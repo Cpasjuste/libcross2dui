@@ -17,10 +17,10 @@ class Config {
 
 public:
 
-    Config(c2d::Renderer *renderer,
-           const std::string &homePath,
+    Config(const std::string &homePath,
            const std::vector<std::string> &roms_paths,
-           const std::vector<Option> &options);
+           const std::vector<Option> &options,
+           const std::vector<RomList::Hardware> &hardwareList);
 
     ~Config() {};
 
@@ -52,6 +52,7 @@ private:
     std::vector<std::string> roms_paths;
     std::vector<Option> options_gui;
     std::vector<Option> options_rom;
+    std::string homePath;
     std::string configPath;
     bool done = false;
 

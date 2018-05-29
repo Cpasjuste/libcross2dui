@@ -5,20 +5,20 @@ cmake_minimum_required(VERSION 3.0)
 set(CROSS2DUI_VERSION_MAJOR 1)
 set(CROSS2DUI_VERSION_MINOR 0)
 
-# delete cmake cache folder before changing this option
-set(BUILD_SFML OFF CACHE BOOL "Build with SFML support")
-set(BUILD_SDL1 OFF CACHE BOOL "Build with SDL1 support (software, osmesa) support")
-set(BUILD_SDL1_GL OFF CACHE BOOL "Build with SDL1 support (hardware rendering, fast, needs BUILD_SDL1=ON)")
-set(BUILD_SDL2 ON CACHE BOOL "Build with SDL2 (software) support")
-set(BUILD_SDL2_GL ON CACHE BOOL "Build with SDL2 support (hardware rendering, fast, needs BUILD_SDL2=ON)")
-set(BUILD_PSP2 OFF CACHE BOOL "Build with PSP2 support")
-set(BUILD_PS3 OFF CACHE BOOL "Build with PS3 support")
-set(BUILD_3DS OFF CACHE BOOL "Build with 3DS support")
-set(BUILD_NX OFF CACHE BOOL "Build with NX (SWITCH) support")
-set(BUILD_NX_GL OFF CACHE BOOL "Build with NX (SWITCH) support (software, osmesa)")
+# delete cmake cache folder before changing this options
+option(BUILD_SFML "Build with SFML support (hardware rendering, fast)" OFF)
+option(BUILD_SDL1 "Build with SDL1 support (software, osmesa) support" OFF)
+option(BUILD_SDL1_GL "Build with SDL1 support (hardware rendering, fast, needs BUILD_SDL1=ON)" OFF)
+option(BUILD_SDL2 "Build with SDL2 support (software)" OFF)
+option(BUILD_SDL2_GL "Build with SDL2 support (hardware rendering, fast, needs BUILD_SDL2=ON)" OFF)
+option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
+option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
+option(BUILD_3DS "Build with 3DS support" OFF)
+option(BUILD_NX "Build with NX (SWITCH) support" OFF)
+option(BUILD_NX_GL "Build with NX support (software, osmesa)" OFF)
 
-set(BUILD_PFBA OFF CACHE BOOL "Build with PFBA support")
-set(BUILD_SNES9X OFF CACHE BOOL "Build with PFBA support")
+option(BUILD_PFBA "Build with PFBA support" OFF)
+option(BUILD_SNES9X "Build with SNES9X support" OFF)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BUILD_DEBUG true CACHE BOOL "Debug build")
@@ -32,7 +32,7 @@ enable_language(ASM)
 # you should (may) only need to port this library.
 add_subdirectory(libcross2d)
 
-project(libcross2dui)
+project(cross2dui)
 
 #################
 # libcross2dui
