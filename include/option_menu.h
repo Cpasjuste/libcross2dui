@@ -6,7 +6,7 @@
 #define PFBA_MENU_H
 
 #include <vector>
-#include "option.h"
+#include "c2dui_option.h"
 
 class OptionMenu {
 

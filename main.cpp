@@ -17,7 +17,7 @@
  *
  */
 
-#include "gui.h"
+#include "c2dui_gui_main.h"
 #include "gui_romlist.h"
 
 using namespace c2d;

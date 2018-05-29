@@ -6,7 +6,7 @@
 #define PFBA_GUI_PROGRESSBOX_H
 
 #include "skeleton/rectangle.h"
-#include "gui.h"
+#include "c2dui_gui_main.h"
 
 class GuiProgressBox : public c2d::Rectangle {
 

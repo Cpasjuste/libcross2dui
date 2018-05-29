@@ -6,7 +6,7 @@
 #define PFBA_GUI_MENU_H
 
 #include "skeleton/rectangle.h"
-#include "gui.h"
+#include "c2dui_gui_main.h"
 
 class MenuLine;
 

@@ -5,7 +5,7 @@
 #ifndef GUI_ROMIST_H
 #define GUI_ROMIST_H
 
-#include "gui.h"
+#include "c2dui_gui_main.h"
 
 class Config;
 

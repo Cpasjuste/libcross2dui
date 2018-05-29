@@ -2,7 +2,7 @@
 // Created by cpasjuste on 23/11/16.
 //
 
-#include "skin.h"
+#include "c2dui.h"
 
 #ifdef __NX__
 
@@ -12,8 +12,9 @@
 #endif
 
 using namespace c2d;
+using namespace c2dui;
 
-Skin::Skin(const std::string &path, const std::vector<Button> &btns) {
+C2DUISkin::C2DUISkin(const std::string &path, const std::vector<Button> &btns) {
 
     this->path = path;
 
@@ -31,37 +32,29 @@ Skin::Skin(const std::string &path, const std::vector<Button> &btns) {
     // load buttons textures
     buttons = btns;
     char str[MAX_PATH];
-    for (unsigned int i = 0; i < buttons.size(); i++) {
+    for (auto &button : buttons) {
         memset(str, 0, MAX_PATH);
-        snprintf(str, MAX_PATH, "%s/buttons/%i.png", path.c_str(), buttons[i].id);
-        buttons[i].path.clear();
-        buttons[i].path.append(str);
+        snprintf(str, MAX_PATH, "%s/buttons/%i.png", path.c_str(), button.id);
+        button.path.clear();
+        button.path.append(str);
     }
 }
 
-Skin::Button *Skin::getButton(int id) {
+C2DUISkin::Button *C2DUISkin::getButton(int id) {
 
     for (unsigned int i = 0; i < buttons.size(); i++) {
         if (buttons[i].id == id) {
             return &buttons[i];
         }
     }
-    return NULL;
+    return nullptr;
 }
 
-Skin::~Skin() {
+C2DUISkin::~C2DUISkin() {
 
     if (font) {
         delete (font);
     }
 
     buttons.clear();
-
-    // deleted by renderer
-    /*
-    if (tex_bg)
-        delete (tex_bg);
-    if (tex_title)
-        delete (tex_title);
-    */
 }

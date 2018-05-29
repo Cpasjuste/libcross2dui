@@ -3,6 +3,9 @@
 //
 
 #include <algorithm>
+
+#include "c2dui.h"
+
 #include "gui_menu.h"
 #include "gui_emu.h"
 #include "gui_state.h"
@@ -10,8 +13,9 @@
 #include "gui_progressbox.h"
 
 using namespace c2d;
+using namespace c2dui;
 
-Gui::Gui(Io *i, Renderer *r, Skin *s, Config *cfg, Input *in, Audio *aud) {
+C2DUIGuiMain::C2DUIGuiMain(Io *i, Renderer *r, C2DUISkin *s, C2DUIConfig *cfg, Input *in, Audio *aud) {
 
     io = i;
     renderer = r;
@@ -56,12 +60,12 @@ Gui::Gui(Io *i, Renderer *r, Skin *s, Config *cfg, Input *in, Audio *aud) {
     updateInputMapping(false);
 }
 
-Gui::~Gui() {
+C2DUIGuiMain::~C2DUIGuiMain() {
     // ui elements (C2DObject)
     // are deleted by the renderer
 }
 
-void Gui::run() {
+void C2DUIGuiMain::run() {
 
     int key = 0;
 
@@ -130,104 +134,84 @@ void Gui::run() {
     }
 }
 
-float Gui::getScaling() {
+float C2DUIGuiMain::getScaling() {
     return scaling;
 }
 
-void Gui::runRom(RomList::Rom *rom) {
-
-    if (!rom) {
-        return;
-    }
-
-    nBurnDrvActive = rom->drv;
-    if (nBurnDrvActive >= nBurnDrvCount) {
-        printf("RunRom: driver not found\n");
-        return;
-    }
-
-    // load rom settings
-    printf("RunRom: config->load(%s)\n", rom->drv_name);
-    config->load(rom);
-
-    printf("RunRom: uiEmu->run(%i)\n", nBurnDrvActive);
-    uiEmu->run(nBurnDrvActive);
-}
-
-Input *Gui::getInput() {
+Input *C2DUIGuiMain::getInput() {
     return input;
 }
 
-Renderer *Gui::getRenderer() {
+Renderer *C2DUIGuiMain::getRenderer() {
     return renderer;
 }
 
-Skin *Gui::getSkin() {
+C2DUISkin *C2DUIGuiMain::getSkin() {
     return skin;
 }
 
-Config *Gui::getConfig() {
+C2DUIConfig *C2DUIGuiMain::getConfig() {
     return config;
 }
 
-Io *Gui::getIo() {
+Io *C2DUIGuiMain::getIo() {
     return io;
 }
 
-c2d::Audio *Gui::getAudio() {
+c2d::Audio *C2DUIGuiMain::getAudio() {
     return audio;
 }
 
-GuiRomList *Gui::getUiRomList() {
+GuiRomList *C2DUIGuiMain::getUiRomList() {
     return uiRomList;
 }
 
-GuiEmu *Gui::getUiEmu() {
+GuiEmu *C2DUIGuiMain::getUiEmu() {
     return uiEmu;
 }
 
-GuiMenu *Gui::getUiMenu() {
+GuiMenu *C2DUIGuiMain::getUiMenu() {
     return uiMenu;
 }
 
 
-GuiProgressBox *Gui::getUiProgressBox() {
+GuiProgressBox *C2DUIGuiMain::getUiProgressBox() {
     return uiProgressBox;
 }
 
-MessageBox *Gui::getUiMessageBox() {
+MessageBox *C2DUIGuiMain::getUiMessageBox() {
     return uiMessageBox;
 }
 
-Font *Gui::getFont() {
+Font *C2DUIGuiMain::getFont() {
     return skin->font;
 }
 
-int Gui::getFontSize() {
-    return config->getValue(Option::Index::SKIN_FONT_SIZE);
+int C2DUIGuiMain::getFontSize() {
+    return config->getValue(C2DUIOption::Index::SKIN_FONT_SIZE);
 }
 
-void Gui::updateInputMapping(bool isRomConfig) {
+void C2DUIGuiMain::updateInputMapping(bool isRomConfig) {
 
     if (isRomConfig) {
         input->setKeyboardMapping(config->getRomPlayerInputKeys(0));
-        int dz = 2000 + config->getValue(Option::Index::JOY_DEADZONE, true) * 2000;
+        int dz = 2000 + config->getValue(C2DUIOption::Index::JOY_DEADZONE, true) * 2000;
         for (int i = 0; i < PLAYER_COUNT; i++) {
             input->setJoystickMapping(i, config->getRomPlayerInputButtons(i), dz);
-            input->players[i].lx.id = config->getValue(Option::Index::JOY_AXIS_LX, true);
-            input->players[i].ly.id = config->getValue(Option::Index::JOY_AXIS_LY, true);
-            input->players[i].rx.id = config->getValue(Option::Index::JOY_AXIS_RX, true);
-            input->players[i].ry.id = config->getValue(Option::Index::JOY_AXIS_RY, true);
+            input->players[i].lx.id = config->getValue(C2DUIOption::Index::JOY_AXIS_LX, true);
+            input->players[i].ly.id = config->getValue(C2DUIOption::Index::JOY_AXIS_LY, true);
+            input->players[i].rx.id = config->getValue(C2DUIOption::Index::JOY_AXIS_RX, true);
+            input->players[i].ry.id = config->getValue(C2DUIOption::Index::JOY_AXIS_RY, true);
         }
     } else {
         input->setKeyboardMapping(config->getGuiPlayerInputKeys(0));
-        int dz = 2000 + config->getValue(Option::Index::JOY_DEADZONE) * 2000;
+        int dz = 2000 + config->getValue(C2DUIOption::Index::JOY_DEADZONE) * 2000;
         for (int i = 0; i < PLAYER_COUNT; i++) {
             input->setJoystickMapping(i, config->getGuiPlayerInputButtons(i), dz);
-            input->players[i].lx.id = config->getValue(Option::Index::JOY_AXIS_LX);
-            input->players[i].ly.id = config->getValue(Option::Index::JOY_AXIS_LY);
-            input->players[i].rx.id = config->getValue(Option::Index::JOY_AXIS_RX);
-            input->players[i].ry.id = config->getValue(Option::Index::JOY_AXIS_RY);
+            input->players[i].lx.id = config->getValue(C2DUIOption::Index::JOY_AXIS_LX);
+            input->players[i].ly.id = config->getValue(C2DUIOption::Index::JOY_AXIS_LY);
+            input->players[i].rx.id = config->getValue(C2DUIOption::Index::JOY_AXIS_RX);
+            input->players[i].ry.id = config->getValue(C2DUIOption::Index::JOY_AXIS_RY);
         }
     }
 }

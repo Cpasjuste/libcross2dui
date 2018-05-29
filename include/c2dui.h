@@ -5,6 +5,13 @@
 #ifndef C2DUI_H
 #define C2DUI_H
 
+#include "c2d.h"
+#include "c2dui_option.h"
+#include "c2dui_config.h"
+#include "c2dui_romlist.h"
+#include "c2dui_skin.h"
+#include "c2dui_gui_main.h"
+
 #ifdef __PSP2__
 #include <psp2/power.h>
 #include <psp2/io/dirent.h>

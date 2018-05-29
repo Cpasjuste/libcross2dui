@@ -6,7 +6,7 @@
 #define PFBA_GUI_EMU_H
 
 #include <sys/time.h>
-#include "gui.h"
+#include "c2dui_gui_main.h"
 #include "video.h"
 #include "skeleton/audio.h"
 

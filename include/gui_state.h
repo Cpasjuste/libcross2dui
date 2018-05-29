@@ -5,7 +5,7 @@
 #ifndef PFBA_GUI_STATES_H
 #define PFBA_GUI_STATES_H
 
-#include "gui.h"
+#include "c2dui_gui_main.h"
 
 class GUISaveStateList;
 
