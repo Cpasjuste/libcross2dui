@@ -2,11 +2,12 @@
 // Created by cpasjuste on 04/02/18.
 //
 
-#include "gui_progressbox.h"
+#include "c2dui.h"
 
 using namespace c2d;
+using namespace c2dui;
 
-GuiProgressBox::GuiProgressBox(Gui *gui)
+C2DUIGuiProgressBox::C2DUIGuiProgressBox(C2DUIGuiMain *gui)
         : Rectangle(Vector2f(gui->getRenderer()->getSize().x / 2,
                              gui->getRenderer()->getSize().y / 2)) {
 
@@ -55,12 +56,12 @@ GuiProgressBox::GuiProgressBox(Gui *gui)
     setVisibility(Hidden);
 }
 
-void GuiProgressBox::setTitle(std::string title) {
+void C2DUIGuiProgressBox::setTitle(std::string title) {
 
     this->title->setString(title);
 }
 
-void GuiProgressBox::setProgress(float progress) {
+void C2DUIGuiProgressBox::setProgress(float progress) {
 
     float width = progress * (progress_bg->getSize().x - 2);
     progress_fg->setSize(
@@ -68,7 +69,7 @@ void GuiProgressBox::setProgress(float progress) {
             progress_fg->getSize().y);
 }
 
-void GuiProgressBox::setMessage(std::string message) {
+void C2DUIGuiProgressBox::setMessage(std::string message) {
 
     this->message->setString(message);
 }

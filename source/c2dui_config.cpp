@@ -2,9 +2,6 @@
 // Created by cpasjuste on 05/12/16.
 //
 
-#include <string>
-#include <libconfig.h>
-
 #include "c2dui.h"
 
 using namespace c2d;
@@ -190,7 +187,7 @@ C2DUIOption *C2DUIConfig::getOption(std::vector<C2DUIOption> *options, int index
             return &options->at(i);
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 int *C2DUIConfig::getGuiPlayerInputKeys(int player) {

@@ -3,11 +3,13 @@
 //
 #ifndef __NX__
 
-#include <burner.h>
-#include <gui/config.h>
-#include "video.h"
+#include "c2dui.h"
+
+// TODO: REMOVE PFBA CODE
+#include "../pfba_test/burn.h"
 
 using namespace c2d;
+using namespace c2dui;
 
 static unsigned int myHighCol16(int r, int g, int b, int /* i */) {
     unsigned int t;
@@ -17,7 +19,7 @@ static unsigned int myHighCol16(int r, int g, int b, int /* i */) {
     return t;
 }
 
-Video::Video(Gui *gui, const c2d::Vector2f &size) : C2DTexture(size, C2D_TEXTURE_FMT_RGB565) {
+C2DUIVideo::C2DUIVideo(C2DUIGuiMain *gui, const c2d::Vector2f &size) : C2DTexture(size, C2D_TEXTURE_FMT_RGB565) {
 
     this->ui = gui;
 
@@ -36,17 +38,17 @@ Video::Video(Gui *gui, const c2d::Vector2f &size) : C2DTexture(size, C2D_TEXTURE
     lock(NULL, (void **) &pBurnDraw, &nBurnPitch);
     unlock();
 
-    setShader(gui->getConfig()->getValue(Option::Index::ROM_SHADER, true));
-    setFiltering(gui->getConfig()->getValue(Option::Index::ROM_FILTER, true));
+    setShader(ui->getConfig()->getValue(C2DUIOption::Index::ROM_SHADER, true));
+    setFiltering(ui->getConfig()->getValue(C2DUIOption::Index::ROM_FILTER, true));
     updateScaling();
 }
 
-void Video::updateScaling() {
+void C2DUIVideo::updateScaling() {
 
     int rotated = 0;
     float rotation = 0;
-    int rotation_cfg = ui->getConfig()->getValue(Option::Index::ROM_ROTATION, true);
-    int scale_mode = ui->getConfig()->getValue(Option::Index::ROM_SCALING, true);
+    int rotation_cfg = ui->getConfig()->getValue(C2DUIOption::Index::ROM_ROTATION, true);
+    int scale_mode = ui->getConfig()->getValue(C2DUIOption::Index::ROM_SCALING, true);
     int vertical = BurnDrvGetFlags() & BDF_ORIENTATION_VERTICAL;
     int flip = BurnDrvGetFlags() & BDF_ORIENTATION_FLIPPED;
     Vector2f screen = ui->getRenderer()->getSize();
@@ -150,7 +152,7 @@ void Video::updateScaling() {
     setRotation(rotation);
 }
 
-Video::~Video() {
+C2DUIVideo::~C2DUIVideo() {
 }
 
 #endif // __NX__

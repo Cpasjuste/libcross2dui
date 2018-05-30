@@ -9,6 +9,8 @@
 
 namespace c2dui {
 
+    class C2DUIGuiMain;
+
     class C2DUIRomList {
 
     public:
@@ -33,9 +35,10 @@ namespace c2dui {
 
         C2DUIRomList(C2DUIGuiMain *ui, const std::string &emuVersion);
 
-        ~C2DUIRomList();
+        virtual ~C2DUIRomList();
 
         virtual void build() {};
+
         void clean();
 
         enum RomState {
@@ -60,9 +63,9 @@ namespace c2dui {
         };
 
         C2DUIGuiMain *ui;
-        Rectangle *rect;
-        Texture *texture;
-        Text *text;
+        c2d::Rectangle *rect;
+        c2d::Texture *texture;
+        c2d::Text *text;
         std::vector<Rom *> list;
         std::vector<Hardware> *hardwareList;
         std::vector<std::string> *paths;
@@ -70,16 +73,16 @@ namespace c2dui {
         char text_str[512];
         float time_start = 0;
 
-        Hardware *GetHardware(int hardware_prefix) {
+        Hardware *getHardware(int hardware_prefix) {
             for (unsigned int i = 0; i < hardwareList->size(); i++) {
-                if (IsHardware(hardware_prefix, hardwareList->at(i).prefix)) {
+                if (isHardware(hardware_prefix, hardwareList->at(i).prefix)) {
                     return &hardwareList->at(i);
                 }
             }
             return NULL;
         };
 
-        const char *GetHardwareName(int hardware_prefix) {
+        const char *getHardwareName(int hardware_prefix) {
             for (unsigned int i = 0; i < hardwareList->size(); i++) {
                 if (hardwareList->at(i).prefix == hardware_prefix) {
                     return hardwareList->at(i).name.c_str();
@@ -87,6 +90,10 @@ namespace c2dui {
             }
             return "UNKNOW";
         };
+
+        virtual bool isHardware(int hardware, int type) {
+            return false;
+        }
     };
 }
 

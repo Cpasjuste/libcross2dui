@@ -33,6 +33,8 @@ namespace c2dui {
 
         virtual C2DUIOption *getOption(std::vector<C2DUIOption> *options, int index);
 
+        virtual std::vector<C2DUIRomList::Hardware> *getHardwareList();
+
         virtual int *getGuiPlayerInputKeys(int player);
 
         virtual int *getGuiPlayerInputButtons(int player);
@@ -40,8 +42,6 @@ namespace c2dui {
         virtual int *getRomPlayerInputKeys(int player);
 
         virtual int *getRomPlayerInputButtons(int player);
-
-        virtual std::vector<C2DUIRomList::Hardware> *getHardwareList();
 
     private:
         std::vector<C2DUIRomList::Hardware> hardwareList;

@@ -6,42 +6,37 @@
 
 #include "c2dui.h"
 
-#include "gui_menu.h"
-#include "gui_emu.h"
-#include "gui_state.h"
-#include "gui_romlist.h"
-#include "gui_progressbox.h"
-
 using namespace c2d;
 using namespace c2dui;
 
-C2DUIGuiMain::C2DUIGuiMain(Io *i, Renderer *r, C2DUISkin *s, C2DUIConfig *cfg, Input *in, Audio *aud) {
+C2DUIGuiMain::C2DUIGuiMain(Renderer *r, Io *i, Input *in, Audio *a,
+                           C2DUIConfig *cfg, C2DUISkin *s) {
 
     io = i;
     renderer = r;
     skin = s;
     config = cfg;
     input = in;
-    audio = aud;
+    audio = a;
 
     // scaling factor mainly used for borders,
     // based on vita resolution..
     scaling = std::min(renderer->getSize().x / 960, 1.0f);
 
-    uiRomList = new GuiRomList(this, renderer->getSize());
+    uiRomList = new C2DUIGuiRomList(this, renderer->getSize());
     renderer->add(uiRomList);
 
     // build menus from options
-    uiMenu = new GuiMenu(this);
+    uiMenu = new C2DUIGuiMenu(this);
     renderer->add(uiMenu);
 
-    uiEmu = new GuiEmu(this);
+    uiEmu = new C2DUIGuiEmu(this);
     renderer->add(uiEmu);
 
-    uiState = new GuiState(this);
+    uiState = new C2DUIGuiState(this);
     renderer->add(uiState);
 
-    uiProgressBox = new GuiProgressBox(this);
+    uiProgressBox = new C2DUIGuiProgressBox(this);
     renderer->add(uiProgressBox);
 
     uiMessageBox = new MessageBox(
@@ -162,20 +157,20 @@ c2d::Audio *C2DUIGuiMain::getAudio() {
     return audio;
 }
 
-GuiRomList *C2DUIGuiMain::getUiRomList() {
+C2DUIGuiRomList *C2DUIGuiMain::getUiRomList() {
     return uiRomList;
 }
 
-GuiEmu *C2DUIGuiMain::getUiEmu() {
+C2DUIGuiEmu *C2DUIGuiMain::getUiEmu() {
     return uiEmu;
 }
 
-GuiMenu *C2DUIGuiMain::getUiMenu() {
+C2DUIGuiMenu *C2DUIGuiMain::getUiMenu() {
     return uiMenu;
 }
 
 
-GuiProgressBox *C2DUIGuiMain::getUiProgressBox() {
+C2DUIGuiProgressBox *C2DUIGuiMain::getUiProgressBox() {
     return uiProgressBox;
 }
 

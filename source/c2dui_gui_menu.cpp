@@ -2,18 +2,19 @@
 // Created by cpasjuste on 30/01/18.
 //
 
-#include "gui_menu.h"
-#include "gui_emu.h"
-#include "gui_romlist.h"
+#include "c2dui.h"
+
+// TODO: remove pfba deps
+#include "../pfba_test/burn.h"
 
 using namespace c2d;
+using namespace c2dui;
 
 class MenuLine : public c2d::Rectangle {
 
 public:
 
-    MenuLine(Gui *ui, FloatRect &rect)
-            : Rectangle(rect) {
+    MenuLine(C2DUIGuiMain *ui, FloatRect &rect) : Rectangle(rect) {
 
         setFillColor(Color::Transparent);
 
@@ -38,7 +39,7 @@ public:
         add(value);
     }
 
-    void update(Option *opt) {
+    void update(C2DUIOption *opt) {
 
         if (texture != NULL) {
             delete (texture);
@@ -54,10 +55,10 @@ public:
             return;
         }
 
-        if (option->flags == Option::Type::INPUT) {
-            Skin::Button *button = ui->getSkin()->getButton(option->value);
+        if (option->flags == C2DUIOption::Type::INPUT) {
+            C2DUISkin::Button *button = ui->getSkin()->getButton(option->value);
             // don't use button textures on keyboard for now
-            if (button && option->index < Option::Index::JOY_DEADZONE) {
+            if (button && option->index < C2DUIOption::Index::JOY_DEADZONE) {
                 if (ui->getIo()->exist(button->path.c_str())) {
                     texture = new C2DTexture(button->path.c_str());
                     if (texture->available) {
@@ -91,14 +92,14 @@ public:
         }
     }
 
-    Gui *ui = NULL;
+    C2DUIGuiMain *ui = NULL;
     Text *name = NULL;
     Text *value = NULL;
     Texture *texture = NULL;
-    Option *option;
+    C2DUIOption *option;
 };
 
-GuiMenu::GuiMenu(Gui *ui) : Rectangle(Vector2f(0, 0)) {
+C2DUIGuiMenu::C2DUIGuiMenu(C2DUIGuiMain *ui) : Rectangle(Vector2f(0, 0)) {
 
     printf("GuiMenu (%p)\n", this);
     this->ui = ui;
@@ -157,9 +158,9 @@ GuiMenu::GuiMenu(Gui *ui) : Rectangle(Vector2f(0, 0)) {
     }
 
     // build menus
-    optionMenuGui = new OptionMenu(NULL, ui->getConfig()->getOptions());
+    optionMenuGui = new C2DUIOptionMenu(NULL, ui->getConfig()->getOptions());
     optionMenuGui->addChild("EXIT");
-    optionMenuRom = new OptionMenu(NULL, ui->getConfig()->getOptions(true), true);
+    optionMenuRom = new C2DUIOptionMenu(NULL, ui->getConfig()->getOptions(true), true);
     optionMenuRom->addChild("RETURN");
     optionMenuRom->addChild("STATES");
     optionMenuRom->addChild("EXIT");
@@ -167,7 +168,7 @@ GuiMenu::GuiMenu(Gui *ui) : Rectangle(Vector2f(0, 0)) {
     setVisibility(Hidden);
 }
 
-void GuiMenu::load(bool isRom, OptionMenu *om) {
+void C2DUIGuiMenu::load(bool isRom, C2DUIOptionMenu *om) {
 
     isRomMenu = isRom;
     options = isRomMenu ? ui->getConfig()->getOptions(true)
@@ -188,7 +189,7 @@ void GuiMenu::load(bool isRom, OptionMenu *om) {
     if (isEmuRunning) {
         // if frameskip is enabled, we may get a black buffer,
         // force a frame to be drawn
-        ui->getUiEmu()->updateFramebuffer();
+        ui->getUiEmu()->updateFb();
     }
 
     if (isRomMenu) {
@@ -199,12 +200,12 @@ void GuiMenu::load(bool isRom, OptionMenu *om) {
         title->setString(optionMenu->title + "__________");
     }
 
-    for (int i = 0; i < lines.size(); i++) {
-        lines[i]->setVisibility(Hidden);
+    for (auto &line : lines) {
+        line->setVisibility(Hidden);
     }
 
     int line_index = 0;
-    for (int i = 0; i < optionMenu->option_ids.size(); i++) {
+    for (unsigned int i = 0; i < optionMenu->option_ids.size(); i++) {
 
         if (i >= lines.size()) {
             // oups
@@ -212,14 +213,14 @@ void GuiMenu::load(bool isRom, OptionMenu *om) {
         }
 
         // menu types
-        Option *option = ui->getConfig()->getOption(options, optionMenu->option_ids[i]);
+        C2DUIOption *option = ui->getConfig()->getOption(options, optionMenu->option_ids[i]);
         if (option == NULL) {
             optionCount--;
             continue;
         }
 
         // skip rotation option if not needed
-        if ((isOptionHidden(option)) || option->flags & Option::Type::HIDDEN) {
+        if ((isOptionHidden(option)) || option->flags & C2DUIOption::Type::HIDDEN) {
             optionCount--;
             continue;
         }
@@ -230,7 +231,7 @@ void GuiMenu::load(bool isRom, OptionMenu *om) {
         line_index++;
     }
 
-    for (int i = 0; i < optionMenu->childs.size(); i++) {
+    for (unsigned i = 0; i < optionMenu->childs.size(); i++) {
 
         if (i >= lines.size()) {
             // oups
@@ -258,13 +259,13 @@ void GuiMenu::load(bool isRom, OptionMenu *om) {
     setLayer(1);
 }
 
-void GuiMenu::updateHighlight() {
+void C2DUIGuiMenu::updateHighlight() {
 
     highlight->setPosition(lines[optionIndex]->value->getGlobalBounds().left - 2,
                            lines[optionIndex]->getGlobalBounds().top - 4);
 }
 
-int GuiMenu::update() {
+int C2DUIGuiMenu::update() {
 
     int ret = 0;
     bool option_changed = false;
@@ -288,13 +289,13 @@ int GuiMenu::update() {
         }
         // LEFT /RIGHT
         if ((key & Input::Key::KEY_LEFT || key & Input::Key::KEY_RIGHT)
-            && optionIndex < optionMenu->option_ids.size()) {
-            Option *option = lines[optionIndex]->option;
+            && (unsigned int) optionIndex < optionMenu->option_ids.size()) {
+            C2DUIOption *option = lines[optionIndex]->option;
             if (!option) {
                 return ret;
             }
             option_changed = true;
-            if (option->flags == Option::Type::INTEGER) {
+            if (option->flags == C2DUIOption::Type::INTEGER) {
                 if (key & Input::Key::KEY_LEFT) {
                     option->prev();
                 } else {
@@ -303,26 +304,26 @@ int GuiMenu::update() {
                 lines[optionIndex]->update(option);
 
                 switch (option->index) {
-                    case Option::Index::GUI_SHOW_CLONES:
-                    case Option::Index::GUI_SHOW_ALL:
-                    case Option::Index::GUI_SHOW_HARDWARE:
+                    case C2DUIOption::Index::GUI_SHOW_CLONES:
+                    case C2DUIOption::Index::GUI_SHOW_ALL:
+                    case C2DUIOption::Index::GUI_SHOW_HARDWARE:
                         ret = UI_KEY_FILTER_ROMS;
                         break;
 
-                    case Option::ROM_ROTATION:
-                    case Option::Index::ROM_SCALING:
+                    case C2DUIOption::ROM_ROTATION:
+                    case C2DUIOption::Index::ROM_SCALING:
                         if (isEmuRunning) {
 #ifndef __NX__
                             ui->getUiEmu()->getVideo()->updateScaling();
 #endif
                         }
                         break;
-                    case Option::Index::ROM_FILTER:
+                    case C2DUIOption::Index::ROM_FILTER:
                         if (isEmuRunning) {
                             ui->getUiEmu()->getVideo()->setFiltering(option->value);
                         }
                         break;
-                    case Option::Index::ROM_SHADER:
+                    case C2DUIOption::Index::ROM_SHADER:
                         if (isEmuRunning) {
                             ui->getUiEmu()->getVideo()->setShader(option->value);
                         }
@@ -335,9 +336,9 @@ int GuiMenu::update() {
 
         // FIRE1
         if (key & Input::Key::KEY_FIRE1) {
-            if (optionIndex < optionMenu->option_ids.size()) {
-                Option *option = lines[optionIndex]->option;
-                if (option->flags == Option::Type::INPUT) {
+            if ((unsigned int) optionIndex < optionMenu->option_ids.size()) {
+                C2DUIOption *option = lines[optionIndex]->option;
+                if (option->flags == C2DUIOption::Type::INPUT) {
                     int new_key = 0;
                     int res = ui->getUiMessageBox()->show("NEW INPUT", "PRESS A BUTTON", "", "", &new_key, 5);
                     if (res != MessageBox::TIMEOUT) {
@@ -348,7 +349,7 @@ int GuiMenu::update() {
                 }
             } else {
                 // extra options in menu (manually added)
-                OptionMenu *menu = optionMenu->childs[optionIndex - optionMenu->option_ids.size()];
+                C2DUIOptionMenu *menu = optionMenu->childs[optionIndex - optionMenu->option_ids.size()];
                 if (menu->title == "EXIT") {
                     setVisibility(Hidden);
                     ret = isRomMenu ? UI_KEY_STOP_ROM : EV_QUIT;
@@ -400,17 +401,17 @@ int GuiMenu::update() {
     return ret;
 }
 
-bool GuiMenu::isOptionHidden(Option *option) {
+bool C2DUIGuiMenu::isOptionHidden(C2DUIOption *option) {
 
-    RomList::Rom *rom = ui->getUiRomList()->getSelection();
+    C2DUIRomList::Rom *rom = ui->getUiRomList()->getSelection();
 
-    if (isRomMenu && option->index == Option::Index::ROM_ROTATION
+    if (isRomMenu && option->index == C2DUIOption::Index::ROM_ROTATION
         && rom != NULL && !(rom->flags & BDF_ORIENTATION_VERTICAL)) {
         return true;
     }
 
-    if (isRomMenu && option->index == Option::Index::ROM_NEOBIOS
-        && rom != NULL && !(RomList::IsHardware(rom->hardware, HARDWARE_PREFIX_SNK))) {
+    if (isRomMenu && option->index == C2DUIOption::Index::ROM_NEOBIOS
+        && rom != NULL && !(ui->getUiRomList()->getRomList()->isHardware(rom->hardware, HARDWARE_PREFIX_SNK))) {
         return true;
     }
 
@@ -425,7 +426,7 @@ bool GuiMenu::isOptionHidden(Option *option) {
     return false;
 }
 
-GuiMenu::~GuiMenu() {
+C2DUIGuiMenu::~C2DUIGuiMenu() {
     printf("~GuiMenu\n");
     delete (optionMenuGui);
     delete (optionMenuRom);

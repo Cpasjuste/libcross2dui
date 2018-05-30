@@ -5,6 +5,23 @@
 #ifndef GUI_H
 #define GUI_H
 
+/*
+#include "c2dui.h"
+#include "c2dui_option.h"
+#include "c2dui_option_menu.h"
+#include "c2dui_romlist.h"
+#include "c2dui_skin.h"
+#include "c2dui_video.h"
+#include "c2dui_config.h"
+
+#include "c2dui_gui_menu.h"
+#include "c2dui_gui_emu.h"
+#include "c2dui_gui_romlist.h"
+#include "c2dui_gui_progressbox.h"
+#include "c2dui_gui_state.h"
+#include "c2dui_gui_main.h"
+*/
+
 #define UI_KEY_FILTER_ROMS      100
 #define UI_KEY_SHOW_ROMLIST     101
 #define UI_KEY_SHOW_MEMU_UI     102
@@ -28,8 +45,8 @@ namespace c2dui {
 
     public:
 
-        C2DUIGuiMain(c2d::Io *io, c2d::Renderer *rdr,
-                     c2dui::C2DUISkin *skin, c2dui::C2DUIConfig *cfg, c2d::Input *input, c2d::Audio *audio);
+        C2DUIGuiMain(c2d::Renderer *renderer, c2d::Io *io, c2d::Input *input, c2d::Audio *audio,
+                     c2dui::C2DUIConfig *config, c2dui::C2DUISkin *skin);
 
         ~C2DUIGuiMain();
 
@@ -41,7 +58,7 @@ namespace c2dui {
 
         c2d::Renderer *getRenderer();
 
-        Skin *getSkin();
+        c2dui::C2DUISkin *getSkin();
 
         C2DUIConfig *getConfig();
 
@@ -51,13 +68,13 @@ namespace c2dui {
 
         c2d::Audio *getAudio();
 
-        GuiRomList *getUiRomList();
+        C2DUIGuiRomList *getUiRomList();
 
-        GuiEmu *getUiEmu();
+        C2DUIGuiEmu *getUiEmu();
 
-        GuiMenu *getUiMenu();
+        C2DUIGuiMenu *getUiMenu();
 
-        GuiProgressBox *getUiProgressBox();
+        C2DUIGuiProgressBox *getUiProgressBox();
 
         c2d::MessageBox *getUiMessageBox();
 
@@ -77,11 +94,11 @@ namespace c2dui {
         c2d::Input *input = NULL;
         c2d::Audio *audio = NULL;
 
-        GuiMenu *uiMenu = NULL;
-        GuiRomList *uiRomList = NULL;
-        GuiEmu *uiEmu = NULL;
-        GuiState *uiState = NULL;
-        GuiProgressBox *uiProgressBox = NULL;
+        C2DUIGuiMenu *uiMenu = NULL;
+        C2DUIGuiRomList *uiRomList = NULL;
+        C2DUIGuiEmu *uiEmu = NULL;
+        C2DUIGuiState *uiState = NULL;
+        C2DUIGuiProgressBox *uiProgressBox = NULL;
         c2d::MessageBox *uiMessageBox = NULL;
 
         float scaling = 1;

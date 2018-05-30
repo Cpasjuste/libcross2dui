@@ -5,6 +5,9 @@
 #ifndef _SKIN_H_
 #define _SKIN_H_
 
+#include <string>
+#include <vector>
+
 namespace c2dui {
 
     class C2DUISkin {

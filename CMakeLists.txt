@@ -9,8 +9,8 @@ set(CROSS2DUI_VERSION_MINOR 0)
 option(BUILD_SFML "Build with SFML support (hardware rendering, fast)" OFF)
 option(BUILD_SDL1 "Build with SDL1 support (software, osmesa) support" OFF)
 option(BUILD_SDL1_GL "Build with SDL1 support (hardware rendering, fast, needs BUILD_SDL1=ON)" OFF)
-option(BUILD_SDL2 "Build with SDL2 support (software)" OFF)
-option(BUILD_SDL2_GL "Build with SDL2 support (hardware rendering, fast, needs BUILD_SDL2=ON)" OFF)
+option(BUILD_SDL2 "Build with SDL2 support (software)" ON)
+option(BUILD_SDL2_GL "Build with SDL2 support (hardware rendering, fast, needs BUILD_SDL2=ON)" ON)
 option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
@@ -110,9 +110,13 @@ target_compile_options(${PROJECT_NAME} PUBLIC ${FLAGS})
 target_link_libraries(${PROJECT_NAME} cross2d)
 
 #########################
-# libcross2dui test
+# libcross2dui (pfba) test
 #########################
-add_executable(${PROJECT_NAME}.elf main.cpp)
+set(PFBA_TEST_INCLUDE pfba_test)
+file(GLOB PFBA_TEST_SOURCE pfba_test/*.c*)
+
+add_executable(${PROJECT_NAME}.elf ${PFBA_TEST_SOURCE})
+target_include_directories(${PROJECT_NAME}.elf  PRIVATE ${PFBA_TEST_INCLUDE})
 target_link_libraries(${PROJECT_NAME}.elf ${PROJECT_NAME})
 
 #####################

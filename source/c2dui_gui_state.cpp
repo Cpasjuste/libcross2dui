@@ -2,22 +2,23 @@
 // Created by cpasjuste on 16/02/18.
 //
 
-#include "gui_state.h"
-#include "gui_emu.h"
-#include "gui_menu.h"
-#include "gui_romlist.h"
+#include "c2dui.h"
+
+// TODO: remove pfba deps
+#include "../pfba_test/burner_sdl.h"
 
 #define STATES_COUNT 4
 
 using namespace c2d;
+using namespace c2dui;
 
-extern INT32 MakeScreenShot(const char *dest);
+extern unsigned int MakeScreenShot(const char *dest);
 
 class GUISaveState : public Rectangle {
 
 public:
 
-    GUISaveState(Gui *ui, const FloatRect &rect, int id) : Rectangle(rect) {
+    GUISaveState(C2DUIGuiMain *ui, const FloatRect &rect, int id) : Rectangle(rect) {
 
         this->ui = ui;
         this->id = id;
@@ -78,7 +79,7 @@ public:
         }
     }
 
-    void setRom(RomList::Rom *rom) {
+    void setRom(C2DUIRomList::Rom *rom) {
 
         memset(path, 0, MAX_PATH);
         memset(shot, 0, MAX_PATH);
@@ -89,18 +90,22 @@ public:
     }
 
     void load() {
+        // TODO
         printf("StateLoad: %s\n", path);
-        BurnStateLoad(path, 1, &DrvInitCallback);
+        //BurnStateLoad(path, 1, &DrvInitCallback);
     }
 
     void save() {
         printf("StateSave: %s\n", path);
+        // TODO
+        /*
         BurnStateSave(path, 1);
         int res = MakeScreenShot(shot);
         loadTexture();
+        */
     }
 
-    Gui *ui;
+    C2DUIGuiMain *ui;
     Texture *texture = NULL;
     Text *middle_text = NULL;
     Text *bottom_text = NULL;
@@ -111,11 +116,11 @@ public:
     int id = 0;
 };
 
-class GUISaveStateList : public Rectangle {
+class C2DUIGuiSaveStateList : public Rectangle {
 
 public:
 
-    GUISaveStateList(Gui *ui, const FloatRect &rect) : Rectangle(rect) {
+    C2DUIGuiSaveStateList(C2DUIGuiMain *ui, const FloatRect &rect) : Rectangle(rect) {
 
         setFillColor(Color::Transparent);
 
@@ -131,7 +136,7 @@ public:
         setSelection(0);
     }
 
-    ~GUISaveStateList() {
+    ~C2DUIGuiSaveStateList() {
         for (int i = 0; i < 4; i++) {
             delete (states[i]);
         }
@@ -177,7 +182,7 @@ public:
     int index = 0;
 };
 
-GuiState::GuiState(Gui *ui) : Rectangle(Vector2f(0, 0)) {
+C2DUIGuiState::C2DUIGuiState(C2DUIGuiMain *ui) : Rectangle(Vector2f(0, 0)) {
 
     this->ui = ui;
 
@@ -201,7 +206,7 @@ GuiState::GuiState(Gui *ui) : Rectangle(Vector2f(0, 0)) {
     add(title);
 
 
-    uiStateList = new GUISaveStateList(ui, {
+    uiStateList = new C2DUIGuiSaveStateList(ui, {
             getLocalBounds().left + getSize().x / 2, start_y + 32,
             getSize().x - 64, getSize().x / (STATES_COUNT + 1)
     });
@@ -211,14 +216,14 @@ GuiState::GuiState(Gui *ui) : Rectangle(Vector2f(0, 0)) {
     setVisibility(Hidden);
 }
 
-void GuiState::load() {
+void C2DUIGuiState::load() {
 
     isEmuRunning = ui->getUiEmu()->getVisibility() == Visible;
     // should always be the case...
     if (isEmuRunning) {
         // if frameskip is enabled, we may get a black buffer,
         // force a frame to be drawn
-        ui->getUiEmu()->updateFramebuffer();
+        ui->getUiEmu()->updateFb();
     }
 
     char name[128];
@@ -233,12 +238,12 @@ void GuiState::load() {
     setVisibility(Visible);
 }
 
-void GuiState::unload() {
+void C2DUIGuiState::unload() {
 
     setVisibility(Hidden);
 }
 
-int GuiState::update() {
+int C2DUIGuiState::update() {
 
     int ret = 0;
     int key = ui->getInput()->update()[0].state;

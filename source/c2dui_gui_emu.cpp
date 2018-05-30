@@ -2,21 +2,23 @@
 // Created by cpasjuste on 03/02/18.
 //
 
-#include "gui_emu.h"
-#include "gui_romlist.h"
-#include "gui_progressbox.h"
+#include "c2dui.h"
+
+// TODO: REMOVE PFBA CODE
+#include "../pfba_test/burn.h"
+#include "../pfba_test/burner_sdl.h"
 
 using namespace c2d;
+using namespace c2dui;
 
 extern int InpMake(Input::Player *players);
 
 extern unsigned char inputServiceSwitch;
 extern unsigned char inputP1P2Switch;
-//extern int nSekCpuCore;
 
-GuiEmu::GuiEmu(Gui *g) : Rectangle(g->getRenderer()->getSize()) {
+C2DUIGuiEmu::C2DUIGuiEmu(C2DUIGuiMain *u) : Rectangle(u->getRenderer()->getSize()) {
 
-    ui = g;
+    ui = u;
     setFillColor(Color::Transparent);
 
     fpsText = new Text("0123456789", *ui->getSkin()->font, (unsigned int) ui->getFontSize());
@@ -27,7 +29,7 @@ GuiEmu::GuiEmu(Gui *g) : Rectangle(g->getRenderer()->getSize()) {
     setVisibility(Hidden);
 }
 
-int GuiEmu::run(int driver) {
+int C2DUIGuiEmu::run(int driver) {
 
     bForce60Hz = true;
 /*
@@ -38,7 +40,7 @@ int GuiEmu::run(int driver) {
     ///////////
     // AUDIO
     //////////
-    int audio = ui->getConfig()->getValue(Option::Index::ROM_AUDIO, true);
+    int audio = ui->getConfig()->getValue(C2DUIOption::Index::ROM_AUDIO, true);
     if (audio && ui->getAudio()->available) {
         printf("Creating audio device...\n");
         // disable interpolation as it produce "cracking" sound
@@ -65,9 +67,9 @@ int GuiEmu::run(int driver) {
     printf("Initialize driver...\n");
     if (DrvInit(driver, false) != 0) {
         printf("\nDriver initialisation failed! Likely causes are:\n"
-                       "- Corrupt/Missing ROM(s)\n"
-                       "- I/O Error\n"
-                       "- Memory error\n\n");
+               "- Corrupt/Missing ROM(s)\n"
+               "- I/O Error\n"
+               "- Memory error\n\n");
         DrvExit();
         InpExit();
         ui->getUiProgressBox()->setVisibility(Hidden);
@@ -83,7 +85,7 @@ int GuiEmu::run(int driver) {
     ui->getRenderer()->clear();
     int w, h;
     BurnDrvGetFullSize(&w, &h);
-    video = new Video(ui, Vector2f(w, h));
+    video = new C2DUIVideo(ui, Vector2f(w, h));
     add(video);
     printf("done\n");
 
@@ -107,7 +109,7 @@ int GuiEmu::run(int driver) {
     return 0;
 }
 
-void GuiEmu::stop() {
+void C2DUIGuiEmu::stop() {
 
     printf("DrvExit...\n");
     DrvExit();
@@ -131,7 +133,7 @@ void GuiEmu::stop() {
     setVisibility(Hidden);
 }
 
-void GuiEmu::pause() {
+void C2DUIGuiEmu::pause() {
 
     paused = true;
     if (ui->getAudio()) {
@@ -147,7 +149,7 @@ void GuiEmu::pause() {
 #endif
 }
 
-void GuiEmu::resume() {
+void C2DUIGuiEmu::resume() {
 
     ui->updateInputMapping(true);
     if (ui->getAudio()) {
@@ -161,9 +163,9 @@ void GuiEmu::resume() {
 #endif
 }
 
-void GuiEmu::updateFramebuffer() {
+void C2DUIGuiEmu::updateFb() {
 
-    if (pBurnDraw == NULL) {
+    if (pBurnDraw == nullptr) {
         nFramesEmulated++;
         nCurrentFrame++;
         nFramesRendered++;
@@ -173,7 +175,7 @@ void GuiEmu::updateFramebuffer() {
     }
 }
 
-void GuiEmu::renderFrame(bool bDraw, int bDrawFps, float fps) {
+void C2DUIGuiEmu::renderFrame(bool bDraw, int bDrawFps, float fps) {
 
     fpsText->setVisibility(
             bDrawFps ? Visible : Hidden);
@@ -206,10 +208,10 @@ void GuiEmu::renderFrame(bool bDraw, int bDrawFps, float fps) {
 
 float timer = 0;
 
-void GuiEmu::updateFrame() {
+void C2DUIGuiEmu::updateFrame() {
 
-    int showFps = ui->getConfig()->getValue(Option::Index::ROM_SHOW_FPS, true);
-    int frameSkip = ui->getConfig()->getValue(Option::Index::ROM_FRAMESKIP, true);
+    int showFps = ui->getConfig()->getValue(C2DUIOption::Index::ROM_SHOW_FPS, true);
+    int frameSkip = ui->getConfig()->getValue(C2DUIOption::Index::ROM_FRAMESKIP, true);
 
     if (frameSkip) {
         bool draw = nFramesEmulated % (frameSkip + 1) == 0;
@@ -243,13 +245,13 @@ void GuiEmu::updateFrame() {
     }
 }
 
-int GuiEmu::update() {
+int C2DUIGuiEmu::update() {
 
     inputServiceSwitch = 0;
     inputP1P2Switch = 0;
 
     int rotation_config =
-            ui->getConfig()->getValue(Option::Index::ROM_ROTATION, true);
+            ui->getConfig()->getValue(C2DUIOption::Index::ROM_ROTATION, true);
     int rotate_input = 0;
 #ifdef __PSP2__
     // TODO: find a way to unify platforms,
@@ -310,69 +312,6 @@ int GuiEmu::update() {
     return 0;
 }
 
-Video *GuiEmu::getVideo() {
+C2DUIVideo *C2DUIGuiEmu::getVideo() {
     return video;
 }
-
-/*
- * it seems cyclone asm core needs fixes to work with fba 0.2.97.43+
- * disable it for now as it's not really useful anyway...
- *
-#if defined(__PSP2__) || defined(__RPI__)
-
-int GuiEmu::getSekCpuCore() {
-
-    int sekCpuCore = 0; // SEK_CORE_C68K: USE CYCLONE ARM ASM M68K CORE
-    // int sekCpuCore = g->GetConfig()->GetRomValue(Option::Index::ROM_M68K);
-
-    std::vector<std::string> zipList;
-    int hardware = BurnDrvGetHardwareCode();
-
-    if (!ui->getConfig()->getValue(Option::Index::ROM_NEOBIOS, true)
-        && RomList::IsHardware(hardware, HARDWARE_PREFIX_SNK)) {
-        sekCpuCore = 1; // SEK_CORE_M68K: USE C M68K CORE
-        ui->getUiMessageBox()->show("WARNING", "UNIBIOS DOESNT SUPPORT THE M68K ASM CORE\n"
-                "CYCLONE ASM CORE DISABLED", "OK");
-    }
-
-    if (RomList::IsHardware(hardware, HARDWARE_PREFIX_SEGA)) {
-        if (hardware & HARDWARE_SEGA_FD1089A_ENC
-            || hardware & HARDWARE_SEGA_FD1089B_ENC
-            || hardware & HARDWARE_SEGA_MC8123_ENC
-            || hardware & HARDWARE_SEGA_FD1094_ENC
-            || hardware & HARDWARE_SEGA_FD1094_ENC_CPU2) {
-            sekCpuCore = 1; // SEK_CORE_M68K: USE C M68K CORE
-            ui->getUiMessageBox()->show("WARNING", "ROM IS CRYPTED, USE DECRYPTED ROM (CLONE)\n"
-                    "TO ENABLE CYCLONE ASM CORE (FASTER)", "OK");
-        }
-    } else if (RomList::IsHardware(hardware, HARDWARE_PREFIX_TOAPLAN)) {
-        zipList.push_back("batrider");
-        zipList.push_back("bbakraid");
-        zipList.push_back("bgaregga");
-    } else if (RomList::IsHardware(hardware, HARDWARE_PREFIX_SNK)) {
-        zipList.push_back("kof97");
-        zipList.push_back("kof98");
-        zipList.push_back("kof99");
-        zipList.push_back("kof2000");
-        zipList.push_back("kof2001");
-        zipList.push_back("kof2002");
-        zipList.push_back("kf2k3pcb");
-        //zipList.push_back("kof2003"); // WORKS
-    }
-
-    std::string zip = BurnDrvGetTextA(DRV_NAME);
-    for (unsigned int i = 0; i < zipList.size(); i++) {
-        if (zipList[i].compare(0, zip.length(), zip) == 0) {
-            ui->getUiMessageBox()->show("WARNING", "THIS ROM DOESNT SUPPORT THE M68K ASM CORE\n"
-                    "CYCLONE ASM CORE DISABLED", "OK");
-            sekCpuCore = 1; // SEK_CORE_M68K: USE C M68K CORE
-            break;
-        }
-    }
-
-    zipList.clear();
-
-    return sekCpuCore;
-}
-#endif
-*/

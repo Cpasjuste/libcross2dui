@@ -21,7 +21,7 @@ const char *C2DUIOption::getName() {
 }
 
 const char *C2DUIOption::getValue() {
-    if (value >= options.size()) {
+    if ((size_t) value >= options.size()) {
         return "NONE";
     }
     return options[value].c_str();
@@ -29,7 +29,7 @@ const char *C2DUIOption::getValue() {
 
 void C2DUIOption::next() {
     value++;
-    if (value >= options.size())
+    if ((size_t) value >= options.size())
         value = 0;
 }
 

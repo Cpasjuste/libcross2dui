@@ -6,9 +6,7 @@
 #include <string>
 #include <algorithm>
 
-#include <skeleton/io.h>
-#include "c2dui_romlist.h"
-#include "c2dui_gui_main.h"
+#include "c2dui.h"
 
 using namespace c2d;
 using namespace c2dui;

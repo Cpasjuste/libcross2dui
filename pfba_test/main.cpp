@@ -1,5 +1,5 @@
 /*
- * libcross2dui
+ * FinalBurn Alpha
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,27 +17,70 @@
  *
  */
 
-#include "c2dui_gui_main.h"
-#include "c2dui_gui_romlist.h"
+#include "burner_sdl.h"
+#include "burn.h"
+
+#include "c2dui.h"
+#include "config.h"
 
 using namespace c2d;
+using namespace c2dui;
+
+#ifdef __PSP2__
+#include <psp2/power.h>
+#include <psp2/io/dirent.h>
+
+int _newlib_heap_size_user = 192 * 1024 * 1024;
+#define SCR_W   960
+#define SCR_H   544
+#elif __PS3__
+#define SCR_W   1280
+#define SCR_H   720
+#elif __3DS__
+#define SCR_W   400
+#define SCR_H   240
+#elif __NX__
+#define SCR_W   1280
+#define SCR_H   720
+#else
+#define SCR_W   1280
+#define SCR_H   720
+#endif
 
 Renderer *renderer;
-
 Input *inp;
-
 Io *io;
 
-Config *config;
+PFBAConfig *config;
+C2DUISkin *skin;
 
-Gui *ui;
+/////////
+// FBA
+/////////
+char szAppBurnVer[16] = VERSION;
+// replaces ips_manager.cpp
+bool bDoIpsPatch = 0;
 
-Skin *skin;
+void IpsApplyPatches(UINT8 *base, char *rom_name) {}
+
+// needed by cps3run.cpp and dataeast/d_backfire.cpp
+void Reinitialise() {}
+
+// needed by neo_run.cpp
+void wav_exit() {}
+
+int bRunPause;
+/////////
+// FBA
+/////////
 
 int main(int argc, char **argv) {
 
+    BurnPathsInit();
+    BurnLibInit();
+
     // buttons used for ui config menu
-    std::vector<Skin::Button> buttons;
+    std::vector<C2DUISkin::Button> buttons;
 
 #ifdef __PSP2__
     // set max cpu speed
@@ -81,17 +124,12 @@ int main(int argc, char **argv) {
     inp = new C2DInput(renderer);
     io = new C2DIo();
 
-#ifdef __PFBA__
-    
-#elif __SNES9X__
-
-#endif
-
     // load configuration
-    config = new Config(renderer, C2DUI_HOME_PATH);
+    int version = 100; //(__PFBA_VERSION_MAJOR__ * 100) + __PFBA_VERSION_MINOR__;
+    config = new PFBAConfig(renderer, C2DUI_HOME_PATH, version);
 
     // skin
-    Skin *skin = new Skin(C2DUI_HOME_PATH, buttons);
+    skin = new C2DUISkin(C2DUI_HOME_PATH, buttons);
 
     // audio
     Audio *audio = new C2DAudio(48000);
@@ -100,6 +138,9 @@ int main(int argc, char **argv) {
     // run gui
     ui = new Gui(io, renderer, skin, config, inp, audio);
     ui->run();
+
+    // quit
+    BurnLibExit();
 
     delete (ui);
     delete (audio);

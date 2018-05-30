@@ -5,12 +5,12 @@
 #ifndef C2DUI_H
 #define C2DUI_H
 
-#include "c2d.h"
+/*
 #include "c2dui_option.h"
-#include "c2dui_config.h"
 #include "c2dui_romlist.h"
+#include "c2dui_config.h"
 #include "c2dui_skin.h"
-#include "c2dui_gui_main.h"
+*/
 
 #ifdef __PSP2__
 #include <psp2/power.h>
@@ -41,5 +41,20 @@ int _newlib_heap_size_user = 192 * 1024 * 1024;
 #elif __SNES9X__
 
 #endif
+
+#include "c2d.h"
+#include "c2dui_option.h"
+#include "c2dui_option_menu.h"
+#include "c2dui_romlist.h"
+#include "c2dui_skin.h"
+#include "c2dui_video.h"
+#include "c2dui_config.h"
+
+#include "c2dui_gui_menu.h"
+#include "c2dui_gui_emu.h"
+#include "c2dui_gui_romlist.h"
+#include "c2dui_gui_progressbox.h"
+#include "c2dui_gui_state.h"
+#include "c2dui_gui_main.h"
 
 #endif //C2DUI_H
