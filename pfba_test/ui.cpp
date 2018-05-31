@@ -14,6 +14,12 @@ PFBAGui::PFBAGui(Renderer *renderer, Io *io, Input *input, Audio *audio,
                  C2DUIConfig *config, C2DUISkin *skin)
         : C2DUIGuiMain(renderer, io, input, audio, config, skin) {
 
+    printf("PFBAGui\n");
+}
+
+PFBAGui::~PFBAGui() {
+
+    printf("~PFBAGui\n");
 }
 
 void PFBAGui::runRom(C2DUIRomList::Rom *rom) {
@@ -30,8 +36,9 @@ void PFBAGui::runRom(C2DUIRomList::Rom *rom) {
 
     // load rom settings
     printf("PFBAGui::runRom: config->load(%s)\n", rom->drv_name);
-    config->load(rom);
+    getConfig()->load(rom);
 
     printf("PFBAGui::runRom: uiEmu->run(%i)\n", nBurnDrvActive);
-    uiEmu->run(nBurnDrvActive);
+    getUiEmu()->run(nBurnDrvActive);
 }
+

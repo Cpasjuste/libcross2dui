@@ -48,7 +48,7 @@ namespace c2dui {
         C2DUIGuiMain(c2d::Renderer *renderer, c2d::Io *io, c2d::Input *input, c2d::Audio *audio,
                      c2dui::C2DUIConfig *config, c2dui::C2DUISkin *skin);
 
-        ~C2DUIGuiMain();
+        virtual ~C2DUIGuiMain();
 
         void run();
 

@@ -18,9 +18,10 @@
  */
 
 #include "burner_sdl.h"
-#include "burn.h"
+//#include "burn.h"
 
 #include "c2dui.h"
+#include "ui.h"
 #include "config.h"
 
 using namespace c2d;
@@ -52,6 +53,7 @@ Input *inp;
 Io *io;
 
 PFBAConfig *config;
+PFBAGui *ui;
 C2DUISkin *skin;
 
 /////////
@@ -136,7 +138,7 @@ int main(int argc, char **argv) {
     audio->pause(1);
 
     // run gui
-    ui = new Gui(io, renderer, skin, config, inp, audio);
+    ui = new PFBAGui(renderer, io, inp, audio, config, skin);
     ui->run();
 
     // quit

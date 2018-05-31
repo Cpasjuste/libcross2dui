@@ -58,7 +58,7 @@
 
 #include "tchar.h"
 #include "version.h"
-//#include "burn.h"
+#include "burn.h"
 typedef unsigned int UINT32;
 typedef int INT32;
 typedef unsigned char UINT8;

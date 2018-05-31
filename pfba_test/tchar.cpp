@@ -1,6 +1,7 @@
 
 
-#include "burner.h"
+#include <cstring>
+#include "tchar.h"
 
 TCHAR* ANSIToTCHAR(const char* pszInString, TCHAR* pszOutString, int nOutSize)
 {
@@ -49,4 +50,3 @@ char* TCHARToANSI(const TCHAR* pszInString, char* pszOutString, int nOutSize)
 	return (char*)pszInString;
 #endif
 }
- 

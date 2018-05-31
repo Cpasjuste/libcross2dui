@@ -5,7 +5,7 @@
 #include "c2dui.h"
 
 // TODO: REMOVE PFBA CODE
-#include "../pfba_test/burn.h"
+//#include "../pfba_test/burn.h"
 #include "../pfba_test/burner_sdl.h"
 
 using namespace c2d;
