@@ -134,6 +134,20 @@ void C2DUIGuiMain::run() {
     }
 }
 
+void C2DUIGuiMain::runRom(C2DUIRomList::Rom *rom) {
+
+    if (!rom) {
+        return;
+    }
+
+    // load rom settings
+    printf("PFBAGui::runRom: config->load(%s)\n", rom->drv_name);
+    getConfig()->load(rom);
+
+    printf("PFBAGui::runRom: uiEmu->run(%s)\n", rom->name);
+    getUiEmu()->run(rom);
+}
+
 float C2DUIGuiMain::getScaling() {
     return scaling;
 }

@@ -33,7 +33,7 @@ namespace c2dui {
 
         virtual ~C2DUIGuiMain();
 
-        virtual void runRom(C2DUIRomList::Rom *rom) {};
+        virtual void runRom(C2DUIRomList::Rom *rom);
 
         void init(C2DUIGuiRomList *uiRomList, C2DUIGuiMenu *uiMenu,
                   C2DUIGuiEmu *uiEmu, C2DUIGuiState *uiState);

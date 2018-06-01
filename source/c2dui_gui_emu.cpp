@@ -22,16 +22,9 @@ C2DUIGuiEmu::C2DUIGuiEmu(C2DUIGuiMain *u) : Rectangle(u->getRenderer()->getSize(
     setVisibility(Hidden);
 }
 
-int C2DUIGuiEmu::run(int driver, const std::string &path) {
-
-    ///////////
-    // VIDEO
-    //////////
-    printf("Creating video device...\n");
-    getUi()->getRenderer()->clear();
+int C2DUIGuiEmu::run(C2DUIRomList::Rom *rom) {
 
     add(video);
-    printf("done\n");
 
     // set fps text on top
     getFpsText()->setLayer(1);

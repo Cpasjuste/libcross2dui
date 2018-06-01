@@ -19,7 +19,7 @@ namespace c2dui {
 
         C2DUIGuiEmu(C2DUIGuiMain *ui);
 
-        virtual int run(int driver, const std::string &path = "");
+        virtual int run(C2DUIRomList::Rom *rom);
 
         virtual void stop();
 
