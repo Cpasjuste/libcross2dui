@@ -5,37 +5,26 @@
 
 #include "c2dui.h"
 
-// TODO: REMOVE PFBA CODE
-#include "../pfba_test/burn.h"
+#ifdef __PFBA__
+// TODO: remove pfba deps
+#define BDF_ORIENTATION_FLIPPED     (1 << 1)
+#define BDF_ORIENTATION_VERTICAL    (1 << 2)
+
+extern "C" int BurnDrvGetFlags();
+
+#endif
 
 using namespace c2d;
 using namespace c2dui;
 
-static unsigned int myHighCol16(int r, int g, int b, int /* i */) {
-    unsigned int t;
-    t = (unsigned int) ((r << 8) & 0xf800); // rrrr r000 0000 0000
-    t |= (g << 3) & 0x07e0; // 0000 0ggg ggg0 0000
-    t |= (b >> 3) & 0x001f; // 0000 0000 000b bbbb
-    return t;
-}
-
-C2DUIVideo::C2DUIVideo(C2DUIGuiMain *gui, const c2d::Vector2f &size) : C2DTexture(size, C2D_TEXTURE_FMT_RGB565) {
-
-    this->ui = gui;
+C2DUIVideo::C2DUIVideo(C2DUIGuiMain *gui, void *_pixels, int *_pitch, const c2d::Vector2f &size)
+        : C2DTexture(size, C2D_TEXTURE_FMT_RGB565) {
 
     printf("game resolution: %ix%i\n", (int) getSize().x, (int) getSize().y);
 
-    if (BurnDrvGetFlags() & BDF_ORIENTATION_VERTICAL) {
-        printf("game orientation: vertical\n");
-    }
-    if (BurnDrvGetFlags() & BDF_ORIENTATION_FLIPPED) {
-        printf("game orientation: flipped\n");
-    }
+    this->ui = gui;
 
-    nBurnBpp = 2;
-    BurnHighCol = myHighCol16;
-    BurnRecalcPal();
-    lock(NULL, (void **) &pBurnDraw, &nBurnPitch);
+    lock(nullptr, &_pixels, _pitch);
     unlock();
 
     setShader(ui->getConfig()->getValue(C2DUIOption::Index::ROM_SHADER, true));
@@ -49,8 +38,13 @@ void C2DUIVideo::updateScaling() {
     float rotation = 0;
     int rotation_cfg = ui->getConfig()->getValue(C2DUIOption::Index::ROM_ROTATION, true);
     int scale_mode = ui->getConfig()->getValue(C2DUIOption::Index::ROM_SCALING, true);
+#ifdef __PFBA__
     int vertical = BurnDrvGetFlags() & BDF_ORIENTATION_VERTICAL;
     int flip = BurnDrvGetFlags() & BDF_ORIENTATION_FLIPPED;
+#else
+    int vertical = false;
+    int flip = false;
+#endif
     Vector2f screen = ui->getRenderer()->getSize();
     Vector2f scale_max;
     float sx = 1, sy = 1;

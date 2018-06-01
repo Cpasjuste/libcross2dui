@@ -5,23 +5,6 @@
 #ifndef GUI_H
 #define GUI_H
 
-/*
-#include "c2dui.h"
-#include "c2dui_option.h"
-#include "c2dui_option_menu.h"
-#include "c2dui_romlist.h"
-#include "c2dui_skin.h"
-#include "c2dui_video.h"
-#include "c2dui_config.h"
-
-#include "c2dui_gui_menu.h"
-#include "c2dui_gui_emu.h"
-#include "c2dui_gui_romlist.h"
-#include "c2dui_gui_progressbox.h"
-#include "c2dui_gui_state.h"
-#include "c2dui_gui_main.h"
-*/
-
 #define UI_KEY_FILTER_ROMS      100
 #define UI_KEY_SHOW_ROMLIST     101
 #define UI_KEY_SHOW_MEMU_UI     102
@@ -50,9 +33,12 @@ namespace c2dui {
 
         virtual ~C2DUIGuiMain();
 
-        void run();
-
         virtual void runRom(C2DUIRomList::Rom *rom) {};
+
+        void init(C2DUIGuiRomList *uiRomList, C2DUIGuiMenu *uiMenu,
+                  C2DUIGuiEmu *uiEmu, C2DUIGuiState *uiState);
+
+        void run();
 
         void updateInputMapping(bool isRomCfg);
 

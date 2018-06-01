@@ -21,11 +21,15 @@ namespace c2dui {
 
         void load(bool isRomMenu = false, C2DUIOptionMenu *om = NULL);
 
+        C2DUIGuiMain *getUi();
+
+        bool isRom();
+
+        virtual bool isOptionHidden(C2DUIOption *option);
+
     private:
 
         void updateHighlight();
-
-        bool isOptionHidden(C2DUIOption *option);
 
         C2DUIGuiMain *ui = NULL;
         c2d::Text *title = NULL;

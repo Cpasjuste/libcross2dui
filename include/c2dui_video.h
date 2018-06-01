@@ -11,15 +11,13 @@
 
 #include <cstring>
 
-//class C2DUIGuiMain;
-
 namespace c2dui {
 
     class C2DUIVideo : public c2d::C2DTexture {
 
     public:
 
-        C2DUIVideo(C2DUIGuiMain *ui, const c2d::Vector2f &size);
+        C2DUIVideo(C2DUIGuiMain *ui, void *pixels, int *pitch, const c2d::Vector2f &size);
 
         virtual ~C2DUIVideo();
 
@@ -30,5 +28,6 @@ namespace c2dui {
         C2DUIGuiMain *ui = NULL;
     };
 }
-#endif
+
+#endif //  __NX__
 #endif //_VIDEO_H_

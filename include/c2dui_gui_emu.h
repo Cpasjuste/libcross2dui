@@ -11,8 +11,6 @@
 #define Video NXVideo
 #endif
 
-//class C2DUIGuiMain;
-
 namespace c2dui {
 
     class C2DUIGuiEmu : public c2d::Rectangle {
@@ -21,32 +19,47 @@ namespace c2dui {
 
         C2DUIGuiEmu(C2DUIGuiMain *ui);
 
-        int run(int driver);
+        virtual int run(int driver, const std::string &path = "");
 
-        void stop();
+        virtual void stop();
 
-        void pause();
+        virtual void pause();
 
-        void resume();
+        virtual void resume();
 
-        int update();
+        virtual int update();
 
-        void updateFb();
+        virtual void updateFb();
+
+        virtual void updateFrame();
+
+        virtual void renderFrame(bool draw = true, int drawFps = false, float fps = 0);
+
+        C2DUIGuiMain *getUi();
 
         C2DUIVideo *getVideo();
 
+        void setVideo(C2DUIVideo *video);
+
+        float getFrameDuration();
+
+        void setFrameDuration(float f);
+
+        c2d::Text *getFpsText();
+
+        char *getFpsString();
+
+        bool isPaused();
+
     private:
-
-        void updateFrame();
-
-        void renderFrame(bool draw = true, int drawFps = false, float fps = 0);
 
         C2DUIGuiMain *ui = NULL;
         C2DUIVideo *video = NULL;
         c2d::Text *fpsText = NULL;
         char fpsString[32];
         bool paused = false;
-        float frame_duration = 0;
+        float frameDuration = 0;
     };
 }
+
 #endif //PFBA_GUI_EMU_H

@@ -7,6 +7,8 @@
 
 #include <vector>
 
+#define HARDWARE_PREFIX_ALL 0xffffffff
+
 namespace c2dui {
 
     class C2DUIGuiMain;
@@ -37,9 +39,7 @@ namespace c2dui {
 
         virtual ~C2DUIRomList();
 
-        virtual void build() {};
-
-        void clean();
+        virtual void build();
 
         enum RomState {
             NOT_WORKING = 0,
@@ -54,7 +54,7 @@ namespace c2dui {
             char *year = NULL;
             char *manufacturer = NULL;
             char *parent = NULL;
-            int flags;
+            unsigned int flags;
             int state;
             int hardware;
             char *system = NULL;

@@ -5,8 +5,11 @@
 
 #include "c2dui.h"
 
+#ifdef __PFBA__
 // TODO: remove pfba deps
-#include "../pfba_test/romlist.h"
+#define BDF_ORIENTATION_FLIPPED     (1 << 1)
+#define BDF_ORIENTATION_VERTICAL    (1 << 2)
+#endif
 
 using namespace c2d;
 using namespace c2dui;
@@ -49,7 +52,7 @@ public:
 
         if (texture) {
             delete (texture);
-            texture = NULL;
+            texture = nullptr;
         }
 
         if (!rom) {
@@ -79,10 +82,11 @@ public:
                 add(texture);
             } else {
                 delete (texture);
-                texture = NULL;
+                texture = nullptr;
             }
 
             // update info text
+#ifdef __PFBA__
             strcpy(rotation, "ROTATION: HORIZONTAL");
             if (rom->flags & BDF_ORIENTATION_VERTICAL) {
                 sprintf(rotation, "ROTATION: VERTICAL");
@@ -90,17 +94,20 @@ public:
                     strncat(rotation, " / FLIPPED", MAX_PATH);
                 }
             }
+#else
+            rotation[0] = '\0';
+#endif
             snprintf(info, 1024, "ZIP: %s.ZIP\nSTATUS: %s\nSYSTEM: %s\nMANUFACTURER: %s\nYEAR: %s\n%s",
-                     rom->zip, rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
+                     rom->zip, rom->state == C2DUIRomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
                      rom->system, rom->manufacturer, rom->year, rotation);
             infoText->setString(info);
             infoText->setVisibility(Visible);
         }
     }
 
-    Texture *texture = NULL;
-    Rectangle *infoBox = NULL;
-    Text *infoText = NULL;
+    Texture *texture = nullptr;
+    Rectangle *infoBox = nullptr;
+    Text *infoText = nullptr;
     char texture_path[1024];
     char info[1024];
     char rotation[64];
@@ -108,15 +115,12 @@ public:
     float scaling = 1;
 };
 
-C2DUIGuiRomList::C2DUIGuiRomList(C2DUIGuiMain *g, const c2d::Vector2f &size) : Rectangle(size) {
+C2DUIGuiRomList::C2DUIGuiRomList(C2DUIGuiMain *g, C2DUIRomList *romList, const c2d::Vector2f &size) : Rectangle(size) {
 
     printf("GuiRomList\n");
 
     ui = g;
-
-    // build/init roms list
-    // TODO: version
-    rom_list = new C2DUIRomList(ui, "v 100");
+    rom_list = romList;
 
     // set gui main "window"
     setFillColor(Color::Gray);
@@ -146,7 +150,7 @@ C2DUIGuiRomList::C2DUIGuiRomList(C2DUIGuiMain *g, const c2d::Vector2f &size) : R
                                            getLocalBounds().height - UI_MARGIN * ui->getScaling() * 2),
                                    ui->getScaling());
     rom_info->infoBox->setOutlineThickness(getOutlineThickness());
-    rom_info->update(!roms.empty() ? roms[0] : NULL);
+    rom_info->update(!roms.empty() ? roms[0] : nullptr);
     add(rom_info);
 }
 
@@ -154,7 +158,7 @@ int C2DUIGuiRomList::update() {
 
     Input::Player *players = ui->getInput()->update();
 
-    int key = players[0].state;
+    unsigned int key = players[0].state;
     if (key > 0) {
 
         if (key & Input::Key::KEY_UP) {
@@ -162,38 +166,38 @@ int C2DUIGuiRomList::update() {
             if (rom_index < 0)
                 rom_index = (int) (roms.size() - 1);
             list_box->setSelection(rom_index);
-            rom_info->update(NULL);
+            rom_info->update(nullptr);
             title_loaded = 0;
         } else if (key & Input::Key::KEY_DOWN) {
             rom_index++;
             if ((unsigned int) rom_index >= roms.size())
                 rom_index = 0;
             list_box->setSelection(rom_index);
-            rom_info->update(NULL);
+            rom_info->update(nullptr);
             title_loaded = 0;
         } else if (key & Input::Key::KEY_RIGHT) {
             rom_index += list_box->getMaxLines();
             if ((unsigned int) rom_index >= roms.size())
                 rom_index = (int) (roms.size() - 1);
             list_box->setSelection(rom_index);
-            rom_info->update(NULL);
+            rom_info->update(nullptr);
             title_loaded = 0;
         } else if (key & Input::Key::KEY_LEFT) {
             rom_index -= list_box->getMaxLines();
             if (rom_index < 0)
                 rom_index = 0;
             list_box->setSelection(rom_index);
-            rom_info->update(NULL);
+            rom_info->update(nullptr);
             title_loaded = 0;
         } else if (key & Input::Key::KEY_FIRE1) {
-            if (getSelection() != NULL
+            if (getSelection() != nullptr
                 && getSelection()->state != C2DUIRomList::RomState::MISSING) {
                 return UI_KEY_RUN_ROM;
             }
         } else if (key & Input::Key::KEY_START) {
             return UI_KEY_SHOW_MEMU_UI;
         } else if (key & Input::Key::KEY_COIN) {
-            if (getSelection() != NULL) {
+            if (getSelection() != nullptr) {
                 return UI_KEY_SHOW_MEMU_ROM;
             }
         } else if (key & EV_QUIT) {
@@ -255,9 +259,9 @@ void C2DUIGuiRomList::updateRomList() {
                                   && !rlist->isHardware(r->hardware, showHardware));
                    });
 
-    if (list_box != NULL) {
+    if (list_box != nullptr) {
         delete (list_box);
-        list_box = NULL;
+        list_box = nullptr;
     }
 
     // add rom list ui
@@ -276,7 +280,7 @@ void C2DUIGuiRomList::updateRomList() {
     add(list_box);
 
     if (rom_info) {
-        rom_info->update(NULL);
+        rom_info->update(nullptr);
         title_loaded = 0;
         timer_load.restart();
     }

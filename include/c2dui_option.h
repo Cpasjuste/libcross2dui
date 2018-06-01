@@ -37,7 +37,6 @@ namespace c2dui {
             ROM_SHADER,
             ROM_ROTATION,
             ROM_SHOW_FPS,
-            //ROM_M68K,
             ROM_FRAMESKIP,
             ROM_NEOBIOS,
             ROM_AUDIO,
@@ -78,9 +77,9 @@ namespace c2dui {
         };
 
         C2DUIOption(const std::string &text, const std::vector<std::string> &options,
-               int defaultValue, Index idx, int flags = INTEGER);
+                    int defaultValue, Index idx, unsigned int flags = INTEGER);
 
-        int flags = INTEGER;
+        unsigned int flags = INTEGER;
         int index = 0;
         int value = 0;
 

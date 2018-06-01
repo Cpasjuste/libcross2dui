@@ -8,7 +8,7 @@ using namespace c2dui;
 
 C2DUIOption::C2DUIOption(const std::string &text,
                          const std::vector<std::string> &options,
-                         int defaultValue, Index idx, int flags) {
+                         int defaultValue, Index idx, unsigned int flags) {
     this->flags = flags;
     this->text = text;
     this->options = options;

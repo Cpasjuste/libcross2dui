@@ -5,13 +5,6 @@
 #ifndef C2DUI_H
 #define C2DUI_H
 
-/*
-#include "c2dui_option.h"
-#include "c2dui_romlist.h"
-#include "c2dui_config.h"
-#include "c2dui_skin.h"
-*/
-
 #ifdef __PSP2__
 #include <psp2/power.h>
 #include <psp2/io/dirent.h>
@@ -34,7 +27,7 @@ int _newlib_heap_size_user = 192 * 1024 * 1024;
 #endif
 
 #define C2DUI_HOME_PATH "./"
-#define C2DUI_ROMS_PATHS_MAX 1
+#define C2DUI_ROMS_PATHS_MAX 20
 
 #ifdef __PFBA__
 

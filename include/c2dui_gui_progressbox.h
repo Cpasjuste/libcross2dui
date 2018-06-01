@@ -5,8 +5,6 @@
 #ifndef PFBA_GUI_PROGRESSBOX_H
 #define PFBA_GUI_PROGRESSBOX_H
 
-//class C2DUIGuiMain;
-
 namespace c2dui {
 
     class C2DUIGuiProgressBox : public c2d::Rectangle {

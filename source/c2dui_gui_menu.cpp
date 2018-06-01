@@ -4,9 +4,6 @@
 
 #include "c2dui.h"
 
-// TODO: remove pfba deps
-#include "../pfba_test/burn.h"
-
 using namespace c2d;
 using namespace c2dui;
 
@@ -25,7 +22,7 @@ public:
         name = new Text("OPTION NAME", *font, (unsigned int) fontSize);
         name->setOutlineThickness(1);
         name->setOutlineColor(Color::Black);
-        name->setOrigin(0, fontSize / 2);
+        name->setOrigin(0, (float) fontSize / 2);
         name->setPosition(16, getSize().y / 2);
         name->setSizeMax(Vector2f((getSize().x * 0.66f) - 32, 0));
         add(name);
@@ -33,7 +30,7 @@ public:
         value = new Text("OPTION VALUE", *font, (unsigned int) fontSize);
         value->setOutlineThickness(1);
         value->setOutlineColor(Color::Black);
-        value->setOrigin(0, fontSize / 2);
+        value->setOrigin(0, (float) fontSize / 2);
         value->setPosition((getSize().x * 0.66f) + 16, getSize().y / 2);
         value->setSizeMax(Vector2f((getSize().x * 0.33f) - 32, 0));
         add(value);
@@ -41,9 +38,9 @@ public:
 
     void update(C2DUIOption *opt) {
 
-        if (texture != NULL) {
+        if (texture != nullptr) {
             delete (texture);
-            texture = NULL;
+            texture = nullptr;
         }
 
         option = opt;
@@ -72,7 +69,7 @@ public:
                         add(texture);
                     } else {
                         delete (texture);
-                        texture = NULL;
+                        texture = nullptr;
                         value->setVisibility(Visible);
                         value->setString(button->name);
                     }
@@ -92,10 +89,10 @@ public:
         }
     }
 
-    C2DUIGuiMain *ui = NULL;
-    Text *name = NULL;
-    Text *value = NULL;
-    Texture *texture = NULL;
+    C2DUIGuiMain *ui = nullptr;
+    Text *name = nullptr;
+    Text *value = nullptr;
+    Texture *texture = nullptr;
     C2DUIOption *option;
 };
 
@@ -150,7 +147,7 @@ C2DUIGuiMenu::C2DUIGuiMenu(C2DUIGuiMain *ui) : Rectangle(Vector2f(0, 0)) {
         FloatRect rect = {0, start_y + (i * line_height), getSize().x / 2, line_height};
         if (i >= max_lines / 2) {
             rect.left = getSize().x / 2;
-            rect.top = start_y + ((i - (max_lines / 2)) * line_height);
+            rect.top = start_y + ((i - ((float) max_lines / 2)) * line_height);
         }
 
         lines.push_back(new MenuLine(ui, rect));
@@ -158,9 +155,9 @@ C2DUIGuiMenu::C2DUIGuiMenu(C2DUIGuiMain *ui) : Rectangle(Vector2f(0, 0)) {
     }
 
     // build menus
-    optionMenuGui = new C2DUIOptionMenu(NULL, ui->getConfig()->getOptions());
+    optionMenuGui = new C2DUIOptionMenu(nullptr, ui->getConfig()->getOptions());
     optionMenuGui->addChild("EXIT");
-    optionMenuRom = new C2DUIOptionMenu(NULL, ui->getConfig()->getOptions(true), true);
+    optionMenuRom = new C2DUIOptionMenu(nullptr, ui->getConfig()->getOptions(true), true);
     optionMenuRom->addChild("RETURN");
     optionMenuRom->addChild("STATES");
     optionMenuRom->addChild("EXIT");
@@ -174,7 +171,7 @@ void C2DUIGuiMenu::load(bool isRom, C2DUIOptionMenu *om) {
     options = isRomMenu ? ui->getConfig()->getOptions(true)
                         : ui->getConfig()->getOptions();
 
-    if (om == NULL) {
+    if (om == nullptr) {
         optionMenu = isRomMenu ? optionMenuRom : optionMenuGui;
     } else {
         optionMenu = om;
@@ -214,7 +211,7 @@ void C2DUIGuiMenu::load(bool isRom, C2DUIOptionMenu *om) {
 
         // menu types
         C2DUIOption *option = ui->getConfig()->getOption(options, optionMenu->option_ids[i]);
-        if (option == NULL) {
+        if (option == nullptr) {
             optionCount--;
             continue;
         }
@@ -247,7 +244,7 @@ void C2DUIGuiMenu::load(bool isRom, C2DUIOptionMenu *om) {
             }
         }
 
-        lines[line_index]->update(NULL);
+        lines[line_index]->update(nullptr);
         lines[line_index]->name->setString(optionMenu->childs[i]->title);
         lines[line_index]->setVisibility(Visible);
         line_index++;
@@ -269,7 +266,7 @@ int C2DUIGuiMenu::update() {
 
     int ret = 0;
     bool option_changed = false;
-    int key = ui->getInput()->update()[0].state;
+    unsigned int key = ui->getInput()->update()[0].state;
 
     if (key > 0) {
 
@@ -369,7 +366,7 @@ int C2DUIGuiMenu::update() {
         if (key & Input::Key::KEY_FIRE2
             || (key & Input::Key::KEY_START && !isRomMenu)
             || (key & Input::Key::KEY_COIN && isRomMenu)) {
-            if (optionMenu->parent == NULL) {
+            if (optionMenu->parent == nullptr) {
                 if (isEmuRunning) {
                     setVisibility(Hidden);
                     ret = UI_KEY_RESUME_ROM;
@@ -402,28 +399,15 @@ int C2DUIGuiMenu::update() {
 }
 
 bool C2DUIGuiMenu::isOptionHidden(C2DUIOption *option) {
-
-    C2DUIRomList::Rom *rom = ui->getUiRomList()->getSelection();
-
-    if (isRomMenu && option->index == C2DUIOption::Index::ROM_ROTATION
-        && rom != NULL && !(rom->flags & BDF_ORIENTATION_VERTICAL)) {
-        return true;
-    }
-
-    if (isRomMenu && option->index == C2DUIOption::Index::ROM_NEOBIOS
-        && rom != NULL && !(ui->getUiRomList()->getRomList()->isHardware(rom->hardware, HARDWARE_PREFIX_SNK))) {
-        return true;
-    }
-
-#ifdef __NX__
-    // TODO: disabled until gpu ?
-    if (option->index == Option::Index::ROM_SHOW_FPS
-        || option->index == Option::Index::ROM_FRAMESKIP) {
-        return true;
-    }
-#endif
-
     return false;
+}
+
+bool C2DUIGuiMenu::isRom() {
+    return isRomMenu;
+}
+
+C2DUIGuiMain *C2DUIGuiMenu::getUi() {
+    return ui;
 }
 
 C2DUIGuiMenu::~C2DUIGuiMenu() {

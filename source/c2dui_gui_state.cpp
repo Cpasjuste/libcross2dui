@@ -4,15 +4,22 @@
 
 #include "c2dui.h"
 
-// TODO: remove pfba deps
-#include "../pfba_test/burner_sdl.h"
-
 #define STATES_COUNT 4
 
 using namespace c2d;
 using namespace c2dui;
 
-extern unsigned int MakeScreenShot(const char *dest);
+#ifdef __PFBA__
+
+extern int BurnStateLoad(char *szName, int bAll, int (*pLoadGame)());
+
+extern int MakeScreenShot(const char *dest);
+
+extern int BurnStateSave(char *szName, int bAll);
+
+extern int DrvInitCallback();
+
+#endif
 
 class GUISaveState : public Rectangle {
 
@@ -49,7 +56,7 @@ public:
 
         if (texture) {
             delete (texture);
-            texture = NULL;
+            texture = nullptr;
         }
 
         exist = ui->getIo()->exist(path);
@@ -83,32 +90,34 @@ public:
 
         memset(path, 0, MAX_PATH);
         memset(shot, 0, MAX_PATH);
-        snprintf(path, 1023, "%s/%s%i.sav", szAppSavePath, rom->drv_name, id);
-        snprintf(shot, 1023, "%s/%s%i.png", szAppSavePath, rom->drv_name, id);
+        snprintf(path, 1023, "%ssaves/%s%i.sav",
+                 ui->getConfig()->getHomePath()->c_str(), rom->drv_name, id);
+        snprintf(shot, 1023, "%ssaves/%s%i.png",
+                 ui->getConfig()->getHomePath()->c_str(), rom->drv_name, id);
 
         loadTexture();
     }
 
     void load() {
-        // TODO
         printf("StateLoad: %s\n", path);
-        //BurnStateLoad(path, 1, &DrvInitCallback);
+#ifdef __PFBA__
+        BurnStateLoad(path, 1, &DrvInitCallback);
+#endif
     }
 
     void save() {
         printf("StateSave: %s\n", path);
-        // TODO
-        /*
+#ifdef __PFBA__
         BurnStateSave(path, 1);
-        int res = MakeScreenShot(shot);
+        MakeScreenShot(shot);
+#endif
         loadTexture();
-        */
     }
 
     C2DUIGuiMain *ui;
-    Texture *texture = NULL;
-    Text *middle_text = NULL;
-    Text *bottom_text = NULL;
+    Texture *texture = nullptr;
+    Text *middle_text = nullptr;
+    Text *bottom_text = nullptr;
     char path[1024];
     char shot[1024];
     char bottom_text_char[32];
@@ -137,8 +146,8 @@ public:
     }
 
     ~C2DUIGuiSaveStateList() {
-        for (int i = 0; i < 4; i++) {
-            delete (states[i]);
+        for (auto &state : states) {
+            delete state;
         }
     }
 
@@ -200,7 +209,7 @@ C2DUIGuiState::C2DUIGuiState(C2DUIGuiMain *ui) : Rectangle(Vector2f(0, 0)) {
     title->setFillColor(Color::White);
     title->setOutlineThickness(2);
     title->setOutlineColor(COL_RED);
-    title->setStyle(c2d::Text::Underlined);
+    title->setStyle((Uint32) c2d::Text::Underlined);
     title->setPosition(20 * ui->getScaling(), 20 * ui->getScaling());
     int start_y = (int) (title->getGlobalBounds().top + title->getGlobalBounds().height + 16 * ui->getScaling());
     add(title);
@@ -230,8 +239,8 @@ void C2DUIGuiState::load() {
     snprintf(name, 128, "%s__________", ui->getUiRomList()->getSelection()->name);
     title->setString(name);
 
-    for (int i = 0; i < STATES_COUNT; i++) {
-        uiStateList->states[i]->setRom(ui->getUiRomList()->getSelection());
+    for (auto &state : uiStateList->states) {
+        state->setRom(ui->getUiRomList()->getSelection());
     }
     uiStateList->setSelection(0);
 
@@ -246,7 +255,7 @@ void C2DUIGuiState::unload() {
 int C2DUIGuiState::update() {
 
     int ret = 0;
-    int key = ui->getInput()->update()[0].state;
+    unsigned int key = ui->getInput()->update()[0].state;
 
     if (key > 0) {
 

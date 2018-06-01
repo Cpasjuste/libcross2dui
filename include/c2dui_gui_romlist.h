@@ -13,7 +13,7 @@ namespace c2dui {
 
     public:
 
-        C2DUIGuiRomList(C2DUIGuiMain *ui, const c2d::Vector2f &size);
+        C2DUIGuiRomList(C2DUIGuiMain *ui, C2DUIRomList *romList, const c2d::Vector2f &size);
 
         ~C2DUIGuiRomList();
 

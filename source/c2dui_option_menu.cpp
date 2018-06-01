@@ -11,7 +11,7 @@ C2DUIOptionMenu::C2DUIOptionMenu(C2DUIOptionMenu *parent, std::vector<C2DUIOptio
 
     this->parent = parent;
 
-    if (options == NULL) {
+    if (options == nullptr) {
         return;
     }
 
@@ -31,7 +31,7 @@ C2DUIOptionMenu::C2DUIOptionMenu(C2DUIOptionMenu *parent, std::vector<C2DUIOptio
             if (i == 0 && !isRomCfg) {
                 menu->title = option.getName();
             } else {
-                menu = new C2DUIOptionMenu(this, NULL);
+                menu = new C2DUIOptionMenu(this, nullptr);
                 menu->title = option.getName();
                 childs.push_back(menu);
             }
@@ -44,15 +44,15 @@ C2DUIOptionMenu::C2DUIOptionMenu(C2DUIOptionMenu *parent, std::vector<C2DUIOptio
 
 void C2DUIOptionMenu::addChild(const std::string &title) {
 
-    C2DUIOptionMenu *m = new C2DUIOptionMenu(NULL, NULL);
+    auto *m = new C2DUIOptionMenu(nullptr, nullptr);
     m->title = title;
     childs.push_back(m);
 }
 
 C2DUIOptionMenu::~C2DUIOptionMenu() {
 
-    for (unsigned int i = 0; i < childs.size(); i++) {
-        delete (childs[i]);
+    for (auto &child : childs) {
+        delete child;
     }
 
     childs.clear();

@@ -13,7 +13,7 @@ using namespace c2dui;
 
 C2DUIRomList::C2DUIRomList(C2DUIGuiMain *_ui, const std::string &emuVersion) {
 
-    printf("C2DUIRomList\n");
+    printf("C2DUIRomList()\n");
 
     ui = _ui;
     hardwareList = ui->getConfig()->getHardwareList();
@@ -44,9 +44,7 @@ C2DUIRomList::C2DUIRomList(C2DUIGuiMain *_ui, const std::string &emuVersion) {
     text->setPosition(16, rect->getSize().y - 8);
     rect->add(text);
 
-    //std::string v = "fba: ";
-    //v += szAppBurnVer;
-    Text *version = new Text(emuVersion, *ui->getSkin()->font);
+    auto *version = new Text(emuVersion, *ui->getSkin()->font);
     version->setOriginBottomRight();
     version->setOutlineColor(Color::Black);
     version->setOutlineThickness(2);
@@ -67,14 +65,16 @@ C2DUIRomList::C2DUIRomList(C2DUIGuiMain *_ui, const std::string &emuVersion) {
     }
 }
 
-void C2DUIRomList::clean() {
+void C2DUIRomList::build() {
 
-    for (int i = 0; i < C2DUI_ROMS_PATHS_MAX; i++) {
-        files[i].clear();
+    printf("C2DUIRomList::build()\n");
+
+    for (auto &file : files) {
+        file.clear();
     }
 
     float time_spent = ui->getRenderer()->getElapsedTime().asSeconds() - time_start;
-    printf("C2DUIRomList::clean(): list built in %f\n", time_spent);
+    printf("C2DUIRomList::build(): list built in %f\n", time_spent);
 
     // UI
     // reset title texture for later use
@@ -88,7 +88,7 @@ void C2DUIRomList::clean() {
 
 C2DUIRomList::~C2DUIRomList() {
 
-    printf("C2DUIRomList()\n");
+    printf("~C2DUIRomList()\n");
 
     for (auto &rom : list) {
         delete (rom);
