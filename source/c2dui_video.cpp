@@ -17,14 +17,14 @@ extern "C" int BurnDrvGetFlags();
 using namespace c2d;
 using namespace c2dui;
 
-C2DUIVideo::C2DUIVideo(C2DUIGuiMain *gui, void *_pixels, int *_pitch, const c2d::Vector2f &size)
+C2DUIVideo::C2DUIVideo(C2DUIGuiMain *gui, void **_pixels, int *_pitch, const c2d::Vector2f &size)
         : C2DTexture(size, C2D_TEXTURE_FMT_RGB565) {
 
     printf("game resolution: %ix%i\n", (int) getSize().x, (int) getSize().y);
 
     this->ui = gui;
 
-    lock(nullptr, &_pixels, _pitch);
+    lock(nullptr, _pixels, _pitch);
     unlock();
 
     setShader(ui->getConfig()->getValue(C2DUIOption::Index::ROM_SHADER, true));
