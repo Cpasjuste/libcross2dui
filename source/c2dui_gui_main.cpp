@@ -141,10 +141,10 @@ void C2DUIGuiMain::runRom(C2DUIRomList::Rom *rom) {
     }
 
     // load rom settings
-    printf("PFBAGui::runRom: config->load(%s)\n", rom->drv_name);
+    printf("C2DUIGuiMain::runRom: config->load(%s)\n", rom->drv_name);
     getConfig()->load(rom);
 
-    printf("PFBAGui::runRom: uiEmu->run(%s)\n", rom->name);
+    printf("C2DUIGuiMain::runRom: uiEmu->run(%s)\n", rom->name);
     getUiEmu()->run(rom);
 }
 
@@ -174,6 +174,10 @@ Io *C2DUIGuiMain::getIo() {
 
 c2d::Audio *C2DUIGuiMain::getAudio() {
     return audio;
+}
+
+void C2DUIGuiMain::setAudio(c2d::Audio *aud) {
+    audio = aud;
 }
 
 C2DUIGuiRomList *C2DUIGuiMain::getUiRomList() {

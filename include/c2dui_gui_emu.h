@@ -57,7 +57,7 @@ namespace c2dui {
         C2DUIVideo *video = NULL;
         c2d::Text *fpsText = NULL;
         char fpsString[32];
-        bool paused = false;
+        bool paused = true;
         float frameDuration = 0;
     };
 }
