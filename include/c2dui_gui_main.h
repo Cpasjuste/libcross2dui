@@ -90,6 +90,8 @@ namespace c2dui {
         c2d::MessageBox *uiMessageBox = NULL;
 
         float scaling = 1;
+
+        c2d::C2DClock timer_input;
     };
 }
 

@@ -7,10 +7,6 @@
 
 #include <sys/time.h>
 
-#ifdef __NX__
-#define Video NXVideo
-#endif
-
 namespace c2dui {
 
     class C2DUIGuiEmu : public c2d::Rectangle {

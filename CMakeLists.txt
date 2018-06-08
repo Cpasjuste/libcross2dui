@@ -67,7 +67,7 @@ elseif (BUILD_SNES9X)
     ##############
     # SNES9X
     ##############
-    list(APPEND FLAGS -D__SNES9X__)
+    list(APPEND FLAGS -D__PSNES__)
 endif (BUILD_PFBA)
 
 if (BUILD_PSP2)
@@ -86,6 +86,7 @@ elseif (BUILD_NX)
     ##############
     # NX (SWITCH)
     ##############
+    list(APPEND FLAGS -DNO_KEYBOARD)
 elseif (BUILD_SDL2)
     ##############
     # SDL2

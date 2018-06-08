@@ -6,8 +6,8 @@
 
 #ifdef __NX__
 
-#include "data/skin/default.h"
-#include "data/skin/title.h"
+#include "../libcross2d/res/title.h"
+#include "../libcross2d/res/default.h"
 
 #endif
 

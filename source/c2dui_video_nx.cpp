@@ -2,31 +2,32 @@
 // Created by cpasjuste on 01/12/16.
 //
 
-#ifdef __NX__
+#ifdef __SWITCH__
 
-#include <burner.h>
-#include <gui/config.h>
-#include "video_nx.h"
+#include "c2dui.h"
+#include "../../snes9x/pixform.h"
+
+#ifdef __PFBA__
+// TODO: remove pfba deps
+#define BDF_ORIENTATION_FLIPPED     (1 << 1)
+#define BDF_ORIENTATION_VERTICAL    (1 << 2)
+
+extern "C" int BurnDrvGetFlags();
+
+#endif
 
 using namespace c2d;
+using namespace c2dui;
 
-static unsigned int myHighCol16(int r, int g, int b, int /* i */) {
-    unsigned int t;
-    t = (unsigned int) ((r << 8) & 0xf800); // rrrr r000 0000 0000
-    t |= (g << 3) & 0x07e0; // 0000 0ggg ggg0 0000
-    t |= (b >> 3) & 0x001f; // 0000 0000 000b bbbb
-    return t;
-}
-
-void NXVideo::clear() {
+void C2DUINXVideo::clear() {
 
     for (int i = 0; i < 2; i++) {
 
         u32 w, h;
         u32 *fb = (u32 *) gfxGetFramebuffer(&w, &h);
 
-        for (int y = 0; y < h; y++) {
-            for (int x = 0; x < w; x++) {
+        for (u32 y = 0; y < h; y++) {
+            for (u32 x = 0; x < w; x++) {
                 fb[gfxGetFramebufferDisplayOffset((u32) x, (u32) y)] =
                         (u32) RGBA8_MAXALPHA(0, 0, 0);
             }
@@ -39,34 +40,26 @@ void NXVideo::clear() {
     gfxWaitForVsync();
 }
 
-NXVideo::NXVideo(Gui *ui, const c2d::Vector2f &size) : Texture(size, C2D_TEXTURE_FMT_RGB565) {
+C2DUINXVideo::C2DUINXVideo(C2DUIGuiMain *gui, void **_pixels, int *_pitch, const c2d::Vector2f &size)
+        : Texture(size, C2D_TEXTURE_FMT_RGB565) {
 
-    this->ui = ui;
+    this->ui = gui;
 
-    printf("game resolution: %ix%i\n", (int) getSize().x, (int) getSize().y);
-
-    if (BurnDrvGetFlags() & BDF_ORIENTATION_VERTICAL) {
-        printf("game orientation: vertical\n");
-    }
-    if (BurnDrvGetFlags() & BDF_ORIENTATION_FLIPPED) {
-        printf("game orientation: flipped\n");
-    }
-
-    nBurnBpp = 2;
-    BurnHighCol = myHighCol16;
-    BurnRecalcPal();
+    printf("C2DUINXVideo::C2DUINXVideo(%i, %i)\n", (int) getSize().x, (int) getSize().y);
 
     pixels = (unsigned char *) malloc((size_t) (size.x * size.y * bpp));
 
     updateScaling();
+
+    //printf("C2DUINXVideo::C2DUINXVideo(%i, %i)\n", (int) getSize().x, (int) getSize().y);
 }
 
-void NXVideo::draw(c2d::Transform &transform) {
+void C2DUINXVideo::draw(c2d::Transform &transform) {
 
     // dont draw with cross2d, we directly write to the framebuffer
 }
 
-int NXVideo::lock(c2d::FloatRect *rect, void **pix, int *p) {
+int C2DUINXVideo::lock(c2d::FloatRect *rect, void **pix, int *p) {
 
     if (!rect) {
         *pix = pixels;
@@ -81,7 +74,9 @@ int NXVideo::lock(c2d::FloatRect *rect, void **pix, int *p) {
     return 0;
 }
 
-void NXVideo::unlock() {
+void C2DUINXVideo::unlock() {
+
+    //printf("C2DUINXVideo::unlock()\n");
 
     bool point = filtering == C2D_TEXTURE_FILTER_POINT;
 
@@ -135,6 +130,7 @@ void NXVideo::unlock() {
             r = ((p & 0xf800) >> 11) << 3;
             g = ((p & 0x07e0) >> 5) << 2;
             b = (p & 0x001f) << 3;
+            //DECOMPOSE_PIXEL_RGB565(p, r, g, b);
             pixel = RGBA8_MAXALPHA(r, g, b);
 
             if (point) {
@@ -156,20 +152,28 @@ void NXVideo::unlock() {
     gfxWaitForVsync();
 }
 
-void NXVideo::updateScaling() {
+void C2DUINXVideo::updateScaling() {
+
+    //printf("C2DUINXVideo::updateScaling()\n");
 
     int rotated = 0;
     float rotation = 0;
-    int rotation_cfg = ui->getConfig()->getValue(Option::Index::ROM_ROTATION, true);
-    int scale_mode = ui->getConfig()->getValue(Option::Index::ROM_SCALING, true);
+    int rotation_cfg = ui->getConfig()->getValue(C2DUIOption::Index::ROM_ROTATION, true);
+    int scale_mode = ui->getConfig()->getValue(C2DUIOption::Index::ROM_SCALING, true);
+#ifdef __PFBA__
     int vertical = BurnDrvGetFlags() & BDF_ORIENTATION_VERTICAL;
     int flip = BurnDrvGetFlags() & BDF_ORIENTATION_FLIPPED;
+#else
+    int vertical = false;
+    int flip = false;
+#endif
+
     Vector2f screen = ui->getRenderer()->getSize();
     Vector2f scale_max;
     float sx = 1, sy = 1;
 
-    gfxSetMode(GfxMode_TiledDouble);
-    setFiltering(ui->getConfig()->getValue(Option::Index::ROM_FILTER, true));
+    //gfxSetMode(GfxMode_TiledDouble);
+    setFiltering(ui->getConfig()->getValue(C2DUIOption::Index::ROM_FILTER, true));
 
     // clear fb before changing res/rot
     clear();
@@ -246,11 +250,13 @@ void NXVideo::updateScaling() {
     setPosition(screen.x / 2, screen.y / 2);
     setScale(sx, sy);
     setRotation(rotation);
+
+    //printf("C2DUINXVideo::updateScaling()\n");
 }
 
-NXVideo::~NXVideo() {
+C2DUINXVideo::~C2DUINXVideo() {
 
-    printf("NXVideo::~NXVideo...\n");
+    printf("C2DUINXVideo::~C2DUINXVideo...\n");
     if (pixels) {
         free(pixels);
     }

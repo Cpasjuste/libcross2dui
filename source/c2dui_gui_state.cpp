@@ -19,6 +19,12 @@ extern int BurnStateSave(char *szName, int bAll);
 
 extern int DrvInitCallback();
 
+#elif __PSNES__
+
+extern unsigned char S9xFreezeGame(const char *path);
+
+extern unsigned char S9xUnfreezeGame(const char *path);
+
 #endif
 
 class GUISaveState : public Rectangle {
@@ -102,6 +108,8 @@ public:
         printf("StateLoad: %s\n", path);
 #ifdef __PFBA__
         BurnStateLoad(path, 1, &DrvInitCallback);
+#elif __PSNES__
+        S9xUnfreezeGame(path);
 #endif
     }
 
@@ -110,6 +118,8 @@ public:
 #ifdef __PFBA__
         BurnStateSave(path, 1);
         MakeScreenShot(shot);
+#elif __PSNES__
+        S9xFreezeGame(path);
 #endif
         loadTexture();
     }
@@ -303,8 +313,6 @@ int C2DUIGuiState::update() {
         if (key & EV_QUIT) {
             return EV_QUIT;
         }
-
-        ui->getRenderer()->delay(INPUT_DELAY);
     }
 
     ui->getRenderer()->flip();

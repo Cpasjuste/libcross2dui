@@ -94,14 +94,18 @@ public:
                     strncat(rotation, " / FLIPPED", MAX_PATH);
                 }
             }
-#else
-            rotation[0] = '\0';
-#endif
             snprintf(info, 1024, "ZIP: %s.ZIP\nSTATUS: %s\nSYSTEM: %s\nMANUFACTURER: %s\nYEAR: %s\n%s",
                      rom->zip, rom->state == C2DUIRomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
                      rom->system, rom->manufacturer, rom->year, rotation);
             infoText->setString(info);
             infoText->setVisibility(Visible);
+#elif __PSNES__
+            snprintf(info, 1024, "ZIP: %s.ZIP\nSTATUS: %s\nMANUFACTURER: %s\nYEAR: %s",
+                     rom->zip, rom->state == C2DUIRomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
+                     rom->manufacturer, rom->year);
+            infoText->setString(info);
+            infoText->setVisibility(Visible);
+#endif
         }
     }
 
@@ -204,16 +208,6 @@ int C2DUIGuiRomList::update() {
             return EV_QUIT;
         }
 
-        if (timer_input.getElapsedTime().asSeconds() > 12) {
-            ui->getRenderer()->delay(INPUT_DELAY / 8);
-        } else if (timer_input.getElapsedTime().asSeconds() > 6) {
-            ui->getRenderer()->delay(INPUT_DELAY / 5);
-        } else if (timer_input.getElapsedTime().asSeconds() > 2) {
-            ui->getRenderer()->delay(INPUT_DELAY / 2);
-        } else {
-            ui->getRenderer()->delay(INPUT_DELAY);
-        }
-
         timer_load.restart();
 
     } else {
@@ -222,8 +216,6 @@ int C2DUIGuiRomList::update() {
             rom_info->update(roms.size() > (unsigned int) rom_index ? roms[rom_index] : nullptr);
             title_loaded = 1;
         }
-
-        timer_input.restart();
     }
 
     ui->getRenderer()->flip();

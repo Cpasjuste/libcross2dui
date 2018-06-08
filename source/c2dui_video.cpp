@@ -1,7 +1,7 @@
 //
 // Created by cpasjuste on 01/12/16.
 //
-#ifndef __NX__
+#ifndef __SWITCH__
 
 #include "c2dui.h"
 

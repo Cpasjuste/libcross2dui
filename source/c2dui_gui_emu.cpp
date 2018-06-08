@@ -24,6 +24,8 @@ C2DUIGuiEmu::C2DUIGuiEmu(C2DUIGuiMain *u) : Rectangle(u->getRenderer()->getSize(
 
 int C2DUIGuiEmu::run(C2DUIRomList::Rom *rom) {
 
+    printf("C2DUIGuiEmu::run()");
+
     add(video);
 
     // set fps text on top
@@ -43,6 +45,8 @@ int C2DUIGuiEmu::run(C2DUIRomList::Rom *rom) {
 
 void C2DUIGuiEmu::stop() {
 
+    printf("C2DUIGuiEmu::stop()");
+
     if (ui->getAudio()) {
         ui->getAudio()->pause(1);
     }
@@ -60,21 +64,25 @@ void C2DUIGuiEmu::stop() {
 
 void C2DUIGuiEmu::pause() {
 
+    printf("C2DUIGuiEmu::pause()");
+
     paused = true;
     if (ui->getAudio()) {
         ui->getAudio()->pause(1);
     }
     ui->updateInputMapping(false);
-#ifdef __NX__
+#ifdef __SWITCH__
     // restore ui rotation and scaling
     video->clear();
-    gfxSetMode(GfxMode_TiledDouble);
+    //gfxSetMode(GfxMode_TiledDouble);
     gfxConfigureTransform(NATIVE_WINDOW_TRANSFORM_FLIP_V);
     gfxConfigureResolution(0, 0);
 #endif
 }
 
 void C2DUIGuiEmu::resume() {
+
+    printf("C2DUIGuiEmu::resume()");
 
     ui->updateInputMapping(true);
 
@@ -83,7 +91,7 @@ void C2DUIGuiEmu::resume() {
     }
 
     ui->getRenderer()->clear();
-#ifdef __NX__
+#ifdef __SWITCH__
     // restore game rotation and scaling
     video->updateScaling();
 #endif

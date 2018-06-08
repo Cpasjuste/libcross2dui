@@ -29,12 +29,6 @@ int _newlib_heap_size_user = 192 * 1024 * 1024;
 #define C2DUI_HOME_PATH "./"
 #define C2DUI_ROMS_PATHS_MAX 20
 
-#ifdef __PFBA__
-
-#elif __SNES9X__
-
-#endif
-
 #include "c2d.h"
 #include "c2dui_option.h"
 #include "c2dui_option_menu.h"

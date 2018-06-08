@@ -5,8 +5,8 @@
 #ifndef _VIDEO_H_
 #define _VIDEO_H_
 
-#ifdef __NX__
-#include "video_nx.h"
+#ifdef __SWITCH__
+#include "c2dui_video_nx.h"
 #else
 
 #include <cstring>

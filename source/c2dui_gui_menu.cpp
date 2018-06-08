@@ -381,8 +381,6 @@ int C2DUIGuiMenu::update() {
         if (key & EV_QUIT) {
             return EV_QUIT;
         }
-
-        ui->getRenderer()->delay(INPUT_DELAY);
     }
 
     if (option_changed) {

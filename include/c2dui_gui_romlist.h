@@ -39,7 +39,6 @@ namespace c2dui {
 
         int title_loaded = 0;
         int load_delay = 100;
-        c2d::C2DClock timer_input;
         c2d::C2DClock timer_load;
     };
 }

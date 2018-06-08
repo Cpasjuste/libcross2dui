@@ -67,21 +67,24 @@ C2DUIGuiMain::~C2DUIGuiMain() {
 
 void C2DUIGuiMain::run() {
 
+    int action = 0;
     int key = 0;
 
     while (true) {
 
         if (uiMenu->getVisibility() == C2DObject::Visible) {
-            key = uiMenu->update();
+            action = uiMenu->update();
         } else if (uiState->getVisibility() == C2DObject::Visible) {
-            key = uiState->update();
+            action = uiState->update();
         } else if (uiEmu->getVisibility() == C2DObject::Visible) {
-            key = uiEmu->update();
+            action = uiEmu->update();
         } else {
-            key = uiRomList->update();
+            action = uiRomList->update();
         }
 
-        switch (key) {
+        key = getInput()->players[0].state;
+
+        switch (action) {
 
             case UI_KEY_RUN_ROM:
                 getInput()->clear(0);
@@ -130,6 +133,20 @@ void C2DUIGuiMain::run() {
 
             default:
                 break;
+        }
+
+        if (key > 0) {
+            if (timer_input.getElapsedTime().asSeconds() > 12) {
+                getRenderer()->delay(INPUT_DELAY / 8);
+            } else if (timer_input.getElapsedTime().asSeconds() > 6) {
+                getRenderer()->delay(INPUT_DELAY / 5);
+            } else if (timer_input.getElapsedTime().asSeconds() > 2) {
+                getRenderer()->delay(INPUT_DELAY / 2);
+            } else {
+                getRenderer()->delay(INPUT_DELAY);
+            }
+        } else {
+            timer_input.restart();
         }
     }
 }
