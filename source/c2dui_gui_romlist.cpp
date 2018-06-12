@@ -100,7 +100,7 @@ public:
             infoText->setString(info);
             infoText->setVisibility(Visible);
 #elif __PSNES__
-            snprintf(info, 1024, "ZIP: %s.ZIP\nSTATUS: %s\nMANUFACTURER: %s\nYEAR: %s",
+            snprintf(info, 1023, "ZIP: %s.ZIP\nSTATUS: %s\nMANUFACTURER: %s\nYEAR: %s",
                      rom->zip, rom->state == C2DUIRomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
                      rom->manufacturer, rom->year);
             infoText->setString(info);
@@ -119,11 +119,11 @@ public:
     float scaling = 1;
 };
 
-C2DUIGuiRomList::C2DUIGuiRomList(C2DUIGuiMain *g, C2DUIRomList *romList, const c2d::Vector2f &size) : Rectangle(size) {
+C2DUIGuiRomList::C2DUIGuiRomList(C2DUIGuiMain *u, C2DUIRomList *romList, const c2d::Vector2f &size) : Rectangle(size) {
 
     printf("GuiRomList\n");
 
-    ui = g;
+    ui = u;
     rom_list = romList;
 
     // set gui main "window"
@@ -154,15 +154,14 @@ C2DUIGuiRomList::C2DUIGuiRomList(C2DUIGuiMain *g, C2DUIRomList *romList, const c
                                            getLocalBounds().height - UI_MARGIN * ui->getScaling() * 2),
                                    ui->getScaling());
     rom_info->infoBox->setOutlineThickness(getOutlineThickness());
-    rom_info->update(!roms.empty() ? roms[0] : nullptr);
+    rom_info->update(roms.empty() ? nullptr : roms[0]);
     add(rom_info);
 }
 
 int C2DUIGuiRomList::update() {
 
-    Input::Player *players = ui->getInput()->update();
+    unsigned int key = ui->getInput()->update()[0].state;
 
-    unsigned int key = players[0].state;
     if (key > 0) {
 
         if (key & Input::Key::KEY_UP) {
@@ -211,7 +210,6 @@ int C2DUIGuiRomList::update() {
         timer_load.restart();
 
     } else {
-
         if (!title_loaded && timer_load.getElapsedTime().asMilliseconds() > load_delay) {
             rom_info->update(roms.size() > (unsigned int) rom_index ? roms[rom_index] : nullptr);
             title_loaded = 1;
@@ -287,4 +285,3 @@ C2DUIGuiRomList::~C2DUIGuiRomList() {
     printf("~C2DUIGuiRomList\n");
     delete (rom_list);
 }
-

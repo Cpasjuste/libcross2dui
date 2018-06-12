@@ -158,8 +158,8 @@ C2DUIGuiMenu::C2DUIGuiMenu(C2DUIGuiMain *ui) : Rectangle(Vector2f(0, 0)) {
     optionMenuGui = new C2DUIOptionMenu(nullptr, ui->getConfig()->getOptions());
     optionMenuGui->addChild("EXIT");
     optionMenuRom = new C2DUIOptionMenu(nullptr, ui->getConfig()->getOptions(true), true);
-    optionMenuRom->addChild("RETURN");
     optionMenuRom->addChild("STATES");
+    optionMenuRom->addChild("RETURN");
     optionMenuRom->addChild("EXIT");
 
     setVisibility(Hidden);

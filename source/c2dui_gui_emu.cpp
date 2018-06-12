@@ -11,6 +11,8 @@ using namespace c2dui;
 
 C2DUIGuiEmu::C2DUIGuiEmu(C2DUIGuiMain *u) : Rectangle(u->getRenderer()->getSize()) {
 
+    printf("C2DUIGuiEmu()\n");
+
     ui = u;
     setFillColor(Color::Transparent);
 
@@ -20,6 +22,8 @@ C2DUIGuiEmu::C2DUIGuiEmu(C2DUIGuiMain *u) : Rectangle(u->getRenderer()->getSize(
     add(fpsText);
 
     setVisibility(Hidden);
+
+    printf("C2DUIGuiEmu()\n");
 }
 
 int C2DUIGuiEmu::run(C2DUIRomList::Rom *rom) {

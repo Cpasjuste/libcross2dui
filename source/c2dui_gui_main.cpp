@@ -67,8 +67,10 @@ C2DUIGuiMain::~C2DUIGuiMain() {
 
 void C2DUIGuiMain::run() {
 
+    printf("C2DUIGuiMain::run()\n");
+
     int action = 0;
-    int key = 0;
+    unsigned int key = 0;
 
     while (true) {
 

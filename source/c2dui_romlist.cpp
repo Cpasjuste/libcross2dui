@@ -69,12 +69,10 @@ void C2DUIRomList::build() {
 
     printf("C2DUIRomList::build()\n");
 
-    for (auto &file : files) {
-        file.clear();
-    }
-
     float time_spent = ui->getRenderer()->getElapsedTime().asSeconds() - time_start;
     printf("C2DUIRomList::build(): list built in %f\n", time_spent);
+
+    files->clear();
 
     // UI
     // reset title texture for later use

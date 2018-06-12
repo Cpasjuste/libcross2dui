@@ -81,8 +81,8 @@ void C2DUINXVideo::unlock() {
     bool point = filtering == C2D_TEXTURE_FILTER_POINT;
 
     unsigned short *tex_buf = (unsigned short *) pixels;
-    int x, y, w, h, cx, cy, sf = 1;
-    unsigned int p, r, g, b;
+    int x, y, w, h, cx, cy;
+    unsigned int p, r, g, b, sf = 1;
     unsigned subx, suby;
     u32 fb_w, fb_h;
     u32 pixel;
@@ -115,7 +115,7 @@ void C2DUINXVideo::unlock() {
     h = (int) getSize().y;
     // point scaling (1x, 2x, 3x)
     if (point) {
-        sf = std::max((int) getScale().x, (int) getScale().y);
+        sf = (unsigned int) std::max((int) getScale().x, (int) getScale().y);
     }
     cx = (fb_w - (w * sf)) / 2;
     cy = (fb_h - (h * sf)) / 2;

@@ -201,9 +201,11 @@ public:
     int index = 0;
 };
 
-C2DUIGuiState::C2DUIGuiState(C2DUIGuiMain *ui) : Rectangle(Vector2f(0, 0)) {
+C2DUIGuiState::C2DUIGuiState(C2DUIGuiMain *u) : Rectangle(Vector2f(0, 0)) {
 
-    this->ui = ui;
+    printf("C2DUIGuiState()\n");
+
+    this->ui = u;
 
     setFillColor({55, 55, 55, 180});
     setOutlineColor(COL_ORANGE);
@@ -233,6 +235,8 @@ C2DUIGuiState::C2DUIGuiState(C2DUIGuiMain *ui) : Rectangle(Vector2f(0, 0)) {
     add(uiStateList);
 
     setVisibility(Hidden);
+
+    printf("C2DUIGuiState()\n");
 }
 
 void C2DUIGuiState::load() {
