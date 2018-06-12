@@ -26,7 +26,9 @@ namespace c2dui {
 
         void unlock();
 
-        static void clear();
+        int save(const char *path);
+
+        void clear();
 
     private:
 

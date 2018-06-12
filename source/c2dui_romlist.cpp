@@ -79,7 +79,7 @@ void C2DUIRomList::build() {
     texture->setOriginTopLeft();
     texture->setPosition(0, 0);
     texture->setScale(1, 1);
-    rect->remove(texture);
+    rect->removeChild(texture);
     // remove ui widgets
     delete (rect);
 }

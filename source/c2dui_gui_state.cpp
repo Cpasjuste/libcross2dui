@@ -120,6 +120,7 @@ public:
         MakeScreenShot(shot);
 #elif __PSNES__
         S9xFreezeGame(path);
+        ui->getUiEmu()->getVideo()->save(shot);
 #endif
         loadTexture();
     }
@@ -228,7 +229,7 @@ C2DUIGuiState::C2DUIGuiState(C2DUIGuiMain *u) : Rectangle(Vector2f(0, 0)) {
 
 
     uiStateList = new C2DUIGuiSaveStateList(ui, {
-            getLocalBounds().left + getSize().x / 2, start_y + 32,
+            getLocalBounds().left + getSize().x / 2, (float) start_y + 32,
             getSize().x - 64, getSize().x / (STATES_COUNT + 1)
     });
     uiStateList->setOrigin(uiStateList->getSize().x / 2, 0);
