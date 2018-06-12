@@ -137,18 +137,20 @@ void C2DUIGuiMain::run() {
                 break;
         }
 
-        if (key > 0) {
-            if (timer_input.getElapsedTime().asSeconds() > 12) {
-                getRenderer()->delay(INPUT_DELAY / 8);
-            } else if (timer_input.getElapsedTime().asSeconds() > 6) {
-                getRenderer()->delay(INPUT_DELAY / 5);
-            } else if (timer_input.getElapsedTime().asSeconds() > 2) {
-                getRenderer()->delay(INPUT_DELAY / 2);
+        if (uiEmu->isPaused()) {
+            if (key > 0) {
+                if (timer_input.getElapsedTime().asSeconds() > 12) {
+                    getRenderer()->delay(INPUT_DELAY / 8);
+                } else if (timer_input.getElapsedTime().asSeconds() > 6) {
+                    getRenderer()->delay(INPUT_DELAY / 5);
+                } else if (timer_input.getElapsedTime().asSeconds() > 2) {
+                    getRenderer()->delay(INPUT_DELAY / 2);
+                } else {
+                    getRenderer()->delay(INPUT_DELAY);
+                }
             } else {
-                getRenderer()->delay(INPUT_DELAY);
+                timer_input.restart();
             }
-        } else {
-            timer_input.restart();
         }
     }
 }

@@ -48,6 +48,7 @@ C2DUINXVideo::C2DUINXVideo(C2DUIGuiMain *gui, void **_pixels, int *_pitch, const
     printf("C2DUINXVideo::C2DUINXVideo(%i, %i)\n", (int) getSize().x, (int) getSize().y);
 
     pixels = (unsigned char *) malloc((size_t) (size.x * size.y * bpp));
+    lock(nullptr, _pixels, _pitch);
 
     updateScaling();
 
