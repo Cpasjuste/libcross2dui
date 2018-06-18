@@ -4,9 +4,16 @@
 
 #include "c2dui.h"
 
-#ifdef __NX__
+#ifdef __SWITCH__
 
+#ifdef __PFBA__
 #include "../libcross2d/res/title.h"
+#elif __PSNES__
+
+#include "../../psnes/data/skin/title.h"
+
+#endif
+
 #include "../libcross2d/res/default.h"
 
 #endif
