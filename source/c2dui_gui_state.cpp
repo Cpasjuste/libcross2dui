@@ -299,6 +299,7 @@ int C2DUIGuiState::update() {
                     }
                 } else {
                     state->save();
+                    unload();
                     ret = UI_KEY_RESUME_ROM;
                 }
             }
