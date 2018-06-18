@@ -310,7 +310,7 @@ int C2DUIGuiMenu::update() {
                     case C2DUIOption::ROM_ROTATION:
                     case C2DUIOption::Index::ROM_SCALING:
                         if (isEmuRunning) {
-#ifndef __NX__
+#ifndef __SWITCH__
                             ui->getUiEmu()->getVideo()->updateScaling();
 #endif
                         }
@@ -325,6 +325,17 @@ int C2DUIGuiMenu::update() {
                             ui->getUiEmu()->getVideo()->setShader(option->value);
                         }
                         break;
+#ifdef __SWITCH__
+                    case C2DUIOption::Index::JOY_SINGLEJOYCON:
+                        for (int i = 0; i < PLAYER_COUNT; i++) {
+                            if (option->value > 0) {
+                                hidSetNpadJoyAssignmentModeSingleByDefault((HidControllerID) i);
+                            } else {
+                                hidSetNpadJoyAssignmentModeDual((HidControllerID) i);
+                            }
+                        }
+                        break;
+#endif
                     default:
                         break;
                 }

@@ -29,6 +29,9 @@ namespace c2dui {
             GUI_SHOW_CLONES,
             GUI_SHOW_HARDWARE,
             GUI_FULLSCREEN,
+#ifdef __SWITCH__
+            JOY_SINGLEJOYCON,
+#endif
             MENU_SKIN,
             SKIN_FONT_SIZE,
             MENU_ROM_OPTIONS,

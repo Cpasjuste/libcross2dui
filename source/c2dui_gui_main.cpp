@@ -253,4 +253,15 @@ void C2DUIGuiMain::updateInputMapping(bool isRomConfig) {
             input->players[i].ry.id = config->getValue(C2DUIOption::Index::JOY_AXIS_RY);
         }
     }
+
+#ifdef __SWITCH__
+    int single_joy = config->getValue(C2DUIOption::Index::JOY_SINGLEJOYCON);
+    for (int i = 0; i < PLAYER_COUNT; i++) {
+        if (single_joy > 0) {
+            hidSetNpadJoyAssignmentModeSingleByDefault((HidControllerID) i);
+        } else {
+            hidSetNpadJoyAssignmentModeDual((HidControllerID) i);
+        }
+    }
+#endif
 }
