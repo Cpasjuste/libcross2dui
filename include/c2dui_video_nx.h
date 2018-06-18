@@ -30,10 +30,11 @@ namespace c2dui {
 
         void clear();
 
+        unsigned char *pixels = NULL;
+
     private:
 
         C2DUIGuiMain *ui = NULL;
-        unsigned char *pixels = NULL;
         int scale_mode = 0;
 
         void draw(c2d::Transform &transform);
