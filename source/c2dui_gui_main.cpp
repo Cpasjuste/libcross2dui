@@ -24,6 +24,22 @@ C2DUIGuiMain::C2DUIGuiMain(Renderer *r, Io *i, Input *in, Audio *a,
     scaling = std::min(renderer->getSize().x / 960, 1.0f);
     printf("scaling: %f\n", scaling);
 
+    uiMessageBox = new MessageBox(
+            FloatRect(
+                    renderer->getSize().x / 2,
+                    renderer->getSize().y / 2,
+                    renderer->getSize().x / 2,
+                    renderer->getSize().y / 2),
+            input, *skin->font, getFontSize());
+    uiMessageBox->setOriginCenter();
+    uiMessageBox->setFillColor(Color::GrayLight);
+    uiMessageBox->setOutlineColor(Color::Orange);
+    uiMessageBox->setOutlineThickness(2);
+    renderer->add(uiMessageBox);
+
+    uiProgressBox = new C2DUIGuiProgressBox(this);
+    renderer->add(uiProgressBox);
+
     updateInputMapping(false);
 }
 
@@ -42,22 +58,6 @@ void C2DUIGuiMain::init(C2DUIGuiRomList *uiRomList, C2DUIGuiMenu *uiMenu,
 
     this->uiState = uiState;
     renderer->add(this->uiState);
-
-    uiProgressBox = new C2DUIGuiProgressBox(this);
-    renderer->add(uiProgressBox);
-
-    uiMessageBox = new MessageBox(
-            FloatRect(
-                    renderer->getSize().x / 2,
-                    renderer->getSize().y / 2,
-                    renderer->getSize().x / 2,
-                    renderer->getSize().y / 2),
-            input, *skin->font, getFontSize());
-    uiMessageBox->setOriginCenter();
-    uiMessageBox->setFillColor(Color::GrayLight);
-    uiMessageBox->setOutlineColor(Color::Orange);
-    uiMessageBox->setOutlineThickness(2);
-    renderer->add(uiMessageBox);
 }
 
 C2DUIGuiMain::~C2DUIGuiMain() {

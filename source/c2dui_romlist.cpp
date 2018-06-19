@@ -58,9 +58,10 @@ C2DUIRomList::C2DUIRomList(C2DUIGuiMain *_ui, const std::string &emuVersion) {
     time_start = ui->getRenderer()->getElapsedTime().asSeconds();
 
     for (unsigned int i = 0; i < paths->size(); i++) {
+        //printf("C2DUIRomList: path: `%s`\n", paths->at(i).c_str());
         if (!paths[i].empty()) {
             files[i] = ui->getIo()->getDirList(paths->at(i).c_str());
-            //printf("RomList: found %i files in `%s`\n", (int) files[i].size(), paths[i].c_str());
+            //printf("C2DUIRomList: found %i files in `%s`\n", (int) files[i].size(), paths->at(i).c_str());
         }
     }
 }
@@ -71,8 +72,6 @@ void C2DUIRomList::build() {
 
     float time_spent = ui->getRenderer()->getElapsedTime().asSeconds() - time_start;
     printf("C2DUIRomList::build(): list built in %f\n", time_spent);
-
-    files->clear();
 
     // UI
     // reset title texture for later use
@@ -87,6 +86,8 @@ void C2DUIRomList::build() {
 C2DUIRomList::~C2DUIRomList() {
 
     printf("~C2DUIRomList()\n");
+
+    files->clear();
 
     for (auto &rom : list) {
         delete (rom);
