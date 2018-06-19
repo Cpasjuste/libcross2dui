@@ -20,6 +20,8 @@ option(BUILD_NX_GL "Build with NX support (software, osmesa)" OFF)
 option(BUILD_PFBA "Build with PFBA support" OFF)
 option(BUILD_SNES9X "Build with SNES9X support" OFF)
 
+option(UPDATE_CONFIG "Force config file updating" OFF)
+
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BUILD_DEBUG true CACHE BOOL "Debug build")
 endif ()
@@ -57,6 +59,10 @@ set(FLAGS
         -D__CROSS2DUI_VERSION_MAJOR__=${CROSS2DUI_VERSION_MAJOR}
         -D__CROSS2DUI_VERSION_MINOR__=${CROSS2DUI_VERSION_MINOR}
         )
+
+if (UPDATE_CONFIG)
+    list(APPEND FLAGS -D__UPDATE_CONFIG__)
+endif ()
 
 if (BUILD_PFBA)
     #################

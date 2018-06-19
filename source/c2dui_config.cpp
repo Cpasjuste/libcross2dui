@@ -35,6 +35,7 @@ void C2DUIConfig::load(C2DUIRomList::Rom *rom) {
         //printf("CFG FOUND: %s\n", path.c_str());
         config_setting_t *settings_root = config_lookup(&cfg, "FBA_CONFIG");
         if (settings_root) {
+#ifdef __UPDATE_CONFIG__
             // verify cfg version
             int cfg_version = 0;
             if (!config_setting_lookup_int(settings_root, "VERSION", &cfg_version)
@@ -45,7 +46,7 @@ void C2DUIConfig::load(C2DUIRomList::Rom *rom) {
                 config_destroy(&cfg);
                 return;
             }
-
+#endif
             config_setting_t *settings = nullptr;
             if (!isRomCfg) {
                 settings = config_setting_lookup(settings_root, "ROMS_PATHS");
