@@ -383,7 +383,7 @@ void C2DUINXVideo::updateScaling() {
 
 C2DUINXVideo::~C2DUINXVideo() {
 
-    printf("C2DUINXVideo::~C2DUINXVideo...\n");
+    printf("C2DUINXVideo::~C2DUINXVideo()\n");
     if (pixels) {
         free(pixels);
     }

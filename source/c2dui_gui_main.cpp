@@ -197,8 +197,16 @@ c2d::Audio *C2DUIGuiMain::getAudio() {
     return audio;
 }
 
-void C2DUIGuiMain::setAudio(c2d::Audio *aud) {
+void C2DUIGuiMain::addAudio(c2d::Audio *aud) {
     audio = aud;
+}
+
+void C2DUIGuiMain::removeAudio() {
+    if (audio) {
+        audio->pause(1);
+        delete (audio);
+        audio = nullptr;
+    }
 }
 
 C2DUIGuiRomList *C2DUIGuiMain::getUiRomList() {
