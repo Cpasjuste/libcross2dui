@@ -28,7 +28,7 @@ C2DUIGuiEmu::C2DUIGuiEmu(C2DUIGuiMain *u) : Rectangle(u->getRenderer()->getSize(
 
 int C2DUIGuiEmu::run(C2DUIRomList::Rom *rom) {
 
-    printf("C2DUIGuiEmu::run()");
+    printf("C2DUIGuiEmu::run()\n");
 
     add(video);
 
@@ -49,7 +49,7 @@ int C2DUIGuiEmu::run(C2DUIRomList::Rom *rom) {
 
 void C2DUIGuiEmu::stop() {
 
-    printf("C2DUIGuiEmu::stop()");
+    printf("C2DUIGuiEmu::stop()\n");
 
     if (ui->getAudio()) {
         ui->getAudio()->pause(1);
@@ -68,7 +68,7 @@ void C2DUIGuiEmu::stop() {
 
 void C2DUIGuiEmu::pause() {
 
-    printf("C2DUIGuiEmu::pause()");
+    printf("C2DUIGuiEmu::pause()\n");
 
     paused = true;
     if (ui->getAudio()) {
@@ -86,7 +86,7 @@ void C2DUIGuiEmu::pause() {
 
 void C2DUIGuiEmu::resume() {
 
-    printf("C2DUIGuiEmu::resume()");
+    printf("C2DUIGuiEmu::resume()\n");
 
     ui->updateInputMapping(true);
 
