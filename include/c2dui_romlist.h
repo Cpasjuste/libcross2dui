@@ -49,15 +49,14 @@ namespace c2dui {
 
         class Rom : public c2d::Io::File {
         public:
-            char zip[64];
-            char *drv_name;
-            char *year = NULL;
-            char *manufacturer = NULL;
-            char *parent = NULL;
+            const char *parent = NULL;
+            const char *drv_name;
+            const char *year = NULL;
+            const char *manufacturer = NULL;
+            const char *system = NULL;
             unsigned int flags;
-            int state;
+            int state = RomState::MISSING;
             int hardware;
-            char *system = NULL;
             unsigned int drv;
             int genre;
         };

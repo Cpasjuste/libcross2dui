@@ -59,7 +59,7 @@ public:
             infoText->setVisibility(Hidden);
         } else {
             // load preview image
-            snprintf(texture_path, 1023, "%spreviews/%s.png", C2DUI_HOME_PATH, rom->zip);
+            snprintf(texture_path, 1023, "%spreviews/%s.png", C2DUI_HOME_PATH, rom->drv_name);
             texture = new C2DTexture(texture_path);
             if (!texture->available && rom->parent) {
                 // try parent image
@@ -94,14 +94,14 @@ public:
                     strncat(rotation, " / FLIPPED", MAX_PATH);
                 }
             }
-            snprintf(info, 1024, "ZIP: %s.ZIP\nSTATUS: %s\nSYSTEM: %s\nMANUFACTURER: %s\nYEAR: %s\n%s",
-                     rom->zip, rom->state == C2DUIRomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
+            snprintf(info, 1024, "FILE: %s\nSTATUS: %s\nSYSTEM: %s\nMANUFACTURER: %s\nYEAR: %s\n%s",
+                     rom->path, rom->state == C2DUIRomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
                      rom->system, rom->manufacturer, rom->year, rotation);
             infoText->setString(info);
             infoText->setVisibility(Visible);
 #elif __PSNES__
-            snprintf(info, 1023, "ZIP: %s.ZIP\nSTATUS: %s\nMANUFACTURER: %s\nYEAR: %s",
-                     rom->zip, rom->state == C2DUIRomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
+            snprintf(info, 1023, "FILE: %s\nSTATUS: %s\nMANUFACTURER: %s\nYEAR: %s",
+                     rom->path, rom->state == C2DUIRomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
                      rom->manufacturer, rom->year);
             infoText->setString(info);
             infoText->setVisibility(Visible);
