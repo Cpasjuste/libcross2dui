@@ -38,12 +38,8 @@ C2DUISkin::C2DUISkin(const std::string &p, const std::vector<Button> &btns) {
 
     // load buttons textures
     buttons = btns;
-    char str[MAX_PATH];
     for (auto &button : buttons) {
-        memset(str, 0, MAX_PATH);
-        snprintf(str, MAX_PATH, "%sbuttons/%i.png", path.c_str(), button.id);
-        button.path.clear();
-        button.path.append(str);
+        button.path = path + "buttons/" + std::to_string(button.id) + ".png";
     }
 }
 
