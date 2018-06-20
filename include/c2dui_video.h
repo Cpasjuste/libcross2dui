@@ -19,8 +19,6 @@ namespace c2dui {
 
         C2DUIVideo(C2DUIGuiMain *ui, void **pixels, int *pitch, const c2d::Vector2f &size);
 
-        virtual ~C2DUIVideo();
-
         virtual void updateScaling();
 
     private:

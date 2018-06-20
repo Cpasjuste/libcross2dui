@@ -38,6 +38,7 @@ void C2DUIVideo::updateScaling() {
     float rotation = 0;
     int rotation_cfg = ui->getConfig()->getValue(C2DUIOption::Index::ROM_ROTATION, true);
     int scale_mode = ui->getConfig()->getValue(C2DUIOption::Index::ROM_SCALING, true);
+
 #ifdef __PFBA__
     int vertical = BurnDrvGetFlags() & BDF_ORIENTATION_VERTICAL;
     int flip = BurnDrvGetFlags() & BDF_ORIENTATION_FLIPPED;
@@ -45,6 +46,7 @@ void C2DUIVideo::updateScaling() {
     int vertical = false;
     int flip = false;
 #endif
+
     Vector2f screen = ui->getRenderer()->getSize();
     Vector2f scale_max;
     float sx = 1, sy = 1;
@@ -146,7 +148,4 @@ void C2DUIVideo::updateScaling() {
     setRotation(rotation);
 }
 
-C2DUIVideo::~C2DUIVideo() {
-}
-
-#endif // __NX__
+#endif // __SWITCH__
