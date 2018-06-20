@@ -28,6 +28,7 @@ public:
         scaling = scale;
         margin = UI_MARGIN * scaling;
 
+        // info box
         infoBox = new Rectangle(FloatRect(0, getSize().y / 2 + margin,
                                           getSize().x, getSize().y / 2 - margin));
         infoBox->setFillColor(Color::GrayLight);
@@ -42,6 +43,22 @@ public:
         infoBox->add(infoText);
 
         add(infoBox);
+
+        // preview box
+        previewBox = new Rectangle(FloatRect(0, 0, getSize().x, getSize().y / 2));
+        previewBox->setFillColor(Color::GrayLight);
+        previewBox->setOutlineColor(COL_YELLOW);
+        previewBox->setOutlineThickness(2);
+
+        previewText = new Text("No Preview Image Available", font, (unsigned int) fontSize);
+        previewText->setPosition(previewBox->getSize().x / 2, previewBox->getSize().y / 2);
+        previewText->setOutlineThickness(2);
+        previewText->setSizeMax(Vector2f(infoBox->getSize().x, 0));
+        previewText->setLineSpacingModifier((int) (8 * scaling));
+        previewText->setOriginCenter();
+        previewBox->add(previewText);
+
+        add(previewBox);
     }
 
     ~C2DUIGuiRomInfo() {
@@ -70,14 +87,11 @@ public:
             }
             // set preview image
             if (texture->available) {
-                float outline = infoBox->getOutlineThickness() * 2;
-                texture->setOutlineColor(COL_YELLOW);
-                texture->setOutlineThickness(outline);
                 texture->setOriginCenter();
-                texture->setPosition(Vector2f(getLocalBounds().width / 2, getLocalBounds().height / 4));
+                texture->setPosition(Vector2f(previewBox->getSize().x / 2, previewBox->getSize().y / 2));
                 float tex_scaling = std::min(
-                        (getLocalBounds().width - margin + outline * 2) / texture->getSize().x,
-                        ((getLocalBounds().height / 2) - margin + outline * 2) / texture->getSize().y);
+                        previewBox->getSize().x / texture->getSize().x,
+                        previewBox->getSize().y / texture->getSize().y);
                 texture->setScale(tex_scaling, tex_scaling);
                 add(texture);
             } else {
@@ -112,6 +126,8 @@ public:
     Texture *texture = nullptr;
     Rectangle *infoBox = nullptr;
     Text *infoText = nullptr;
+    Rectangle *previewBox = nullptr;
+    Text *previewText = nullptr;
     char texture_path[1024];
     char info[1024];
     char rotation[64];
