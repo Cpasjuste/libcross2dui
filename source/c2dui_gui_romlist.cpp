@@ -74,6 +74,7 @@ public:
 
         if (!rom) {
             infoText->setVisibility(Hidden);
+            previewText->setVisibility(Visibility::Visible);
         } else {
             // load preview image
             snprintf(texture_path, 1023, "%spreviews/%s.png", C2DUI_HOME_PATH, rom->drv_name);
@@ -87,6 +88,7 @@ public:
             }
             // set preview image
             if (texture->available) {
+                previewText->setVisibility(Visibility::Hidden);
                 texture->setOriginCenter();
                 texture->setPosition(Vector2f(previewBox->getSize().x / 2, previewBox->getSize().y / 2));
                 float tex_scaling = std::min(
@@ -95,6 +97,7 @@ public:
                 texture->setScale(tex_scaling, tex_scaling);
                 add(texture);
             } else {
+                previewText->setVisibility(Visibility::Visible);
                 delete (texture);
                 texture = nullptr;
             }
