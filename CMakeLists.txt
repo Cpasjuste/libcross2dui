@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
-# libcross2dui version
-set(CROSS2DUI_VERSION_MAJOR 1)
-set(CROSS2DUI_VERSION_MINOR 0)
-
 # delete cmake cache folder before changing this options
 option(BUILD_SFML "Build with SFML support (hardware rendering, fast)" OFF)
 option(BUILD_SDL1 "Build with SDL1 support (software, osmesa) support" OFF)
@@ -52,12 +48,6 @@ file(GLOB LIBCONFIG_SOURCE
         libconfig/scanctx.c
         libconfig/scanner.c
         libconfig/strbuf.c
-        )
-
-# flags
-set(FLAGS
-        -D__CROSS2DUI_VERSION_MAJOR__=${CROSS2DUI_VERSION_MAJOR}
-        -D__CROSS2DUI_VERSION_MINOR__=${CROSS2DUI_VERSION_MINOR}
         )
 
 if (UPDATE_CONFIG)
