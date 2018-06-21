@@ -278,7 +278,6 @@ void C2DUINXVideo::unlock() {
     gfxWaitForVsync();
 }
 
-
 void C2DUINXVideo::updateScaling() {
 
     //printf("C2DUINXVideo::updateScaling()\n");

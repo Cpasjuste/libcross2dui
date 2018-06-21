@@ -20,15 +20,15 @@ namespace c2dui {
 
         ~C2DUINXVideo();
 
-        void updateScaling();
+        virtual void updateScaling();
 
-        int lock(c2d::FloatRect *rect, void **pixels, int *pitch);
+        virtual int lock(c2d::FloatRect *rect, void **pixels, int *pitch);
 
-        void unlock();
+        virtual void unlock();
 
-        int save(const char *path);
+        virtual int save(const char *path);
 
-        void clear();
+        virtual void clear();
 
         unsigned char *pixels = NULL;
 
