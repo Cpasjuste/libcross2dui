@@ -29,6 +29,8 @@ void C2DUIConfig::load(C2DUIRomList::Rom *rom) {
         path += ".cfg";
     }
 
+    printf("C2DUIConfig::load: %s\n", path.c_str());
+
     if (config_read_file(&cfg, path.c_str())) {
 
         //printf("###########################\n");
@@ -81,9 +83,16 @@ void C2DUIConfig::load(C2DUIRomList::Rom *rom) {
             }
         }
         //printf("###########################\n");
-    } else if (!isRomCfg) {
+    } else {
+        // reset default rom options for other roms usage
+        options_rom.clear();
+        for (int i = C2DUIOption::Index::MENU_ROM_OPTIONS; i < C2DUIOption::Index::END; i++) {
+            options_rom.emplace_back(options_gui[i]);
+        }
         // no need to save default rom config
-        save();
+        if (!isRomCfg) {
+            save();
+        }
     }
 
     config_destroy(&cfg);
@@ -103,6 +112,8 @@ void C2DUIConfig::save(C2DUIRomList::Rom *rom) {
         path += rom->drv_name;
         path += ".cfg";
     }
+
+    printf("C2DUIConfig::save: %s\n", path.c_str());
 
     // create root
     config_setting_t *setting_root = config_root_setting(&cfg);
@@ -139,14 +150,6 @@ void C2DUIConfig::save(C2DUIRomList::Rom *rom) {
 
     config_write_file(&cfg, path.c_str());
     config_destroy(&cfg);
-
-    if (!isRomCfg) {
-        // set default rom options // TODO: why did i do that ?
-        options_rom.clear();
-        for (int i = C2DUIOption::Index::MENU_ROM_OPTIONS; i < C2DUIOption::Index::END; i++) {
-            options_rom.emplace_back(options_gui[i]);
-        }
-    }
 }
 
 int C2DUIConfig::getValue(int index, bool rom) {
