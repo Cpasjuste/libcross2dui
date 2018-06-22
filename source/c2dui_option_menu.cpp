@@ -21,8 +21,7 @@ C2DUIOptionMenu::C2DUIOptionMenu(C2DUIOptionMenu *parent, std::vector<C2DUIOptio
 
         C2DUIOption option = options->at(i);
 
-        if (option.flags & C2DUIOption::Type::HIDDEN
-            || option.index == C2DUIOption::Index::END) {
+        if (option.flags & C2DUIOption::Type::HIDDEN) {
             continue;
         }
 

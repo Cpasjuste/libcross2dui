@@ -21,15 +21,17 @@ namespace c2dui {
 
         virtual void save(C2DUIRomList::Rom *rom = nullptr);
 
-        virtual int getValue(int id, bool rom = false);
+        virtual void reset(bool isRom = true);
+
+        virtual int getValue(int id, bool isRom = false);
 
         virtual std::string *getHomePath();
 
-        virtual const char *getRomPath(int n);
+        virtual const char *getRomPath(int n = 0);
 
         virtual std::vector<std::string> *getRomPaths();
 
-        virtual std::vector<C2DUIOption> *getOptions(bool rom = false);
+        virtual std::vector<C2DUIOption> *getOptions(bool isRom = false);
 
         virtual C2DUIOption *getOption(std::vector<C2DUIOption> *options, int index);
 

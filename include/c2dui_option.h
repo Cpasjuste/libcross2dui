@@ -28,6 +28,7 @@ namespace c2dui {
             GUI_SHOW_ALL,
             GUI_SHOW_CLONES,
             GUI_SHOW_HARDWARE,
+            GUI_USE_DATABASE,
             GUI_FULLSCREEN,
 #ifdef __SWITCH__
             JOY_SINGLEJOYCON,
@@ -76,7 +77,6 @@ namespace c2dui {
             KEY_COIN1,
             KEY_START1,
 #endif
-            END
         };
 
         C2DUIOption(const std::string &text, const std::vector<std::string> &options,

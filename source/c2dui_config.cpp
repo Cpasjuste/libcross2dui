@@ -12,6 +12,13 @@ C2DUIConfig::C2DUIConfig(const std::string &home, int ver) {
     homePath = home;
     configPath = homePath + "config.cfg";
     version = ver;
+
+    // add default roms paths
+    getRomPaths()->clear();
+    getRomPaths()->emplace_back(home + "roms/");
+    for (size_t i = 1; i < C2DUI_ROMS_PATHS_MAX; i++) {
+        getRomPaths()->emplace_back(home + "roms" + std::to_string((int) i) + "/");
+    }
 }
 
 void C2DUIConfig::load(C2DUIRomList::Rom *rom) {
@@ -32,20 +39,19 @@ void C2DUIConfig::load(C2DUIRomList::Rom *rom) {
     printf("C2DUIConfig::load: %s ...", path.c_str());
 
     if (config_read_file(&cfg, path.c_str())) {
-
-        printf("OK\n");
-
         //printf("###########################\n");
         //printf("CFG FOUND: %s\n", path.c_str());
-        config_setting_t *settings_root = config_lookup(&cfg, "FBA_CONFIG");
+
+        config_setting_t *settings_root = config_lookup(&cfg, "CONFIG");
         if (settings_root) {
+            printf("OK\n");
 #ifdef __UPDATE_CONFIG__
             // verify cfg version
             int cfg_version = 0;
             if (!config_setting_lookup_int(settings_root, "VERSION", &cfg_version)
                 || cfg_version != version) {
                 // update cfg to newer version
-                printf("CFG VERSION (%i) != PFBA VERSION (%i)\n", cfg_version, version);
+                printf("CONFIG VERSION (%i) != EXE VERSION (%i)\n", cfg_version, version);
                 save(rom);
                 config_destroy(&cfg);
                 return;
@@ -79,22 +85,21 @@ void C2DUIConfig::load(C2DUIRomList::Rom *rom) {
                     int value = 0;
                     if (config_setting_lookup_int(settings, option.getName(), &value)) {
                         option.value = value;
-                        //printf("%s: %i\n", options->at(i).GetName(), value);
+                        printf("[%i] => %s: %i\n", option.index, option.getName(), value);
                     }
                 }
             }
+        } else {
+            printf("NOK: root configuration not found\n");
+            save(rom);
+            config_destroy(&cfg);
+            return;
         }
         //printf("###########################\n");
     } else {
-
-        printf("NOK (file not found)\n");
-
+        printf("NOK: file not found\n");
         // reset default rom options for other roms usage
-        options_rom.clear();
-        for (int i = C2DUIOption::Index::MENU_ROM_OPTIONS; i < C2DUIOption::Index::END; i++) {
-            options_rom.emplace_back(options_gui[i]);
-        }
-
+        reset();
         // no need to save default rom config
         if (!isRomCfg) {
             save();
@@ -125,7 +130,7 @@ void C2DUIConfig::save(C2DUIRomList::Rom *rom) {
     config_setting_t *setting_root = config_root_setting(&cfg);
 
     // create main group
-    config_setting_t *setting_fba = config_setting_add(setting_root, "FBA_CONFIG", CONFIG_TYPE_GROUP);
+    config_setting_t *setting_fba = config_setting_add(setting_root, "CONFIG", CONFIG_TYPE_GROUP);
     // add version
     config_setting_t *setting_cfg = config_setting_add(setting_fba, "VERSION", CONFIG_TYPE_INT);
     config_setting_set_int(setting_cfg, version);
@@ -143,9 +148,6 @@ void C2DUIConfig::save(C2DUIRomList::Rom *rom) {
     }
 
     for (auto &option : *options) {
-        if (option.index == C2DUIOption::Index::END) {
-            continue;
-        }
         if (option.flags & C2DUIOption::Type::MENU) {
             sub_setting = config_setting_add(setting_fba, option.getName(), CONFIG_TYPE_GROUP);
             continue;
@@ -156,6 +158,23 @@ void C2DUIConfig::save(C2DUIRomList::Rom *rom) {
 
     config_write_file(&cfg, path.c_str());
     config_destroy(&cfg);
+}
+
+void C2DUIConfig::reset(bool isRom) {
+
+    options_rom.clear();
+
+    int start = 0, end = (int) options_gui.size();
+    for (unsigned int i = 0; i < options_gui.size(); i++) {
+        if (options_gui[i].index == C2DUIOption::Index::MENU_ROM_OPTIONS) {
+            start = i;
+            break;
+        }
+    }
+
+    for (int i = start; i < end; i++) {
+        options_rom.emplace_back(options_gui[i]);
+    }
 }
 
 int C2DUIConfig::getValue(int index, bool rom) {
