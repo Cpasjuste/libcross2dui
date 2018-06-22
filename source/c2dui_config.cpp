@@ -29,9 +29,11 @@ void C2DUIConfig::load(C2DUIRomList::Rom *rom) {
         path += ".cfg";
     }
 
-    printf("C2DUIConfig::load: %s\n", path.c_str());
+    printf("C2DUIConfig::load: %s ...", path.c_str());
 
     if (config_read_file(&cfg, path.c_str())) {
+
+        printf("OK\n");
 
         //printf("###########################\n");
         //printf("CFG FOUND: %s\n", path.c_str());
@@ -84,11 +86,15 @@ void C2DUIConfig::load(C2DUIRomList::Rom *rom) {
         }
         //printf("###########################\n");
     } else {
+
+        printf("NOK (file not found)\n");
+
         // reset default rom options for other roms usage
         options_rom.clear();
         for (int i = C2DUIOption::Index::MENU_ROM_OPTIONS; i < C2DUIOption::Index::END; i++) {
             options_rom.emplace_back(options_gui[i]);
         }
+
         // no need to save default rom config
         if (!isRomCfg) {
             save();
