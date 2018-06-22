@@ -79,12 +79,23 @@ public:
             // load preview image
             snprintf(texture_path, 1023, "%spreviews/%s.png", C2DUI_HOME_PATH, rom->drv_name);
             texture = new C2DTexture(texture_path);
-            if (!texture->available && rom->parent) {
-                // try parent image
-                delete (texture);
-                memset(texture_path, 0, MAX_PATH);
-                snprintf(texture_path, 1023, "%spreviews/%s.png", C2DUI_HOME_PATH, rom->parent);
-                texture = new C2DTexture(texture_path);
+            if (!texture->available) {
+                // try removing the extension (drv_name has extension with psnes and no db.xml)
+                char *drv_name_no_ext = Utility::remove_ext(rom->drv_name, '/');
+                if (drv_name_no_ext) {
+                    delete (texture);
+                    memset(texture_path, 0, 1023);
+                    snprintf(texture_path, 1023, "%spreviews/%s.png", C2DUI_HOME_PATH, drv_name_no_ext);
+                    texture = new C2DTexture(texture_path);
+                    free(drv_name_no_ext);
+                }
+                if (!texture->available && rom->parent) {
+                    // try parent image
+                    delete (texture);
+                    memset(texture_path, 0, 1023);
+                    snprintf(texture_path, 1023, "%spreviews/%s.png", C2DUI_HOME_PATH, rom->parent);
+                    texture = new C2DTexture(texture_path);
+                }
             }
             // set preview image
             if (texture->available) {
