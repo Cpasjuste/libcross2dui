@@ -32,7 +32,6 @@ namespace c2dui {
         Button *getButton(int id);
 
         std::string path;
-        c2d::Texture *tex_bg = NULL;
         c2d::Texture *tex_title = NULL;
         c2d::Font *font = NULL;
         std::vector<Button> buttons;

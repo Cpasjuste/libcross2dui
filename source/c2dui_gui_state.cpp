@@ -68,7 +68,7 @@ public:
         exist = ui->getIo()->exist(path);
         if (exist) {
             if (ui->getIo()->exist(shot)) {
-                texture = (Texture *) new C2DTexture(shot);
+                texture = new C2DTexture(shot);
                 if (texture->available) {
                     float tex_scaling = std::min(
                             getSize().x / texture->getSize().x,

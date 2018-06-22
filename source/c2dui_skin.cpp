@@ -30,8 +30,7 @@ C2DUISkin::C2DUISkin(const std::string &p, const std::vector<Button> &btns) {
     font = new C2DFont();
     font->loadFromMemory(pfba_font, pfba_font_length);
 #else
-    tex_bg = (Texture *) new C2DTexture((path + "fba_bg.png").c_str());
-    tex_title = (Texture *) new C2DTexture((path + "title.png").c_str());
+    tex_title = new C2DTexture((path + "title.png").c_str());
     font = new C2DFont();
     font->loadFromFile(path + "default.ttf");
 #endif

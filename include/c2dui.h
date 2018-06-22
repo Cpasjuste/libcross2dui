@@ -5,11 +5,12 @@
 #ifndef C2DUI_H
 #define C2DUI_H
 
-#ifdef __PSP2__
-#include <psp2/power.h>
-#include <psp2/io/dirent.h>
+#define C2DUI_HOME_PATH "./"
+#define C2DUI_ROMS_PATHS_MAX 20
 
-int _newlib_heap_size_user = 192 * 1024 * 1024;
+#ifdef __PSP2__
+#undef C2DUI_HOME_PATH
+#define C2DUI_HOME_PATH "ux0:/data/psnes/"
 #define SCR_W   960
 #define SCR_H   544
 #elif __PS3__
@@ -25,9 +26,6 @@ int _newlib_heap_size_user = 192 * 1024 * 1024;
 #define SCR_W   1280
 #define SCR_H   720
 #endif
-
-#define C2DUI_HOME_PATH "./"
-#define C2DUI_ROMS_PATHS_MAX 20
 
 #include "c2d.h"
 #include "c2dui_option.h"

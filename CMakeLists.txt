@@ -70,6 +70,7 @@ if (BUILD_PSP2)
     #################
     # PSP2 (ps vita)
     #################
+    list(APPEND FLAGS -DNO_KEYBOARD)
 elseif (BUILD_PS3)
     ##############
     # PS3
