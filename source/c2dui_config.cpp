@@ -16,9 +16,6 @@ C2DUIConfig::C2DUIConfig(const std::string &home, int ver) {
     // add default roms paths
     getRomPaths()->clear();
     getRomPaths()->emplace_back(home + "roms/");
-    for (size_t i = 1; i < C2DUI_ROMS_PATHS_MAX; i++) {
-        getRomPaths()->emplace_back(home + "roms" + std::to_string((int) i) + "/");
-    }
 }
 
 void C2DUIConfig::load(C2DUIRomList::Rom *rom) {
@@ -85,7 +82,7 @@ void C2DUIConfig::load(C2DUIRomList::Rom *rom) {
                     int value = 0;
                     if (config_setting_lookup_int(settings, option.getName(), &value)) {
                         option.value = value;
-                        printf("[%i] => %s: %i\n", option.index, option.getName(), value);
+                        //printf("[%i] => %s: %i\n", option.index, option.getName(), value);
                     }
                 }
             }
