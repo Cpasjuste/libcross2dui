@@ -19,18 +19,18 @@ public:
         Font *font = ui->getSkin()->font;
         int fontSize = ui->getFontSize();
 
-        name = new Text("OPTION NAME", *font, (unsigned int) fontSize);
+        name = new Text("OPTION NAME,)'", *font, (unsigned int) fontSize);
         name->setOutlineThickness(1);
         name->setOutlineColor(Color::Black);
-        name->setOrigin(0, (float) fontSize / 2);
+        name->setOrigin(0, name->getLocalBounds().height / 2);
         name->setPosition(16, getSize().y / 2);
         name->setSizeMax(Vector2f((getSize().x * 0.66f) - 32, 0));
         add(name);
 
-        value = new Text("OPTION VALUE", *font, (unsigned int) fontSize);
+        value = new Text("OPTION VALUE,)'", *font, (unsigned int) fontSize);
         value->setOutlineThickness(1);
         value->setOutlineColor(Color::Black);
-        value->setOrigin(0, (float) fontSize / 2);
+        value->setOrigin(0, value->getLocalBounds().height / 2);
         value->setPosition((getSize().x * 0.66f) + 16, getSize().y / 2);
         value->setSizeMax(Vector2f((getSize().x * 0.33f) - 32, 0));
         add(value);
@@ -127,18 +127,14 @@ C2DUIGuiMenu::C2DUIGuiMenu(C2DUIGuiMain *ui) : Rectangle(Vector2f(0, 0)) {
 
     // calculate lines per menu
     float font_size = ui->getFontSize();
-    float line_height = ui->getFont()->getLineSpacing((unsigned int) font_size) + 8;
+    float line_height = ui->getFont()->getLineSpacing((unsigned int) font_size) + 4;
     int max_lines = (int) ((getSize().y - start_y) / line_height) * 2;
 
     // add selection rectangle (highlight)
     highlight = new Rectangle(Vector2f(((getSize().x / 2) * 0.3f) - 4, line_height));
     highlight->setOutlineThickness(1);
     highlight->setOutlineColor(COL_ORANGE);
-#ifdef __TINYGL__
-    highlight->setFillColor(Color(61, 100, 20, 255));
-#else
     highlight->setFillColor(Color(153, 255, 51, 100));
-#endif
     add(highlight);
 
     // add lines of text
@@ -259,7 +255,7 @@ void C2DUIGuiMenu::load(bool isRom, C2DUIOptionMenu *om) {
 void C2DUIGuiMenu::updateHighlight() {
 
     highlight->setPosition(lines[optionIndex]->value->getGlobalBounds().left - 2,
-                           lines[optionIndex]->getGlobalBounds().top - 4);
+                           lines[optionIndex]->getGlobalBounds().top);
 }
 
 int C2DUIGuiMenu::update() {

@@ -20,9 +20,12 @@ class C2DUIGuiRomInfo : public Rectangle {
 
 public:
 
-    C2DUIGuiRomInfo(const Font &font, int fontSize, const FloatRect &rect, float scale) : Rectangle(rect) {
+    C2DUIGuiRomInfo(C2DUIGuiMain *ui, const Font &font, int fontSize, const FloatRect &rect, float scale)
+            : Rectangle(rect) {
 
         printf("C2DUIGuiRomInfo\n");
+
+        this->ui = ui;
 
         setFillColor(Color::Transparent);
         scaling = scale;
@@ -39,7 +42,7 @@ public:
         infoText->setPosition(margin, margin);
         infoText->setOutlineThickness(2);
         infoText->setSizeMax(Vector2f(infoBox->getSize().x, 0));
-        infoText->setLineSpacingModifier((int) (8 * scaling));
+        infoText->setLineSpacingModifier((int) (2 * scaling));
         infoBox->add(infoText);
 
         add(infoBox);
@@ -77,23 +80,26 @@ public:
             previewText->setVisibility(Visibility::Visible);
         } else {
             // load preview image
-            snprintf(texture_path, 1023, "%spreviews/%s.png", C2DUI_HOME_PATH, rom->drv_name);
+            snprintf(texture_path, 1023, "%spreviews/%s.png",
+                     ui->getConfig()->getHomePath()->c_str(), rom->drv_name);
             texture = new C2DTexture(texture_path);
             if (!texture->available) {
                 // try removing the extension (drv_name has extension with psnes and no db.xml)
                 char *drv_name_no_ext = Utility::remove_ext(rom->drv_name, '/');
                 if (drv_name_no_ext) {
                     delete (texture);
-                    memset(texture_path, 0, 1023);
-                    snprintf(texture_path, 1023, "%spreviews/%s.png", C2DUI_HOME_PATH, drv_name_no_ext);
+                    memset(texture_path, 0, 1024);
+                    snprintf(texture_path, 1023, "%spreviews/%s.png",
+                             ui->getConfig()->getHomePath()->c_str(), drv_name_no_ext);
                     texture = new C2DTexture(texture_path);
                     free(drv_name_no_ext);
                 }
                 if (!texture->available && rom->parent) {
                     // try parent image
                     delete (texture);
-                    memset(texture_path, 0, 1023);
-                    snprintf(texture_path, 1023, "%spreviews/%s.png", C2DUI_HOME_PATH, rom->parent);
+                    memset(texture_path, 0, 1024);
+                    snprintf(texture_path, 1023, "%spreviews/%s.png",
+                             ui->getConfig()->getHomePath()->c_str(), rom->parent);
                     texture = new C2DTexture(texture_path);
                 }
             }
@@ -137,6 +143,7 @@ public:
         }
     }
 
+    C2DUIGuiMain *ui = nullptr;
     Texture *texture = nullptr;
     Rectangle *infoBox = nullptr;
     Text *infoText = nullptr;
@@ -176,7 +183,7 @@ C2DUIGuiRomList::C2DUIGuiRomList(C2DUIGuiMain *u, C2DUIRomList *romList, const c
     updateRomList();
 
     // add rom info ui
-    rom_info = new C2DUIGuiRomInfo(*skin->font, ui->getFontSize(),
+    rom_info = new C2DUIGuiRomInfo(ui, *skin->font, ui->getFontSize(),
                                    FloatRect(
                                            (getLocalBounds().width / 2) + UI_MARGIN * ui->getScaling(),
                                            UI_MARGIN * ui->getScaling(),
@@ -186,6 +193,60 @@ C2DUIGuiRomList::C2DUIGuiRomList(C2DUIGuiMain *u, C2DUIRomList *romList, const c
     rom_info->infoBox->setOutlineThickness(getOutlineThickness());
     rom_info->update(roms.empty() ? nullptr : roms[0]);
     add(rom_info);
+}
+
+C2DUIRomList::Rom *C2DUIGuiRomList::getSelection() {
+    return (C2DUIRomList::Rom *) list_box->getSelection();
+}
+
+C2DUIRomList *C2DUIGuiRomList::getRomList() {
+    return rom_list;
+}
+
+void C2DUIGuiRomList::updateRomList() {
+
+    rom_index = 0;
+    roms.clear();
+
+    static C2DUIRomList *list = rom_list;
+    int showClone = ui->getConfig()->getValue(C2DUIOption::Index::GUI_SHOW_CLONES);
+    int showAll = ui->getConfig()->getValue(C2DUIOption::Index::GUI_SHOW_ALL);
+    int showHardwareCfg = ui->getConfig()->getValue(C2DUIOption::Index::GUI_SHOW_HARDWARE);
+    int showHardware = ui->getConfig()->getHardwareList()->at((unsigned int) showHardwareCfg).prefix;
+
+    remove_copy_if(rom_list->list.begin(), rom_list->list.end(), back_inserter(roms),
+                   [showAll, showClone, showHardware](C2DUIRomList::Rom *r) {
+                       return (!showAll && r->state != C2DUIRomList::RomState::WORKING)
+                              || (!showClone && r->parent != nullptr)
+                              || ((unsigned int) showHardware != HARDWARE_PREFIX_ALL
+                                  && !list->isHardware(r->hardware, showHardware));
+                   });
+
+    if (!list_box) {
+        // add rom list ui
+        float top = ui->getSkin()->tex_title->getGlobalBounds().top
+                    + ui->getSkin()->tex_title->getGlobalBounds().height
+                    + UI_MARGIN * ui->getScaling();
+
+        FloatRect rect = {
+                UI_MARGIN * ui->getScaling(), top,
+                (getLocalBounds().width / 2) - UI_MARGIN * ui->getScaling(),
+                getLocalBounds().height - top - UI_MARGIN * ui->getScaling()};
+        list_box = new ListBox(*ui->getSkin()->font, ui->getFontSize(), rect, (std::vector<Io::File *> &) roms,
+                               ui->getConfig()->getValue(C2DUIOption::Index::GUI_SHOW_ICONS) == 1);
+        list_box->setOutlineThickness(getOutlineThickness());
+        list_box->setFillColor(Color::GrayLight);
+        list_box->setOutlineColor(COL_ORANGE);
+        add(list_box);
+    } else {
+        list_box->setFiles((std::vector<Io::File *> &) roms);
+    }
+
+    if (rom_info) {
+        rom_info->update(nullptr);
+        title_loaded = 0;
+        timer_load.restart();
+    }
 }
 
 int C2DUIGuiRomList::update() {
@@ -249,65 +310,6 @@ int C2DUIGuiRomList::update() {
     ui->getRenderer()->flip();
 
     return 0;
-}
-
-C2DUIRomList::Rom *C2DUIGuiRomList::getSelection() {
-    return (C2DUIRomList::Rom *) list_box->getSelection();
-}
-
-C2DUIRomList *C2DUIGuiRomList::getRomList() {
-    return rom_list;
-}
-
-void C2DUIGuiRomList::updateRomList() {
-
-    rom_index = 0;
-    roms.clear();
-
-    int showClone = ui->getConfig()->getValue(C2DUIOption::Index::GUI_SHOW_CLONES);
-    int showAll = ui->getConfig()->getValue(C2DUIOption::Index::GUI_SHOW_ALL);
-    int showHardwareCfg = ui->getConfig()->getValue(C2DUIOption::Index::GUI_SHOW_HARDWARE);
-    int showHardware = ui->getConfig()->getHardwareList()->at(showHardwareCfg).prefix;
-
-    static C2DUIRomList *rlist = rom_list;
-
-    remove_copy_if(rom_list->list.begin(), rom_list->list.end(), back_inserter(roms),
-                   [showAll, showClone, showHardware](C2DUIRomList::Rom *r) {
-                       return (!showAll && r->state != C2DUIRomList::RomState::WORKING)
-                              || (!showClone && r->parent != nullptr)
-                              || ((unsigned int) showHardware != HARDWARE_PREFIX_ALL
-                                  && !rlist->isHardware(r->hardware, showHardware));
-                   });
-
-    if (list_box != nullptr) {
-        delete (list_box);
-        list_box = nullptr;
-    }
-
-    // add rom list ui
-    float top = ui->getSkin()->tex_title->getGlobalBounds().top
-                + ui->getSkin()->tex_title->getGlobalBounds().height
-                + UI_MARGIN * ui->getScaling();
-
-    FloatRect rect = {
-            UI_MARGIN * ui->getScaling(), top,
-            (getLocalBounds().width / 2) - UI_MARGIN * ui->getScaling(),
-            getLocalBounds().height - top - UI_MARGIN * ui->getScaling()};
-    list_box = new ListBox(*ui->getSkin()->font, ui->getFontSize(), rect, (std::vector<Io::File *> &) roms);
-    list_box->setOutlineThickness(getOutlineThickness());
-    list_box->setFillColor(Color::GrayLight);
-    list_box->setOutlineColor(COL_ORANGE);
-    add(list_box);
-
-    if (rom_info) {
-        rom_info->update(nullptr);
-        title_loaded = 0;
-        timer_load.restart();
-    }
-}
-
-void C2DUIGuiRomList::setLoadDelay(int delay) {
-    load_delay = delay;
 }
 
 C2DUIGuiRomList::~C2DUIGuiRomList() {

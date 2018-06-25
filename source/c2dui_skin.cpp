@@ -34,6 +34,7 @@ C2DUISkin::C2DUISkin(const std::string &p, const std::vector<Button> &btns) {
     font = new C2DFont();
     font->loadFromFile(path + "default.ttf");
 #endif
+    font->setYOffset(-5);
 
     // load buttons textures
     buttons = btns;

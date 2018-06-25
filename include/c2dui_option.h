@@ -28,6 +28,7 @@ namespace c2dui {
             GUI_SHOW_ALL,
             GUI_SHOW_CLONES,
             GUI_SHOW_HARDWARE,
+            GUI_SHOW_ICONS,
             GUI_USE_DATABASE,
             GUI_FULLSCREEN,
 #ifdef __SWITCH__

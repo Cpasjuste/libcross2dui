@@ -25,15 +25,13 @@ namespace c2dui {
 
         C2DUIRomList::Rom *getSelection();
 
-        void setLoadDelay(int delay);
-
     private:
 
-        C2DUIGuiMain *ui = NULL;
-        C2DUIGuiRomInfo *rom_info = NULL;
-        c2d::ListBox *list_box = NULL;
+        C2DUIGuiMain *ui = nullptr;
+        C2DUIGuiRomInfo *rom_info = nullptr;
+        c2d::ListBox *list_box = nullptr;
 
-        C2DUIRomList *rom_list = NULL;
+        C2DUIRomList *rom_list = nullptr;
         std::vector<C2DUIRomList::Rom *> roms;
         int rom_index = 0;
 

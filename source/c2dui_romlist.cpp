@@ -41,14 +41,14 @@ C2DUIRomList::C2DUIRomList(C2DUIGuiMain *_ui, const std::string &emuVersion) {
     text->setOriginBottomLeft();
     text->setOutlineColor(Color::Black);
     text->setOutlineThickness(2);
-    text->setPosition(16, rect->getSize().y - 8);
+    text->setPosition(8, rect->getSize().y - 16);
     rect->add(text);
 
     auto *version = new Text(emuVersion, *ui->getSkin()->font);
     version->setOriginBottomRight();
     version->setOutlineColor(Color::Black);
     version->setOutlineThickness(2);
-    version->setPosition(rect->getSize().x - 8, rect->getSize().y - 8);
+    version->setPosition(rect->getSize().x - 16, rect->getSize().y - 16);
     rect->add(version);
 
     ui->getRenderer()->add(rect);
@@ -90,6 +90,9 @@ C2DUIRomList::~C2DUIRomList() {
     files->clear();
 
     for (auto &rom : list) {
+        if (rom->icon) {
+            delete (rom->icon);
+        }
         delete (rom);
     }
 
