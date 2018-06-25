@@ -90,8 +90,9 @@ C2DUIRomList::~C2DUIRomList() {
     files->clear();
 
     for (auto &rom : list) {
-        if (rom->icon) {
+        if (!rom->parent && rom->icon) {
             delete (rom->icon);
+            rom->icon = nullptr;
         }
         delete (rom);
     }
