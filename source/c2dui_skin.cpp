@@ -5,17 +5,13 @@
 #include "c2dui.h"
 
 #ifdef __SWITCH__
-
 #ifdef __PFBA__
-#include "../libcross2d/res/title.h"
+#include "../../pfba/data/skin/title.h"
+#include "../../pfba/data/skin/default.h"
 #elif __PSNES__
-
 #include "../../psnes/data/skin/title.h"
-
+#include "../../psnes/data/skin/default.h"
 #endif
-
-#include "../libcross2d/res/default.h"
-
 #endif
 
 using namespace c2d;
