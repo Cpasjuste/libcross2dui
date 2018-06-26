@@ -243,12 +243,18 @@ void C2DUINXVideo::unlock() {
     // point scaling (1x, 2x, 3x)
     if (point) {
         sf = (unsigned int) std::max((int) getScale().x, (int) getScale().y);
+        // be sure we don't scale higher than fb size
+        while (w * sf > fb_w || h * sf > fb_h) {
+            sf--;
+        }
     }
+
+    // center image
     cx = (fb_w - (w * sf)) / 2;
     cy = (fb_h - (h * sf)) / 2;
 
-    //printf("res:%ix%i | fb:%ix%i | tex:%ix%i | scale:%fx%f\n",
-    //       vw, vh, fb_w, fb_h, (int) getSize().x, (int) getSize().y, getScale().x, getScale().y);
+    //printf("res:%ix%i | fb:%ix%i | c:%ix%i | tex:%ix%i | scale:%fx%f (point=%i)\n",
+    //       vw, vh, fb_w, fb_h, cx, cy, (int) getSize().x, (int) getSize().y, getScale().x, getScale().y, sf);
 
     for (y = 0; y < h; y++) {
         for (x = 0; x < w; x++) {
