@@ -7,8 +7,6 @@
 using namespace c2d;
 using namespace c2dui;
 
-//static float timer = 0;
-
 C2DUIGuiEmu::C2DUIGuiEmu(C2DUIGuiMain *u) : Rectangle(u->getRenderer()->getSize()) {
 
     printf("C2DUIGuiEmu()\n");
@@ -29,8 +27,6 @@ C2DUIGuiEmu::C2DUIGuiEmu(C2DUIGuiMain *u) : Rectangle(u->getRenderer()->getSize(
 int C2DUIGuiEmu::run(C2DUIRomList::Rom *rom) {
 
     printf("C2DUIGuiEmu::run()\n");
-
-    add(video);
 
     // set fps text on top
     getFpsText()->setLayer(1);
@@ -130,6 +126,7 @@ C2DUIVideo *C2DUIGuiEmu::getVideo() {
 
 void C2DUIGuiEmu::setVideo(C2DUIVideo *v) {
     video = v;
+    add(video);
 }
 
 float C2DUIGuiEmu::getFrameDuration() {
