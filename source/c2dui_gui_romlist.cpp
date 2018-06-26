@@ -14,8 +14,6 @@
 using namespace c2d;
 using namespace c2dui;
 
-#define MIN_SIZE_Y  200
-
 class C2DUIGuiRomInfo : public Rectangle {
 
 public:
@@ -68,7 +66,58 @@ public:
         printf("~GuiRomInfo\n");
     }
 
-    void update(C2DUIRomList::Rom *rom) {
+    bool loadTexture(C2DUIRomList::Rom *rom, bool isPreview) {
+
+        const char *type = isPreview ? "previews" : "titles";
+
+        // load image
+        snprintf(texture_path, 1023, "%s%s/%s.png",
+                 ui->getConfig()->getHomePath()->c_str(), type, rom->drv_name);
+        texture = new C2DTexture(texture_path);
+        if (!texture->available) {
+#ifdef __PSNES__
+            // try removing the extension (drv_name has extension (.zip, .smc) with psnes and no db.xml)
+            char *drv_name_no_ext = Utility::remove_ext(rom->drv_name, '/');
+            if (drv_name_no_ext) {
+                delete (texture);
+                memset(texture_path, 0, 1024);
+                snprintf(texture_path, 1023, "%s%s/%s.png",
+                         ui->getConfig()->getHomePath()->c_str(), type, drv_name_no_ext);
+                texture = new C2DTexture(texture_path);
+                free(drv_name_no_ext);
+            }
+#endif
+            if (!texture->available && rom->parent) {
+                // try parent image
+                delete (texture);
+                memset(texture_path, 0, 1024);
+                snprintf(texture_path, 1023, "%s%s/%s.png",
+                         ui->getConfig()->getHomePath()->c_str(), type, rom->parent);
+                texture = new C2DTexture(texture_path);
+            }
+        }
+
+        // set image
+        if (texture->available) {
+            previewText->setVisibility(Visibility::Hidden);
+            texture->setOriginCenter();
+            texture->setPosition(Vector2f(previewBox->getSize().x / 2, previewBox->getSize().y / 2));
+            float tex_scaling = std::min(
+                    previewBox->getSize().x / texture->getSize().x,
+                    previewBox->getSize().y / texture->getSize().y);
+            texture->setScale(tex_scaling, tex_scaling);
+            add(texture);
+        } else {
+            previewText->setVisibility(Visibility::Visible);
+            delete (texture);
+            texture = nullptr;
+            return false;
+        }
+
+        return true;
+    }
+
+    void update(C2DUIRomList::Rom *rom, bool isPreview) {
 
         if (texture) {
             delete (texture);
@@ -79,44 +128,9 @@ public:
             infoText->setVisibility(Hidden);
             previewText->setVisibility(Visibility::Visible);
         } else {
-            // load preview image
-            snprintf(texture_path, 1023, "%spreviews/%s.png",
-                     ui->getConfig()->getHomePath()->c_str(), rom->drv_name);
-            texture = new C2DTexture(texture_path);
-            if (!texture->available) {
-                // try removing the extension (drv_name has extension with psnes and no db.xml)
-                char *drv_name_no_ext = Utility::remove_ext(rom->drv_name, '/');
-                if (drv_name_no_ext) {
-                    delete (texture);
-                    memset(texture_path, 0, 1024);
-                    snprintf(texture_path, 1023, "%spreviews/%s.png",
-                             ui->getConfig()->getHomePath()->c_str(), drv_name_no_ext);
-                    texture = new C2DTexture(texture_path);
-                    free(drv_name_no_ext);
-                }
-                if (!texture->available && rom->parent) {
-                    // try parent image
-                    delete (texture);
-                    memset(texture_path, 0, 1024);
-                    snprintf(texture_path, 1023, "%spreviews/%s.png",
-                             ui->getConfig()->getHomePath()->c_str(), rom->parent);
-                    texture = new C2DTexture(texture_path);
-                }
-            }
-            // set preview image
-            if (texture->available) {
-                previewText->setVisibility(Visibility::Hidden);
-                texture->setOriginCenter();
-                texture->setPosition(Vector2f(previewBox->getSize().x / 2, previewBox->getSize().y / 2));
-                float tex_scaling = std::min(
-                        previewBox->getSize().x / texture->getSize().x,
-                        previewBox->getSize().y / texture->getSize().y);
-                texture->setScale(tex_scaling, tex_scaling);
-                add(texture);
-            } else {
-                previewText->setVisibility(Visibility::Visible);
-                delete (texture);
-                texture = nullptr;
+            // load title/preview texture
+            if (!loadTexture(rom, isPreview)) {
+                loadTexture(rom, !isPreview);
             }
 
             // update info text
@@ -191,7 +205,7 @@ C2DUIGuiRomList::C2DUIGuiRomList(C2DUIGuiMain *u, C2DUIRomList *romList, const c
                                            getLocalBounds().height - UI_MARGIN * ui->getScaling() * 2),
                                    ui->getScaling());
     rom_info->infoBox->setOutlineThickness(getOutlineThickness());
-    rom_info->update(roms.empty() ? nullptr : roms[0]);
+    rom_info->update(roms.empty() ? nullptr : roms[0], show_preview);
     add(rom_info);
 }
 
@@ -227,7 +241,6 @@ void C2DUIGuiRomList::updateRomList() {
         float top = ui->getSkin()->tex_title->getGlobalBounds().top
                     + ui->getSkin()->tex_title->getGlobalBounds().height
                     + UI_MARGIN * ui->getScaling();
-
         FloatRect rect = {
                 UI_MARGIN * ui->getScaling(), top,
                 (getLocalBounds().width / 2) - UI_MARGIN * ui->getScaling(),
@@ -243,7 +256,7 @@ void C2DUIGuiRomList::updateRomList() {
     }
 
     if (rom_info) {
-        rom_info->update(nullptr);
+        rom_info->update(nullptr, show_preview);
         title_loaded = 0;
         timer_load.restart();
     }
@@ -260,34 +273,47 @@ int C2DUIGuiRomList::update() {
             if (rom_index < 0)
                 rom_index = (int) (roms.size() - 1);
             list_box->setSelection(rom_index);
-            rom_info->update(nullptr);
+            show_preview = false;
+            rom_info->update(nullptr, show_preview);
             title_loaded = 0;
         } else if (key & Input::Key::KEY_DOWN) {
             rom_index++;
             if ((unsigned int) rom_index >= roms.size())
                 rom_index = 0;
             list_box->setSelection(rom_index);
-            rom_info->update(nullptr);
+            show_preview = false;
+            rom_info->update(nullptr, show_preview);
             title_loaded = 0;
         } else if (key & Input::Key::KEY_RIGHT) {
             rom_index += list_box->getMaxLines();
             if ((unsigned int) rom_index >= roms.size())
                 rom_index = (int) (roms.size() - 1);
             list_box->setSelection(rom_index);
-            rom_info->update(nullptr);
+            show_preview = false;
+            rom_info->update(nullptr, show_preview);
             title_loaded = 0;
         } else if (key & Input::Key::KEY_LEFT) {
             rom_index -= list_box->getMaxLines();
             if (rom_index < 0)
                 rom_index = 0;
             list_box->setSelection(rom_index);
-            rom_info->update(nullptr);
+            show_preview = false;
+            rom_info->update(nullptr, show_preview);
             title_loaded = 0;
         } else if (key & Input::Key::KEY_FIRE1) {
             if (getSelection() != nullptr
                 && getSelection()->state != C2DUIRomList::RomState::MISSING) {
+                show_preview = false;
                 return UI_KEY_RUN_ROM;
             }
+        } else if (key & Input::Key::KEY_FIRE5) {
+            show_preview = !show_preview;
+            rom_info->update(roms.size() > (unsigned int) rom_index ?
+                             roms[rom_index] : nullptr, show_preview);
+        } else if (key & Input::Key::KEY_FIRE6) {
+            show_preview = !show_preview;
+            rom_info->update(roms.size() > (unsigned int) rom_index ?
+                             roms[rom_index] : nullptr, show_preview);
         } else if (key & Input::Key::KEY_START) {
             return UI_KEY_SHOW_MEMU_UI;
         } else if (key & Input::Key::KEY_COIN) {
@@ -302,7 +328,8 @@ int C2DUIGuiRomList::update() {
 
     } else {
         if (!title_loaded && timer_load.getElapsedTime().asMilliseconds() > load_delay) {
-            rom_info->update(roms.size() > (unsigned int) rom_index ? roms[rom_index] : nullptr);
+            rom_info->update(roms.size() > (unsigned int) rom_index ?
+                             roms[rom_index] : nullptr, show_preview);
             title_loaded = 1;
         }
     }

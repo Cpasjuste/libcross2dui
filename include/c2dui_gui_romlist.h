@@ -35,6 +35,7 @@ namespace c2dui {
         std::vector<C2DUIRomList::Rom *> roms;
         int rom_index = 0;
 
+        bool show_preview = false;
         int title_loaded = 0;
         int load_delay = 100;
         c2d::C2DClock timer_load;
