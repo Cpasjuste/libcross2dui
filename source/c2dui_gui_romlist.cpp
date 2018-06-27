@@ -77,7 +77,7 @@ public:
         if (!texture->available) {
 #ifdef __PSNES__
             // try removing the extension (drv_name has extension (.zip, .smc) with psnes and no db.xml)
-            char *drv_name_no_ext = Utility::remove_ext(rom->drv_name, '/');
+            char *drv_name_no_ext = Utility::removeExt(rom->drv_name, '/');
             if (drv_name_no_ext) {
                 delete (texture);
                 memset(texture_path, 0, 1024);
