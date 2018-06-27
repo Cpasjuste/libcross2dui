@@ -115,7 +115,7 @@ C2DUIGuiMenu::C2DUIGuiMenu(C2DUIGuiMain *ui) : Rectangle(Vector2f(0, 0)) {
     }
 
     // menu title
-    title = new Text("TITLE_______________________", *ui->getSkin()->font);
+    title = new Text("TITLE", *ui->getSkin()->font);
     title->setSizeMax(Vector2f(getSize().x - 16, 0));
     title->setFillColor(Color::White);
     title->setOutlineThickness(2);
@@ -186,11 +186,9 @@ void C2DUIGuiMenu::load(bool isRom, C2DUIOptionMenu *om) {
     }
 
     if (isRomMenu) {
-        char name[128];
-        snprintf(name, 128, "%s__________", ui->getUiRomList()->getSelection()->name);
-        title->setString(name);
+        title->setString(ui->getUiRomList()->getSelection()->name);
     } else {
-        title->setString(optionMenu->title + "__________");
+        title->setString(optionMenu->title);
     }
 
     for (auto &line : lines) {
