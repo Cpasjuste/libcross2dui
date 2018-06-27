@@ -201,7 +201,7 @@ void C2DUIGuiMain::addAudio(c2d::Audio *aud) {
     audio = aud;
 }
 
-void C2DUIGuiMain::removeAudio() {
+void C2DUIGuiMain::deleteAudio() {
     if (audio) {
         audio->pause(1);
         delete (audio);

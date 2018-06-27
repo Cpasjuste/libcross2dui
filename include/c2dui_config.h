@@ -27,7 +27,7 @@ namespace c2dui {
 
         virtual std::string *getHomePath();
 
-        virtual const char *getRomPath(int n = 0);
+        virtual std::string *getRomPath(int n = 0);
 
         virtual std::vector<std::string> *getRomPaths();
 

@@ -191,11 +191,11 @@ std::string *C2DUIConfig::getHomePath() {
     return &homePath;
 }
 
-const char *C2DUIConfig::getRomPath(int n) {
+std::string *C2DUIConfig::getRomPath(int n) {
     if (n >= C2DUI_ROMS_PATHS_MAX) {
-        return roms_paths[0].c_str();
+        return &roms_paths[0];
     } else {
-        return roms_paths[n].c_str();
+        return &roms_paths[n];
     }
 }
 

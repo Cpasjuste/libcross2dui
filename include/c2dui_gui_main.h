@@ -56,7 +56,7 @@ namespace c2dui {
 
         void addAudio(c2d::Audio *audio);
 
-        void removeAudio();
+        void deleteAudio();
 
         C2DUIGuiRomList *getUiRomList();
 
