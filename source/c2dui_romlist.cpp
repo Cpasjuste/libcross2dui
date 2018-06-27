@@ -59,11 +59,15 @@ C2DUIRomList::C2DUIRomList(C2DUIGuiMain *_ui, const std::string &emuVersion) {
 
     for (unsigned int i = 0; i < paths->size(); i++) {
         //printf("C2DUIRomList: path: `%s`\n", paths->at(i).c_str());
-        if (!paths[i].empty()) {
-            files[i] = ui->getIo()->getDirList(paths->at(i).c_str());
+        if (!paths->at(i).empty()) {
+            //printf("C2DUIRomList: getDirList(%s) - (path=%i)\n", paths->at(i).c_str(), (int) paths->at(i).size());
+            files.emplace_back(ui->getIo()->getDirList(paths->at(i)));
             //printf("C2DUIRomList: found %i files in `%s`\n", (int) files[i].size(), paths->at(i).c_str());
+        } else {
+            files.emplace_back(std::vector<std::string>());
         }
     }
+    printf("C2DUIRomList()\n");
 }
 
 void C2DUIRomList::build() {
@@ -87,8 +91,6 @@ C2DUIRomList::~C2DUIRomList() {
 
     printf("~C2DUIRomList()\n");
 
-    files->clear();
-
     for (auto &rom : list) {
         if (!rom->parent && rom->icon) {
             delete (rom->icon);
@@ -96,6 +98,4 @@ C2DUIRomList::~C2DUIRomList() {
         }
         delete (rom);
     }
-
-    list.clear();
 }

@@ -68,7 +68,7 @@ namespace c2dui {
         std::vector<Rom *> list;
         std::vector<Hardware> *hardwareList;
         std::vector<std::string> *paths;
-        std::vector<std::string> files[C2DUI_ROMS_PATHS_MAX];
+        std::vector<std::vector<std::string>> files;
         char icon_path[1024];
         char text_str[512];
         float time_start = 0;

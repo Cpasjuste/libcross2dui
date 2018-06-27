@@ -50,9 +50,8 @@ void C2DUINXVideo::clear() {
 
         gfxFlushBuffers();
         gfxSwapBuffers();
+        gfxWaitForVsync();
     }
-
-    gfxWaitForVsync();
 }
 
 void C2DUINXVideo::draw(c2d::Transform &transform) {
