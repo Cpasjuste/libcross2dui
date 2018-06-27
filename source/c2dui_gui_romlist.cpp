@@ -40,7 +40,7 @@ public:
         infoText->setPosition(margin, margin);
         infoText->setOutlineThickness(2);
         infoText->setSizeMax(Vector2f(infoBox->getSize().x, 0));
-        infoText->setLineSpacingModifier((int) (2 * scaling));
+        infoText->setLineSpacingModifier((int) (6 * scaling));
         infoBox->add(infoText);
 
         add(infoBox);
@@ -55,7 +55,6 @@ public:
         previewText->setPosition(previewBox->getSize().x / 2, previewBox->getSize().y / 2);
         previewText->setOutlineThickness(2);
         previewText->setSizeMax(Vector2f(infoBox->getSize().x, 0));
-        previewText->setLineSpacingModifier((int) (8 * scaling));
         previewText->setOriginCenter();
         previewBox->add(previewText);
 
