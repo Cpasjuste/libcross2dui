@@ -74,7 +74,6 @@ void C2DUIGuiEmu::pause() {
 #ifdef __SWITCH__
     // restore ui rotation and scaling
     video->clear();
-    //gfxSetMode(GfxMode_TiledDouble);
     gfxConfigureTransform(NATIVE_WINDOW_TRANSFORM_FLIP_V);
     gfxConfigureResolution(0, 0);
 #endif

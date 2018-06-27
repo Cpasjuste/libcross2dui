@@ -303,7 +303,6 @@ void C2DUINXVideo::updateScaling() {
     Vector2f scale_max;
     float sx = 1, sy = 1;
 
-    //gfxSetMode(GfxMode_TiledDouble);
     setFiltering(ui->getConfig()->getValue(C2DUIOption::Index::ROM_FILTER, true));
 
     // clear fb before changing res/rot
