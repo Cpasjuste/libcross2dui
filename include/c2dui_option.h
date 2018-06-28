@@ -45,6 +45,7 @@ namespace c2dui {
             ROM_FRAMESKIP,
             ROM_NEOBIOS,
             ROM_AUDIO,
+            ROM_CHEATS,
             MENU_JOYPAD,
             JOY_UP,
             JOY_DOWN,
