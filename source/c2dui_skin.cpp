@@ -11,6 +11,9 @@
 #elif __PSNES__
 #include "../../psnes/data/skin/title.h"
 #include "../../psnes/data/skin/default.h"
+#elif __PNES__
+#include "../../pnes/data/skin/title.h"
+#include "../../pnes/data/skin/default.h"
 #endif
 #endif
 

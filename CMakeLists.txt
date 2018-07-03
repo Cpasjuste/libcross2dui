@@ -15,6 +15,7 @@ option(BUILD_NX_GL "Build with NX support (software, osmesa)" OFF)
 
 option(BUILD_PFBA "Build with PFBA support" OFF)
 option(BUILD_SNES9X "Build with SNES9X support" OFF)
+option(BUILD_NES "Build with NES (MESEN) support" OFF)
 
 option(UPDATE_CONFIG "Force config file updating" OFF)
 
@@ -64,6 +65,11 @@ elseif (BUILD_SNES9X)
     # SNES9X
     ##############
     list(APPEND FLAGS -D__PSNES__)
+elseif (BUILD_NES)
+    ##############
+    # NES (MESEN)
+    ##############
+    list(APPEND FLAGS -D__PNES__)
 endif (BUILD_PFBA)
 
 if (BUILD_PSP2)

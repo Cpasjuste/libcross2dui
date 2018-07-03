@@ -2,6 +2,10 @@
 // Created by cpasjuste on 03/02/18.
 //
 
+#ifdef __SWITCH__
+#include <switch.h>
+#endif
+
 #include "c2dui.h"
 
 using namespace c2d;

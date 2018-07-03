@@ -4,7 +4,9 @@
 
 #ifdef __SWITCH__
 
+#include <switch.h>
 #include <png.h>
+
 #include "c2dui.h"
 
 #ifdef __PFBA__
@@ -19,15 +21,19 @@ extern "C" int BurnDrvGetFlags();
 using namespace c2d;
 using namespace c2dui;
 
-C2DUINXVideo::C2DUINXVideo(C2DUIGuiMain *gui, void **_pixels, int *_pitch, const c2d::Vector2f &size)
-        : Texture(size, C2D_TEXTURE_FMT_RGB565) {
+C2DUINXVideo::C2DUINXVideo(C2DUIGuiMain *gui, void **_pixels, int *_pitch,
+                           const c2d::Vector2f &size, int format)
+        : Texture(size, format) {
 
     this->ui = gui;
 
-    printf("C2DUINXVideo::C2DUINXVideo(%i, %i)\n", (int) getSize().x, (int) getSize().y);
+    printf("C2DUINXVideo::C2DUINXVideo(%i, %i, %i)\n", (int) getSize().x, (int) getSize().y, format);
 
     pixels = (unsigned char *) malloc((size_t) (size.x * size.y * bpp));
-    lock(nullptr, _pixels, _pitch);
+
+    if (_pixels) {
+        lock(nullptr, _pixels, _pitch);
+    }
 
     updateScaling();
 

@@ -3,6 +3,11 @@
 //
 
 #include <algorithm>
+#ifdef __SWITCH__
+extern "C" {
+#include <switch/services/hid.h>
+}
+#endif
 
 #include "c2dui.h"
 

@@ -2,6 +2,12 @@
 // Created by cpasjuste on 30/01/18.
 //
 
+#ifdef __SWITCH__
+extern "C" {
+#include <switch/services/hid.h>
+}
+#endif
+
 #include "c2dui.h"
 
 using namespace c2d;

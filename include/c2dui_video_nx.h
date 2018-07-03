@@ -16,7 +16,8 @@ namespace c2dui {
 
     public:
 
-        C2DUINXVideo(C2DUIGuiMain *ui, void **pixels, int *pitch, const c2d::Vector2f &size);
+        C2DUINXVideo(C2DUIGuiMain *ui, void **pixels, int *pitch,
+                     const c2d::Vector2f &size, int format = C2D_TEXTURE_FMT_RGB565);
 
         ~C2DUINXVideo();
 
