@@ -17,6 +17,7 @@ C2DUIGuiEmu::C2DUIGuiEmu(C2DUIGuiMain *u) : Rectangle(u->getRenderer()->getSize(
     fpsText = new Text("0123456789", *ui->getSkin()->font, (unsigned int) ui->getFontSize());
     fpsText->setString("FPS: 00/60");
     fpsText->setPosition(16, 16);
+    fpsText->setVisibility(Visibility::Hidden);
     add(fpsText);
 
     setVisibility(Hidden);
