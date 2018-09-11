@@ -1,7 +1,7 @@
 //
 // Created by cpasjuste on 01/12/16.
 //
-#ifndef __SWITCH__
+//#ifndef __SWITCH__
 
 #include "c2dui.h"
 
@@ -151,4 +151,4 @@ void C2DUIVideo::updateScaling() {
     setRotation(rotation);
 }
 
-#endif // __SWITCH__
+//#endif // __SWITCH__

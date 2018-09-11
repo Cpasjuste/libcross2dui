@@ -310,9 +310,9 @@ int C2DUIGuiMenu::update() {
                     case C2DUIOption::ROM_ROTATION:
                     case C2DUIOption::Index::ROM_SCALING:
                         if (isEmuRunning) {
-#ifndef __SWITCH__
+//#ifndef __SWITCH__
                             ui->getUiEmu()->getVideo()->updateScaling();
-#endif
+//#endif
                         }
                         break;
                     case C2DUIOption::Index::ROM_FILTER:

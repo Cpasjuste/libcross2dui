@@ -2,6 +2,7 @@
 // Created by cpasjuste on 01/12/16.
 //
 
+#if 0
 #ifdef __SWITCH__
 
 #include <switch.h>
@@ -399,4 +400,5 @@ C2DUINXVideo::~C2DUINXVideo() {
     printf("Done\n");
 }
 
+#endif
 #endif

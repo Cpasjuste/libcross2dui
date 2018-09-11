@@ -76,12 +76,13 @@ void C2DUIGuiEmu::pause() {
         ui->getAudio()->pause(1);
     }
     ui->updateInputMapping(false);
-#ifdef __SWITCH__
+
+//#ifdef __SWITCH__
     // restore ui rotation and scaling
-    video->clear();
-    gfxConfigureTransform(NATIVE_WINDOW_TRANSFORM_FLIP_V);
-    gfxConfigureResolution(0, 0);
-#endif
+//    video->clear();
+//    gfxConfigureTransform(NATIVE_WINDOW_TRANSFORM_FLIP_V);
+//    gfxConfigureResolution(0, 0);
+//#endif
 }
 
 void C2DUIGuiEmu::resume() {
@@ -95,10 +96,10 @@ void C2DUIGuiEmu::resume() {
     }
 
     ui->getRenderer()->clear();
-#ifdef __SWITCH__
+//#ifdef __SWITCH__
     // restore game rotation and scaling
-    video->updateScaling();
-#endif
+//    video->updateScaling();
+//#endif
 
     paused = false;
 }
