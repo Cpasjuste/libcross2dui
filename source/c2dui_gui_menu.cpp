@@ -67,11 +67,11 @@ public:
                     if (texture->available) {
                         value->setVisibility(Hidden);
                         float tex_scaling = std::min(
-                                ((getSize().x * 0.33f) - 32) / texture->getSize().x,
-                                (getSize().y / 2 + 4) / texture->getSize().y);
+                                ((getSize().x * 0.33f) - 32) / texture->getTextureRect().width,
+                                (getSize().y / 2 + 4) / texture->getTextureRect().height);
                         texture->setScale(tex_scaling, tex_scaling);
                         texture->setPosition((getSize().x * 0.66f) + 16, getSize().y / 2 - 3);
-                        texture->setOrigin(0, texture->getSize().y / 2);
+                        texture->setOrigin(0, texture->getTextureRect().height / 2);
                         add(texture);
                     } else {
                         delete (texture);

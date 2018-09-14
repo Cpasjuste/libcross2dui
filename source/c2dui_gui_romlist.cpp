@@ -102,8 +102,8 @@ public:
             texture->setOriginCenter();
             texture->setPosition(Vector2f(previewBox->getSize().x / 2, previewBox->getSize().y / 2));
             float tex_scaling = std::min(
-                    previewBox->getSize().x / texture->getSize().x,
-                    previewBox->getSize().y / texture->getSize().y);
+                    previewBox->getSize().x / texture->getTextureRect().width,
+                    previewBox->getSize().y / texture->getTextureRect().height);
             texture->setScale(tex_scaling, tex_scaling);
             add(texture);
         } else {
@@ -187,7 +187,7 @@ C2DUIGuiRomList::C2DUIGuiRomList(C2DUIGuiMain *u, C2DUIRomList *romList, const c
     C2DUISkin *skin = ui->getSkin();
     if (skin->tex_title->available) {
         skin->tex_title->setPosition(UI_MARGIN * ui->getScaling(), UI_MARGIN * ui->getScaling());
-        float scale = (getLocalBounds().width / 3) / skin->tex_title->getSize().x;
+        float scale = (getLocalBounds().width / 3) / skin->tex_title->getTextureRect().width;
         skin->tex_title->setScale(scale, scale);
         add(skin->tex_title);
     }

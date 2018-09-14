@@ -21,7 +21,7 @@ C2DUIVideo::C2DUIVideo(C2DUIGuiMain *gui, void **_pixels, int *_pitch,
                        const c2d::Vector2f &size, int format)
         : C2DTexture(size, format) {
 
-    printf("game resolution: %ix%i\n", (int) getSize().x, (int) getSize().y);
+    printf("game resolution: %ix%i\n", (int) getTextureRect().width, (int) getTextureRect().height);
 
     this->ui = gui;
 
@@ -94,11 +94,11 @@ void C2DUIVideo::updateScaling() {
 #endif
 
     if (rotated) {
-        scale_max.x = screen.x / getSize().y;
-        scale_max.y = screen.y / getSize().x;
+        scale_max.x = screen.x / getTextureRect().height;
+        scale_max.y = screen.y / getTextureRect().width;
     } else {
-        scale_max.x = screen.x / getSize().x;
-        scale_max.y = screen.y / getSize().y;
+        scale_max.x = screen.x / getTextureRect().width;
+        scale_max.y = screen.y / getTextureRect().height;
     }
 
     switch (scale_mode) {
@@ -127,12 +127,12 @@ void C2DUIVideo::updateScaling() {
         case 4: // fit 4:3
             if (rotated) {
                 sx = scale_max.y;
-                float size_y = sx * getSize().x * 1.33f;
-                sy = std::min(scale_max.x, size_y / getSize().y);
+                float size_y = sx * getTextureRect().width * 1.33f;
+                sy = std::min(scale_max.x, size_y / getTextureRect().height);
             } else {
                 sy = scale_max.y;
-                float size_x = sy * getSize().y * 1.33f;
-                sx = std::min(scale_max.x, size_x / getSize().x);
+                float size_x = sy * getTextureRect().width * 1.33f;
+                sx = std::min(scale_max.x, size_x / getTextureRect().height);
             }
             break;
 
