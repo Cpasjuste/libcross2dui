@@ -24,7 +24,7 @@ C2DUISkin::C2DUISkin(const std::string &p, const std::vector<Button> &btns) {
 
     this->path = p + "skin/";
 
-#ifdef __NX__
+#ifdef __SWITCH__
     tex_title = (Texture *) new C2DTexture((const unsigned char *) pfba_title, pfba_title_length);
     font = new C2DFont();
     font->loadFromMemory(pfba_font, pfba_font_length);
