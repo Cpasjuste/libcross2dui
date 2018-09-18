@@ -5,10 +5,6 @@
 #ifndef _VIDEO_H_
 #define _VIDEO_H_
 
-//#ifdef __SWITCH__
-//#include "c2dui_video_nx.h"
-//#else
-
 #include <cstring>
 
 namespace c2dui {
@@ -28,5 +24,4 @@ namespace c2dui {
     };
 }
 
-//#endif //  __SWITCH__
 #endif //_VIDEO_H_

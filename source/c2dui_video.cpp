@@ -1,7 +1,6 @@
 //
 // Created by cpasjuste on 01/12/16.
 //
-//#ifndef __SWITCH__
 
 #include "c2dui.h"
 
@@ -132,7 +131,7 @@ void C2DUIVideo::updateScaling() {
             } else {
                 sy = scale_max.y;
                 float size_x = sy * getTextureRect().width * 1.33f;
-                sx = std::min(scale_max.x, size_x / getTextureRect().height);
+                sx = std::min(scale_max.x, size_x / getTextureRect().width);
             }
             break;
 
@@ -150,5 +149,3 @@ void C2DUIVideo::updateScaling() {
     setScale(sx, sy);
     setRotation(rotation);
 }
-
-//#endif // __SWITCH__
