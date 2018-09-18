@@ -192,9 +192,6 @@ C2DUIGuiRomList::C2DUIGuiRomList(C2DUIGuiMain *u, C2DUIRomList *romList, const c
         add(skin->tex_title);
     }
 
-    // filter roms
-    updateRomList();
-
     // add rom info ui
     rom_info = new C2DUIGuiRomInfo(ui, *skin->font, ui->getFontSize(),
                                    FloatRect(
@@ -204,8 +201,10 @@ C2DUIGuiRomList::C2DUIGuiRomList(C2DUIGuiMain *u, C2DUIRomList *romList, const c
                                            getLocalBounds().height - UI_MARGIN * ui->getScaling() * 2),
                                    ui->getScaling());
     rom_info->infoBox->setOutlineThickness(getOutlineThickness());
-    rom_info->update(roms.empty() ? nullptr : roms[0], show_preview);
     add(rom_info);
+
+    // filter roms
+    updateRomList();
 }
 
 C2DUIRomList::Rom *C2DUIGuiRomList::getSelection() {
