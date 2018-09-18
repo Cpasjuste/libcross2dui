@@ -130,7 +130,7 @@ void C2DUIVideo::updateScaling() {
                 sy = std::min(scale_max.x, size_y / getTextureRect().height);
             } else {
                 sy = scale_max.y;
-                float size_x = sy * getTextureRect().width * 1.33f;
+                float size_x = sy * getTextureRect().height * 1.33f;
                 sx = std::min(scale_max.x, size_x / getTextureRect().width);
             }
             break;
