@@ -91,6 +91,10 @@ namespace c2dui {
 
         const char *getName();
 
+        std::string getInfo() const;
+
+        void setInfo(const std::string &info);
+
         const char *getValue();
 
         void next();
@@ -99,6 +103,7 @@ namespace c2dui {
 
     private:
         std::string text;
+        std::string info;
         std::vector<std::string> options;
     };
 }

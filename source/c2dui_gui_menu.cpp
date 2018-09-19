@@ -300,6 +300,10 @@ int C2DUIGuiMenu::update() {
                 }
                 lines[optionIndex]->update(option);
 
+                if (!option->getInfo().empty()) {
+                    ui->getUiMessageBox()->show("WARNING", option->getInfo(), "OK");
+                }
+
                 switch (option->index) {
                     case C2DUIOption::Index::GUI_SHOW_CLONES:
                     case C2DUIOption::Index::GUI_SHOW_ALL:
@@ -310,9 +314,7 @@ int C2DUIGuiMenu::update() {
                     case C2DUIOption::ROM_ROTATION:
                     case C2DUIOption::Index::ROM_SCALING:
                         if (isEmuRunning) {
-//#ifndef __SWITCH__
                             ui->getUiEmu()->getVideo()->updateScaling();
-//#endif
                         }
                         break;
                     case C2DUIOption::Index::ROM_FILTER:
