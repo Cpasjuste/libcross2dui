@@ -11,7 +11,6 @@ option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
 option(BUILD_NX "Build with NX (SWITCH) support" OFF)
-option(BUILD_NX_GL "Build with NX support (software, osmesa)" OFF)
 
 option(BUILD_PFBA "Build with PFBA support" OFF)
 option(BUILD_SNES9X "Build with SNES9X support" OFF)

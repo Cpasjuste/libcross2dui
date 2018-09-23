@@ -71,8 +71,8 @@ public:
                 texture = new C2DTexture(shot);
                 if (texture->available) {
                     float tex_scaling = std::min(
-                            getSize().x / texture->getSize().x,
-                            getSize().y / texture->getSize().y);
+                            getSize().x / texture->getTextureRect().width,
+                            getSize().y / texture->getTextureRect().height);
                     texture->setScale(tex_scaling, tex_scaling);
                     texture->setPosition(getSize().x / 2, getSize().y / 2);
                     texture->setOriginCenter();

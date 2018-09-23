@@ -27,7 +27,7 @@
 #elif __3DS__
 #define SCR_W   400
 #define SCR_H   240
-#elif __NX__
+#elif __SWITCH__
 #define SCR_W   1280
 #define SCR_H   720
 #else

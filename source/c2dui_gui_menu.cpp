@@ -67,11 +67,11 @@ public:
                     if (texture->available) {
                         value->setVisibility(Hidden);
                         float tex_scaling = std::min(
-                                ((getSize().x * 0.33f) - 32) / texture->getSize().x,
-                                (getSize().y / 2 + 4) / texture->getSize().y);
+                                ((getSize().x * 0.33f) - 32) / texture->getTextureRect().width,
+                                (getSize().y / 2 + 4) / texture->getTextureRect().height);
                         texture->setScale(tex_scaling, tex_scaling);
                         texture->setPosition((getSize().x * 0.66f) + 16, getSize().y / 2 - 3);
-                        texture->setOrigin(0, texture->getSize().y / 2);
+                        texture->setOrigin(0, texture->getTextureRect().height / 2);
                         add(texture);
                     } else {
                         delete (texture);
@@ -300,6 +300,10 @@ int C2DUIGuiMenu::update() {
                 }
                 lines[optionIndex]->update(option);
 
+                if (!option->getInfo().empty()) {
+                    ui->getUiMessageBox()->show("WARNING", option->getInfo(), "OK");
+                }
+
                 switch (option->index) {
                     case C2DUIOption::Index::GUI_SHOW_CLONES:
                     case C2DUIOption::Index::GUI_SHOW_ALL:
@@ -310,9 +314,7 @@ int C2DUIGuiMenu::update() {
                     case C2DUIOption::ROM_ROTATION:
                     case C2DUIOption::Index::ROM_SCALING:
                         if (isEmuRunning) {
-#ifndef __SWITCH__
                             ui->getUiEmu()->getVideo()->updateScaling();
-#endif
                         }
                         break;
                     case C2DUIOption::Index::ROM_FILTER:

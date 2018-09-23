@@ -20,6 +20,14 @@ const char *C2DUIOption::getName() {
     return text.c_str();
 }
 
+std::string C2DUIOption::getInfo() const {
+    return info;
+}
+
+void C2DUIOption::setInfo(const std::string &inf) {
+    info = inf;
+}
+
 const char *C2DUIOption::getValue() {
     if ((size_t) value >= options.size()) {
         return "NONE";

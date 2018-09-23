@@ -31,8 +31,8 @@ C2DUIRomList::C2DUIRomList(C2DUIGuiMain *_ui, const std::string &emuVersion) {
     texture->setOriginCenter();
     texture->setPosition(Vector2f(rect->getSize().x / 2, rect->getSize().y / 2));
     float scaling = std::min(
-            (rect->getSize().x - 64) / texture->getSize().x,
-            (rect->getSize().y - 64) / texture->getSize().y);
+            (rect->getSize().x - 64) / texture->getTextureRect().width,
+            (rect->getSize().y - 64) / texture->getTextureRect().height);
     texture->setScale(scaling, scaling);
     rect->add(texture);
 
