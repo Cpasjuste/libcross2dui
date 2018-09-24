@@ -166,7 +166,7 @@ C2DUIGuiMenu::C2DUIGuiMenu(C2DUIGuiMain *ui) : Rectangle(Vector2f(0, 0)) {
     optionMenuRom->addChild("RETURN");
     optionMenuRom->addChild("EXIT");
 
-    tweenPosition = new TweenPosition({-getSize().x, getPosition().y}, getPosition(), 0.5f);
+    tweenPosition = new TweenPosition({getPosition().x, -getSize().y}, getPosition(), 0.4f);
     tweenPosition->setState(TweenState::Stopped);
     add(tweenPosition);
 
