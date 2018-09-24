@@ -236,8 +236,6 @@ C2DUIGuiState::C2DUIGuiState(C2DUIGuiMain *u) : Rectangle(Vector2f(0, 0)) {
     add(uiStateList);
 
     setVisibility(Hidden);
-
-    printf("C2DUIGuiState()\n");
 }
 
 void C2DUIGuiState::load() {

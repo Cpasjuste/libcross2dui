@@ -141,6 +141,8 @@ C2DUIGuiMenu::C2DUIGuiMenu(C2DUIGuiMain *ui) : Rectangle(Vector2f(0, 0)) {
     highlight->setOutlineThickness(1);
     highlight->setOutlineColor(COL_ORANGE);
     highlight->setFillColor(Color(153, 255, 51, 100));
+    auto *tween = new TweenAlpha(50, 150, 1.0f, TweenLoop::PingPong);
+    highlight->add(tween);
     add(highlight);
 
     // add lines of text
@@ -163,6 +165,14 @@ C2DUIGuiMenu::C2DUIGuiMenu(C2DUIGuiMain *ui) : Rectangle(Vector2f(0, 0)) {
     optionMenuRom->addChild("STATES");
     optionMenuRom->addChild("RETURN");
     optionMenuRom->addChild("EXIT");
+
+    tweenPosition = new TweenPosition({-getSize().x, getPosition().y}, getPosition(), 0.5f);
+    tweenPosition->setState(TweenState::Stopped);
+    add(tweenPosition);
+
+    tweenAlpha = new TweenAlpha(0, getFillColor().a, 1.0f);
+    tweenAlpha->setState(TweenState::Stopped);
+    add(tweenAlpha);
 
     setVisibility(Hidden);
 }
@@ -252,8 +262,10 @@ void C2DUIGuiMenu::load(bool isRom, C2DUIOptionMenu *om) {
 
     updateHighlight();
 
-    setVisibility(Visible);
-    setLayer(1);
+    if (getVisibility() != Visible) {
+        setVisibility(Visible);
+        setLayer(1);
+    }
 }
 
 void C2DUIGuiMenu::updateHighlight() {

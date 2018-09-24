@@ -2,8 +2,8 @@
 // Created by cpasjuste on 30/01/18.
 //
 
-#ifndef PFBA_GUI_MENU_H
-#define PFBA_GUI_MENU_H
+#ifndef C2DUI_GUI_MENU_H
+#define C2DUI_GUI_MENU_H
 
 class MenuLine;
 
@@ -31,18 +31,20 @@ namespace c2dui {
 
         void updateHighlight();
 
-        C2DUIGuiMain *ui = NULL;
-        c2d::Text *title = NULL;
-        c2d::Rectangle *highlight = NULL;
+        C2DUIGuiMain *ui = nullptr;
+        c2d::Text *title = nullptr;
+        c2d::Rectangle *highlight = nullptr;
         std::vector<MenuLine *> lines;
         c2d::Color fillColor[2] = {
                 {55, 55, 55, 230},
                 {55, 55, 55, 180}};
 
-        C2DUIOptionMenu *optionMenuGui = NULL;
-        C2DUIOptionMenu *optionMenuRom = NULL;
-        C2DUIOptionMenu *optionMenu = NULL;
+        C2DUIOptionMenu *optionMenuGui = nullptr;
+        C2DUIOptionMenu *optionMenuRom = nullptr;
+        C2DUIOptionMenu *optionMenu = nullptr;
         std::vector <C2DUIOption> *options;
+        c2d::TweenPosition *tweenPosition;
+        c2d::TweenAlpha *tweenAlpha;
         int optionIndex = 0;
         int optionCount = 0;
         bool isRomMenu = false;
@@ -50,4 +52,4 @@ namespace c2dui {
     };
 }
 
-#endif //PFBA_GUI_MENU_H
+#endif //C2DUI_GUI_MENU_H

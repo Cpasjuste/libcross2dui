@@ -248,6 +248,8 @@ void C2DUIGuiRomList::updateRomList() {
         list_box->setOutlineThickness(getOutlineThickness());
         list_box->setFillColor(Color::GrayLight);
         list_box->setOutlineColor(COL_ORANGE);
+        auto *tween = new TweenAlpha(50, 150, 1.0f, TweenLoop::PingPong);
+        list_box->getHighLight()->add(tween);
         add(list_box);
     } else {
         list_box->setFiles((std::vector<Io::File *> &) roms);
