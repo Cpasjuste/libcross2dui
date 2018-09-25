@@ -2,8 +2,8 @@
 // Created by cpasjuste on 25/11/16.
 //
 
-#ifndef _VIDEO_H_
-#define _VIDEO_H_
+#ifndef C2DUI_VIDEO_H_
+#define C2DUI_VIDEO_H_
 
 #include <cstring>
 
@@ -24,4 +24,4 @@ namespace c2dui {
     };
 }
 
-#endif //_VIDEO_H_
+#endif //C2DUI_VIDEO_H_
