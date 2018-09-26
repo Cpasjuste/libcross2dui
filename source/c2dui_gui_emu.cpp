@@ -3,7 +3,9 @@
 //
 
 #ifdef __SWITCH__
+
 #include <switch.h>
+
 #endif
 
 #include "c2dui.h"
@@ -27,6 +29,16 @@ C2DUIGuiEmu::C2DUIGuiEmu(C2DUIGuiMain *u) : Rectangle(u->getRenderer()->getSize(
     setVisibility(Hidden);
 }
 
+void C2DUIGuiEmu::addAudio(c2d::Audio *_audio) {
+
+    if (audio) {
+        delete (audio);
+        audio = nullptr;
+    }
+
+    audio = _audio;
+}
+
 void C2DUIGuiEmu::addAudio(int rate, int fps, Audio::C2DAudioCallback cb) {
 
     if (audio) {
@@ -34,7 +46,19 @@ void C2DUIGuiEmu::addAudio(int rate, int fps, Audio::C2DAudioCallback cb) {
         audio = nullptr;
     }
 
-    audio = new C2DAudio(rate, fps, cb);
+    C2DAudio *_audio = new C2DAudio(rate, fps, cb);
+    addAudio(_audio);
+}
+
+void C2DUIGuiEmu::addVideo(C2DUIVideo *_video) {
+
+    if (video) {
+        delete (video);
+        video = nullptr;
+    }
+
+    video = _video;
+    add(video);
 }
 
 void C2DUIGuiEmu::addVideo(C2DUIGuiMain *ui, void **pixels, int *pitch, const c2d::Vector2f &size, int format) {
@@ -44,8 +68,8 @@ void C2DUIGuiEmu::addVideo(C2DUIGuiMain *ui, void **pixels, int *pitch, const c2
         video = nullptr;
     }
 
-    video = new C2DUIVideo(ui, pixels, pitch, size, format);
-    add(video);
+    C2DUIVideo *_video = new C2DUIVideo(ui, pixels, pitch, size, format);
+    addVideo(_video);
 }
 
 int C2DUIGuiEmu::run(C2DUIRomList::Rom *rom) {

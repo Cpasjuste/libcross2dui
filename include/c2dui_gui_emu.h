@@ -37,7 +37,11 @@ namespace c2dui {
 
         c2d::Audio *getAudio();
 
+        void addAudio(c2d::Audio *audio);
+
         void addAudio(int rate = 48000, int fps = 60, c2d::Audio::C2DAudioCallback cb = nullptr);
+
+        void addVideo(C2DUIVideo *video);
 
         void addVideo(C2DUIGuiMain *ui, void **pixels, int *pitch,
                       const c2d::Vector2f &size, int format = C2D_TEXTURE_FMT_RGB565);
