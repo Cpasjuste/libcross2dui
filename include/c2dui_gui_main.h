@@ -28,7 +28,7 @@ namespace c2dui {
 
     public:
 
-        C2DUIGuiMain(c2d::Renderer *renderer, c2d::Io *io, c2d::Input *input, c2d::Audio *audio,
+        C2DUIGuiMain(c2d::Renderer *renderer, c2d::Io *io, c2d::Input *input,
                      c2dui::C2DUIConfig *config, c2dui::C2DUISkin *skin);
 
         virtual ~C2DUIGuiMain();
@@ -52,12 +52,6 @@ namespace c2dui {
 
         c2d::Io *getIo();
 
-        c2d::Audio *getAudio();
-
-        void addAudio(c2d::Audio *audio);
-
-        void deleteAudio();
-
         C2DUIGuiRomList *getUiRomList();
 
         C2DUIGuiEmu *getUiEmu();
@@ -76,20 +70,19 @@ namespace c2dui {
 
     private:
 
-        c2dui::C2DUIConfig *config = NULL;
-        c2dui::C2DUISkin *skin = NULL;
+        c2dui::C2DUIConfig *config = nullptr;
+        c2dui::C2DUISkin *skin = nullptr;
 
-        c2d::Io *io = NULL;
-        c2d::Renderer *renderer = NULL;
-        c2d::Input *input = NULL;
-        c2d::Audio *audio = NULL;
+        c2d::Io *io = nullptr;
+        c2d::Renderer *renderer = nullptr;
+        c2d::Input *input = nullptr;
 
-        C2DUIGuiMenu *uiMenu = NULL;
-        C2DUIGuiRomList *uiRomList = NULL;
-        C2DUIGuiEmu *uiEmu = NULL;
-        C2DUIGuiState *uiState = NULL;
-        C2DUIGuiProgressBox *uiProgressBox = NULL;
-        c2d::MessageBox *uiMessageBox = NULL;
+        C2DUIGuiMenu *uiMenu = nullptr;
+        C2DUIGuiRomList *uiRomList = nullptr;
+        C2DUIGuiEmu *uiEmu = nullptr;
+        C2DUIGuiState *uiState = nullptr;
+        C2DUIGuiProgressBox *uiProgressBox = nullptr;
+        c2d::MessageBox *uiMessageBox = nullptr;
 
         float scaling = 1;
 

@@ -13,8 +13,6 @@ using namespace c2dui;
 
 extern int BurnStateLoad(char *szName, int bAll, int (*pLoadGame)());
 
-extern int MakeScreenShot(const char *dest);
-
 extern int BurnStateSave(char *szName, int bAll);
 
 extern int DrvInitCallback();
@@ -117,11 +115,10 @@ public:
         printf("StateSave: %s\n", path);
 #ifdef __PFBA__
         BurnStateSave(path, 1);
-        MakeScreenShot(shot);
 #elif __PSNES__
         S9xFreezeGame(path);
-        ui->getUiEmu()->getVideo()->save(shot);
 #endif
+        ui->getUiEmu()->getVideo()->save(shot);
         loadTexture();
     }
 

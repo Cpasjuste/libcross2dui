@@ -3,6 +3,7 @@
 //
 
 #include <algorithm>
+
 #ifdef __SWITCH__
 extern "C" {
 #include <switch/services/hid.h>
@@ -14,15 +15,13 @@ extern "C" {
 using namespace c2d;
 using namespace c2dui;
 
-C2DUIGuiMain::C2DUIGuiMain(Renderer *r, Io *i, Input *in, Audio *a,
-                           C2DUIConfig *cfg, C2DUISkin *s) {
+C2DUIGuiMain::C2DUIGuiMain(Renderer *r, Io *i, Input *in, C2DUIConfig *cfg, C2DUISkin *s) {
 
     io = i;
     renderer = r;
     skin = s;
     config = cfg;
     input = in;
-    audio = a;
 
     // scaling factor mainly used for borders,
     // based on vita resolution..
@@ -196,22 +195,6 @@ C2DUIConfig *C2DUIGuiMain::getConfig() {
 
 Io *C2DUIGuiMain::getIo() {
     return io;
-}
-
-c2d::Audio *C2DUIGuiMain::getAudio() {
-    return audio;
-}
-
-void C2DUIGuiMain::addAudio(c2d::Audio *aud) {
-    audio = aud;
-}
-
-void C2DUIGuiMain::deleteAudio() {
-    if (audio) {
-        audio->pause(1);
-        delete (audio);
-        audio = nullptr;
-    }
 }
 
 C2DUIGuiRomList *C2DUIGuiMain::getUiRomList() {
