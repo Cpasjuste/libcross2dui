@@ -166,13 +166,9 @@ C2DUIGuiMenu::C2DUIGuiMenu(C2DUIGuiMain *ui) : Rectangle(Vector2f(0, 0)) {
     optionMenuRom->addChild("RETURN");
     optionMenuRom->addChild("EXIT");
 
-    tweenPosition = new TweenPosition({getPosition().x, -getSize().y}, getPosition(), 0.4f);
+    tweenPosition = new TweenPosition({getPosition().x, -getSize().y}, getPosition(), 0.3f);
     tweenPosition->setState(TweenState::Stopped);
     add(tweenPosition);
-
-    tweenAlpha = new TweenAlpha(0, getFillColor().a, 1.0f);
-    tweenAlpha->setState(TweenState::Stopped);
-    add(tweenAlpha);
 
     setVisibility(Hidden);
 }

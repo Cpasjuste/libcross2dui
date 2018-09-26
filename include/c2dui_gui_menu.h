@@ -44,7 +44,6 @@ namespace c2dui {
         C2DUIOptionMenu *optionMenu = nullptr;
         std::vector <C2DUIOption> *options;
         c2d::TweenPosition *tweenPosition;
-        c2d::TweenAlpha *tweenAlpha;
         int optionIndex = 0;
         int optionCount = 0;
         bool isRomMenu = false;
