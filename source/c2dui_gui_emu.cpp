@@ -27,6 +27,27 @@ C2DUIGuiEmu::C2DUIGuiEmu(C2DUIGuiMain *u) : Rectangle(u->getRenderer()->getSize(
     setVisibility(Hidden);
 }
 
+void C2DUIGuiEmu::addAudio(int rate, int fps, Audio::C2DAudioCallback cb) {
+
+    if (audio) {
+        delete (audio);
+        audio = nullptr;
+    }
+
+    audio = new C2DAudio(rate, fps, cb);
+}
+
+void C2DUIGuiEmu::addVideo(C2DUIGuiMain *ui, void **pixels, int *pitch, const c2d::Vector2f &size, int format) {
+
+    if (video) {
+        delete (video);
+        video = nullptr;
+    }
+
+    video = new C2DUIVideo(ui, pixels, pitch, size, format);
+    add(video);
+}
+
 int C2DUIGuiEmu::run(C2DUIRomList::Rom *rom) {
 
     printf("C2DUIGuiEmu::run()\n");
@@ -46,19 +67,36 @@ int C2DUIGuiEmu::run(C2DUIRomList::Rom *rom) {
     return 0;
 }
 
+void C2DUIGuiEmu::resume() {
+
+    printf("C2DUIGuiEmu::resume()\n");
+
+    ui->updateInputMapping(true);
+
+    if (audio) {
+        audio->pause(0);
+    }
+
+    ui->getRenderer()->clear();
+
+    paused = false;
+}
+
 void C2DUIGuiEmu::stop() {
 
     printf("C2DUIGuiEmu::stop()\n");
 
-    if (ui->getAudio()) {
-        ui->getAudio()->pause(1);
+    if (audio) {
+        printf("Closing audio...\n");
+        audio->pause(1);
+        delete (audio);
+        audio = nullptr;
     }
 
     if (video) {
         printf("Closing video...\n");
         delete (video);
         video = nullptr;
-        printf("Done\n");
     }
 
     ui->updateInputMapping(false);
@@ -70,41 +108,13 @@ void C2DUIGuiEmu::pause() {
     printf("C2DUIGuiEmu::pause()\n");
 
     paused = true;
-    if (ui->getAudio()) {
-        ui->getAudio()->pause(1);
+    if (audio) {
+        audio->pause(1);
     }
     ui->updateInputMapping(false);
 }
 
-void C2DUIGuiEmu::resume() {
-
-    printf("C2DUIGuiEmu::resume()\n");
-
-    ui->updateInputMapping(true);
-
-    if (ui->getAudio()) {
-        ui->getAudio()->pause(0);
-    }
-
-    ui->getRenderer()->clear();
-
-    paused = false;
-}
-
-void C2DUIGuiEmu::updateFb() {
-
-}
-
-void C2DUIGuiEmu::renderFrame(bool draw, int drawFps, float fps) {
-
-}
-
-void C2DUIGuiEmu::updateFrame() {
-
-}
-
 int C2DUIGuiEmu::update() {
-
     return 0;
 }
 
@@ -116,9 +126,8 @@ C2DUIVideo *C2DUIGuiEmu::getVideo() {
     return video;
 }
 
-void C2DUIGuiEmu::setVideo(C2DUIVideo *v) {
-    video = v;
-    add(video);
+c2d::Audio *C2DUIGuiEmu::getAudio() {
+    return audio;
 }
 
 float C2DUIGuiEmu::getFrameDuration() {
@@ -140,3 +149,4 @@ char *C2DUIGuiEmu::getFpsString() {
 bool C2DUIGuiEmu::isPaused() {
     return paused;
 }
+
