@@ -13,8 +13,8 @@ option(BUILD_3DS "Build with 3DS support" OFF)
 option(BUILD_NX "Build with NX (SWITCH) support" OFF)
 
 option(BUILD_PFBA "Build with PFBA support" OFF)
-option(BUILD_SNES9X "Build with SNES9X support" OFF)
-option(BUILD_NES "Build with NES (MESEN) support" OFF)
+option(BUILD_SNES "Build with SNES9X support" OFF)
+option(BUILD_NES "Build with NES (NESTOPIA) support" OFF)
 
 option(UPDATE_CONFIG "Force config file updating" OFF)
 
@@ -59,7 +59,7 @@ if (BUILD_PFBA)
     # PFBA
     #################
     list(APPEND FLAGS -D__PFBA__)
-elseif (BUILD_SNES9X)
+elseif (BUILD_SNES)
     ##############
     # SNES9X
     ##############

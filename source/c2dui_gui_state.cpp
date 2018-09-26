@@ -23,6 +23,12 @@ extern unsigned char S9xFreezeGame(const char *path);
 
 extern unsigned char S9xUnfreezeGame(const char *path);
 
+#elif __PNES__
+
+extern int nestopia_state_load(const char *path);
+
+extern int nestopia_state_save(const char *path);
+
 #endif
 
 class GUISaveState : public Rectangle {
@@ -108,6 +114,8 @@ public:
         BurnStateLoad(path, 1, &DrvInitCallback);
 #elif __PSNES__
         S9xUnfreezeGame(path);
+#elif __PNES__
+        nestopia_state_load(path);
 #endif
     }
 
@@ -117,6 +125,8 @@ public:
         BurnStateSave(path, 1);
 #elif __PSNES__
         S9xFreezeGame(path);
+#elif __PNES__
+        nestopia_state_save(path);
 #endif
         ui->getUiEmu()->getVideo()->save(shot);
         loadTexture();
