@@ -83,10 +83,10 @@ namespace c2dui {
         };
 
         C2DUIOption(const std::string &text, const std::vector<std::string> &options,
-                    int defaultValue, Index idx, unsigned int flags = INTEGER);
+                    int defaultValue, int id, unsigned int flags = INTEGER);
 
         unsigned int flags = INTEGER;
-        int index = 0;
+        int id = 0;
         int value = 0;
 
         const char *getName();

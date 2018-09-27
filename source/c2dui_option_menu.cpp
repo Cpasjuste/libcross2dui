@@ -36,7 +36,7 @@ C2DUIOptionMenu::C2DUIOptionMenu(C2DUIOptionMenu *parent, std::vector<C2DUIOptio
             }
         } else {
             //printf("NEW OPTION: %s (%i)\n", option.getName(), option.index);
-            menu->option_ids.push_back(option.index);
+            menu->option_ids.push_back(option.id);
         }
     }
 }

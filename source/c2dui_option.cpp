@@ -8,12 +8,12 @@ using namespace c2dui;
 
 C2DUIOption::C2DUIOption(const std::string &text,
                          const std::vector<std::string> &options,
-                         int defaultValue, Index idx, unsigned int flags) {
+                         int defaultValue, int id, unsigned int flags) {
     this->flags = flags;
     this->text = text;
     this->options = options;
     this->value = defaultValue;
-    this->index = idx;
+    this->id = id;
 }
 
 const char *C2DUIOption::getName() {

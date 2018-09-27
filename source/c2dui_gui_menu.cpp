@@ -61,7 +61,7 @@ public:
         if (option->flags == C2DUIOption::Type::INPUT) {
             C2DUISkin::Button *button = ui->getSkin()->getButton(option->value);
             // don't use button textures on keyboard for now
-            if (button && option->index < C2DUIOption::Index::JOY_DEADZONE) {
+            if (button && option->id < C2DUIOption::Index::JOY_DEADZONE) {
                 if (ui->getIo()->exist(button->path.c_str())) {
                     texture = new C2DTexture(button->path.c_str());
                     if (texture->available) {
@@ -159,9 +159,9 @@ C2DUIGuiMenu::C2DUIGuiMenu(C2DUIGuiMain *ui) : Rectangle(Vector2f(0, 0)) {
     }
 
     // build menus
-    optionMenuGui = new C2DUIOptionMenu(nullptr, ui->getConfig()->getOptions());
+    optionMenuGui = new C2DUIOptionMenu(nullptr, ui->getConfig()->get());
     optionMenuGui->addChild("EXIT");
-    optionMenuRom = new C2DUIOptionMenu(nullptr, ui->getConfig()->getOptions(true), true);
+    optionMenuRom = new C2DUIOptionMenu(nullptr, ui->getConfig()->get(true), true);
     optionMenuRom->addChild("STATES");
     optionMenuRom->addChild("RETURN");
     optionMenuRom->addChild("EXIT");
@@ -176,8 +176,8 @@ C2DUIGuiMenu::C2DUIGuiMenu(C2DUIGuiMain *ui) : Rectangle(Vector2f(0, 0)) {
 void C2DUIGuiMenu::load(bool isRom, C2DUIOptionMenu *om) {
 
     isRomMenu = isRom;
-    options = isRomMenu ? ui->getConfig()->getOptions(true)
-                        : ui->getConfig()->getOptions();
+    options = isRomMenu ? ui->getConfig()->get(true)
+                        : ui->getConfig()->get();
 
     if (om == nullptr) {
         optionMenu = isRomMenu ? optionMenuRom : optionMenuGui;
@@ -216,7 +216,7 @@ void C2DUIGuiMenu::load(bool isRom, C2DUIOptionMenu *om) {
         }
 
         // menu types
-        C2DUIOption *option = ui->getConfig()->getOption(options, optionMenu->option_ids[i]);
+        C2DUIOption *option = ui->getConfig()->get(optionMenu->option_ids[i], isRomMenu);
         if (option == nullptr) {
             optionCount--;
             continue;
@@ -312,7 +312,7 @@ int C2DUIGuiMenu::update() {
                     ui->getUiMessageBox()->show("WARNING", option->getInfo(), "OK");
                 }
 
-                switch (option->index) {
+                switch (option->id) {
                     case C2DUIOption::Index::GUI_SHOW_CLONES:
                     case C2DUIOption::Index::GUI_SHOW_ALL:
                     case C2DUIOption::Index::GUI_SHOW_HARDWARE:
