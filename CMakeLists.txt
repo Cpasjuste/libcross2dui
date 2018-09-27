@@ -13,18 +13,14 @@ option(BUILD_3DS "Build with 3DS support" OFF)
 option(BUILD_NX "Build with NX (SWITCH) support" OFF)
 
 option(BUILD_PFBA "Build with PFBA support" OFF)
-option(BUILD_SNES "Build with SNES9X support" OFF)
-option(BUILD_NES "Build with NES (NESTOPIA) support" OFF)
+option(BUILD_PSNES "Build with SNES9X support" OFF)
+option(BUILD_PNES "Build with NES (NESTOPIA) support" OFF)
 
 option(UPDATE_CONFIG "Force config file updating" OFF)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BUILD_DEBUG true CACHE BOOL "Debug build")
 endif ()
-
-# setup toolchain
-include(libcross2d/Toolchain.cmake)
-enable_language(ASM)
 
 # add cross2d library. If you want to port libcross2dui to another platform,
 # you should (may) only need to port this library.
@@ -59,14 +55,14 @@ if (BUILD_PFBA)
     # PFBA
     #################
     list(APPEND FLAGS -D__PFBA__)
-elseif (BUILD_SNES)
+elseif (BUILD_PSNES)
     ##############
-    # SNES9X
+    # PSNES
     ##############
     list(APPEND FLAGS -D__PSNES__)
-elseif (BUILD_NES)
+elseif (BUILD_PNES)
     ##############
-    # NES (MESEN)
+    # PNES
     ##############
     list(APPEND FLAGS -D__PNES__)
 endif (BUILD_PFBA)
@@ -111,27 +107,3 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CROSS2DUI_INCLUDE} ${LIBCONF
 target_compile_options(${PROJECT_NAME} PUBLIC ${FLAGS})
 #target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++11 -fpermissive>)
 target_link_libraries(${PROJECT_NAME} cross2d)
-
-#####################
-# PSP2 (vita) vpk
-#####################
-if (BUILD_PSP2)
-endif (BUILD_PSP2)
-
-#####################
-# PS3
-#####################
-if (BUILD_PS3)
-endif (BUILD_PS3)
-
-#####################
-# CTR (3DS) target
-#####################
-if (BUILD_3DS)
-endif (BUILD_3DS)
-
-#####################
-# NX (SWITCH) target
-#####################
-if (BUILD_NX)
-endif (BUILD_NX)
