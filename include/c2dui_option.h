@@ -83,7 +83,7 @@ namespace c2dui {
         };
 
         Option(const std::string &text, const std::vector<std::string> &options,
-                    int defaultValue, int id, unsigned int flags = INTEGER);
+               int defaultValue, int id, unsigned int flags = INTEGER);
 
         unsigned int flags = INTEGER;
         int id = 0;
@@ -96,6 +96,8 @@ namespace c2dui {
         void setInfo(const std::string &info);
 
         const char *getValue();
+
+        std::vector<std::string> *getValues();
 
         void next();
 

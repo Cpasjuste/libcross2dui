@@ -8,6 +8,7 @@
 #include <vector>
 
 #define HARDWARE_PREFIX_ALL 0xffffffff
+#define HARDWARE_PREFIX_FAV 0x20000000
 
 namespace c2dui {
 
@@ -35,18 +36,6 @@ namespace c2dui {
             }
         };
 
-        RomList(UIMain *ui, const std::string &emuVersion);
-
-        virtual ~RomList();
-
-        virtual void build();
-
-        enum RomState {
-            NOT_WORKING = 0,
-            MISSING,
-            WORKING
-        };
-
         class Rom : public c2d::Io::File {
         public:
             const char *parent = NULL;
@@ -54,11 +43,27 @@ namespace c2dui {
             const char *year = NULL;
             const char *manufacturer = NULL;
             const char *system = NULL;
-            unsigned int flags;
             int state = RomState::MISSING;
-            int hardware;
+            unsigned int flags;
+            unsigned int hardware;
             unsigned int drv;
             int genre;
+        };
+
+        RomList(UIMain *ui, const std::string &emuVersion);
+
+        virtual ~RomList();
+
+        virtual void build();
+
+        void addFav(Rom *rom);
+
+        void removeFav(Rom *rom);
+
+        enum RomState {
+            NOT_WORKING = 0,
+            MISSING,
+            WORKING
         };
 
         UIMain *ui;

@@ -19,21 +19,15 @@ Config::Config(const std::string &home, int ver) {
     /// add default roms paths
     getRomPaths()->clear();
     getRomPaths()->emplace_back(home + "roms/");
-
-    /// add all hardware support by default ("show all roms")
+    // default hardware filter (all)
     getHardwareList()->emplace_back(HARDWARE_PREFIX_ALL, "All");
-    std::vector<std::string> hardware_names;
-    for (auto &i : *getHardwareList()) {
-        hardware_names.emplace_back(i.name);
-    }
 
     /// default options available for all cores
-
     /////////////////////////////////////////////////
     /// main/gui config
     /////////////////////////////////////////////////
     append("MAIN", {"MAIN"}, 0, Option::Index::MENU_MAIN, Option::Type::MENU);
-    append("SHOW_ALL", {"WORKING", "ALL"}, 1, Option::Index::GUI_SHOW_ALL);
+    append("SHOW_ALL", {"ALL", "FAVORITES"}, 0, Option::Index::GUI_SHOW_ALL);
     append("SHOW_CLONES", {"OFF", "ON"}, 0, Option::Index::GUI_SHOW_CLONES);
 #ifndef __PSP2__ // two slow on vita
     append("SHOW_ICONS", {"OFF", "ON"}, 0, Option::Index::GUI_SHOW_ICONS);

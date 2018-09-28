@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <iostream>
+#include <fstream>
 
 #include "c2dui.h"
 
@@ -57,14 +59,16 @@ RomList::RomList(UIMain *_ui, const std::string &emuVersion) {
     printf("RomList: building list...\n");
     time_start = ui->getRenderer()->getElapsedTime().asSeconds();
 
-    for (unsigned int i = 0; i < paths->size(); i++) {
+    for (auto &path : *paths) {
         //printf("RomList: path: `%s`\n", paths->at(i).c_str());
-        if (!paths->at(i).empty()) {
+        std::vector<std::string> filesList;
+        if (!path.empty()) {
             //printf("RomList: getDirList(%s) - (path=%i)\n", paths->at(i).c_str(), (int) paths->at(i).size());
-            files.emplace_back(ui->getIo()->getDirList(paths->at(i)));
+            filesList = ui->getIo()->getDirList(path);
+            files.emplace_back(filesList);
             //printf("RomList: found %i files in `%s`\n", (int) files[i].size(), paths->at(i).c_str());
         } else {
-            files.emplace_back(std::vector<std::string>());
+            files.emplace_back(filesList);
         }
     }
     printf("RomList()\n");
@@ -73,6 +77,22 @@ RomList::RomList(UIMain *_ui, const std::string &emuVersion) {
 void RomList::build() {
 
     printf("RomList::build()\n");
+
+    // build favorites
+    std::string favPath = *ui->getConfig()->getHomePath() + "favorites.bin";
+    std::ifstream favFile(favPath);
+    if (favFile.is_open()) {
+        std::string line;
+        while (std::getline(favFile, line)) {
+            auto rom = std::find_if(list.begin(), list.end(), [line](Rom *rom) -> bool {
+                return line == rom->path;
+            });
+            if (rom != list.end()) {
+                (*rom)->hardware |= HARDWARE_PREFIX_FAV;
+            }
+        }
+        favFile.close();
+    }
 
     float time_spent = ui->getRenderer()->getElapsedTime().asSeconds() - time_start;
     printf("RomList::build(): list built in %f\n", time_spent);
@@ -85,6 +105,47 @@ void RomList::build() {
     rect->remove(texture);
     // remove ui widgets
     delete (rect);
+}
+
+void RomList::addFav(Rom *rom) {
+
+    if (!rom || rom->hardware & HARDWARE_PREFIX_FAV) {
+        printf("RomList::addFav: already in favorites\n");
+        return;
+    }
+
+    rom->hardware |= HARDWARE_PREFIX_FAV;
+
+    std::string favPath = *ui->getConfig()->getHomePath() + "favorites.bin";
+    std::ofstream favFile(favPath, std::ios::app);
+    if (favFile.is_open()) {
+        favFile << rom->path;
+        favFile << "\n";
+        favFile.close();
+    }
+}
+
+void RomList::removeFav(Rom *rom) {
+
+    if (!rom || !(rom->hardware & HARDWARE_PREFIX_FAV)) {
+        printf("RomList::addFav: not in favorites\n");
+        return;
+    }
+
+    rom->hardware &= ~HARDWARE_PREFIX_FAV;
+
+    // TODO: only remove specific line ?
+    std::string favPath = *ui->getConfig()->getHomePath() + "favorites.bin";
+    std::ofstream favFile(favPath, std::ios::trunc);
+    if (favFile.is_open()) {
+        for (auto &r : list) {
+            if (r->flags & HARDWARE_PREFIX_FAV) {
+                favFile << rom->path;
+                favFile << "\n";
+            }
+        }
+        favFile.close();
+    }
 }
 
 RomList::~RomList() {

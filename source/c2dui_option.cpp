@@ -7,8 +7,8 @@
 using namespace c2dui;
 
 Option::Option(const std::string &text,
-                         const std::vector<std::string> &options,
-                         int defaultValue, int id, unsigned int flags) {
+               const std::vector<std::string> &options,
+               int defaultValue, int id, unsigned int flags) {
     this->flags = flags;
     this->text = text;
     this->options = options;
@@ -33,6 +33,10 @@ const char *Option::getValue() {
         return "NONE";
     }
     return options[value].c_str();
+}
+
+std::vector<std::string> *Option::getValues() {
+    return &options;
 }
 
 void Option::next() {

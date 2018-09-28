@@ -217,17 +217,31 @@ void UIRomList::updateRomList() {
 
     static RomList *list = rom_list;
     int showClone = ui->getConfig()->getValue(Option::Index::GUI_SHOW_CLONES);
-    int showAll = ui->getConfig()->getValue(Option::Index::GUI_SHOW_ALL);
     int showHardwareCfg = ui->getConfig()->getValue(Option::Index::GUI_SHOW_HARDWARE);
     int showHardware = ui->getConfig()->getHardwareList()->at((unsigned int) showHardwareCfg).prefix;
 
-    remove_copy_if(rom_list->list.begin(), rom_list->list.end(), back_inserter(roms),
-                   [showAll, showClone, showHardware](RomList::Rom *r) {
-                       return (!showAll && r->state != RomList::RomState::WORKING)
-                              || (!showClone && r->parent != nullptr)
-                              || ((unsigned int) showHardware != HARDWARE_PREFIX_ALL
-                                  && !list->isHardware(r->hardware, showHardware));
-                   });
+    // psnes and pnes have only 2 (0/1) values, so work with value string
+    Option *opt = ui->getConfig()->get(Option::Index::GUI_SHOW_ALL);
+    int showAll = opt->value;
+    if (strcmp(opt->getValue(), "FAVORITES") == 0) {
+        showAll = 2;
+    }
+
+    if (showAll == 2) {
+        // filter/show favorites
+        remove_copy_if(rom_list->list.begin(), rom_list->list.end(), back_inserter(roms),
+                       [](RomList::Rom *r) {
+                           return !(r->hardware & HARDWARE_PREFIX_FAV);
+                       });
+    } else {
+        remove_copy_if(rom_list->list.begin(), rom_list->list.end(), back_inserter(roms),
+                       [showAll, showClone, showHardware](RomList::Rom *r) {
+                           return (showAll && r->state != RomList::RomState::WORKING)
+                                  || (!showClone && r->parent != nullptr)
+                                  || ((unsigned int) showHardware != HARDWARE_PREFIX_ALL
+                                      && !list->isHardware(r->hardware, showHardware));
+                       });
+    }
 
     if (!list_box) {
         // add rom list ui
@@ -300,6 +314,33 @@ int UIRomList::update() {
                 && getSelection()->state != RomList::RomState::MISSING) {
                 show_preview = false;
                 return UI_KEY_RUN_ROM;
+            }
+        } else if (key & Input::Key::KEY_FIRE3) {
+            if (getSelection() != nullptr) {
+                // remove from favorites
+                if (getSelection()->hardware & HARDWARE_PREFIX_FAV) {
+                    int res = ui->getUiMessageBox()->show("FAVORITES",
+                                                          "remove selection from favorites ?", "OK", "CANCEL");
+                    if (res == MessageBox::LEFT) {
+                        rom_list->removeFav(getSelection());
+                        Option *opt = ui->getConfig()->get(Option::Index::GUI_SHOW_ALL);
+                        if (strcmp(opt->getValue(), "FAVORITES") == 0) {
+                            // update list if we are in favorites
+                            updateRomList();
+                        }
+                    }
+                }
+            }
+        } else if (key & Input::Key::KEY_FIRE4) {
+            if (getSelection() != nullptr) {
+                // add to favorites
+                if (!(getSelection()->hardware & HARDWARE_PREFIX_FAV)) {
+                    int res = ui->getUiMessageBox()->show("FAVORITES",
+                                                          "add selection to favorites ?", "OK", "CANCEL");
+                    if (res == MessageBox::LEFT) {
+                        rom_list->addFav(getSelection());
+                    }
+                }
             }
         } else if (key & Input::Key::KEY_FIRE5) {
             show_preview = !show_preview;
