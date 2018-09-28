@@ -16,7 +16,7 @@ extern "C" int BurnDrvGetFlags();
 using namespace c2d;
 using namespace c2dui;
 
-C2DUIVideo::C2DUIVideo(C2DUIGuiMain *gui, void **_pixels, int *_pitch,
+C2DUIVideo::C2DUIVideo(UIMain *gui, void **_pixels, int *_pitch,
                        const c2d::Vector2f &size, int format)
         : C2DTexture(size, format) {
 
@@ -29,8 +29,8 @@ C2DUIVideo::C2DUIVideo(C2DUIGuiMain *gui, void **_pixels, int *_pitch,
         unlock();
     }
 
-    setShader(ui->getConfig()->getValue(C2DUIOption::Index::ROM_SHADER, true));
-    setFiltering(ui->getConfig()->getValue(C2DUIOption::Index::ROM_FILTER, true));
+    setShader(ui->getConfig()->getValue(Option::Index::ROM_SHADER, true));
+    setFiltering(ui->getConfig()->getValue(Option::Index::ROM_FILTER, true));
     updateScaling();
 }
 
@@ -38,8 +38,8 @@ void C2DUIVideo::updateScaling() {
 
     int rotated = 0;
     float rotation = 0;
-    int rotation_cfg = ui->getConfig()->getValue(C2DUIOption::Index::ROM_ROTATION, true);
-    int scale_mode = ui->getConfig()->getValue(C2DUIOption::Index::ROM_SCALING, true);
+    int rotation_cfg = ui->getConfig()->getValue(Option::Index::ROM_ROTATION, true);
+    int scale_mode = ui->getConfig()->getValue(Option::Index::ROM_SCALING, true);
 
 #ifdef __PFBA__
     int vertical = BurnDrvGetFlags() & BDF_ORIENTATION_VERTICAL;

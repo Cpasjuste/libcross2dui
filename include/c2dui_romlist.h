@@ -2,8 +2,8 @@
 // Created by cpasjuste on 19/10/16.
 //
 
-#ifndef _ROMLIST_H
-#define _ROMLIST_H
+#ifndef C2DUI_ROMLIST_H
+#define C2DUI_ROMLIST_H
 
 #include <vector>
 
@@ -11,9 +11,9 @@
 
 namespace c2dui {
 
-    class C2DUIGuiMain;
+    class UIMain;
 
-    class C2DUIRomList {
+    class RomList {
 
     public:
 
@@ -35,9 +35,9 @@ namespace c2dui {
             }
         };
 
-        C2DUIRomList(C2DUIGuiMain *ui, const std::string &emuVersion);
+        RomList(UIMain *ui, const std::string &emuVersion);
 
-        virtual ~C2DUIRomList();
+        virtual ~RomList();
 
         virtual void build();
 
@@ -61,7 +61,7 @@ namespace c2dui {
             int genre;
         };
 
-        C2DUIGuiMain *ui;
+        UIMain *ui;
         c2d::Rectangle *rect;
         c2d::Texture *texture;
         c2d::Text *text;
@@ -97,4 +97,4 @@ namespace c2dui {
     };
 }
 
-#endif //_ROMLIST_H
+#endif //C2DUI_ROMLIST_H

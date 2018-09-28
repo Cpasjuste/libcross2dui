@@ -7,7 +7,7 @@
 using namespace c2d;
 using namespace c2dui;
 
-C2DUIGuiProgressBox::C2DUIGuiProgressBox(C2DUIGuiMain *gui)
+UIProgressBox::UIProgressBox(UIMain *gui)
         : Rectangle(Vector2f(gui->getRenderer()->getSize().x / 2,
                              gui->getRenderer()->getSize().y / 2)) {
 
@@ -56,12 +56,12 @@ C2DUIGuiProgressBox::C2DUIGuiProgressBox(C2DUIGuiMain *gui)
     setVisibility(Hidden);
 }
 
-void C2DUIGuiProgressBox::setTitle(std::string title) {
+void UIProgressBox::setTitle(std::string title) {
 
     this->title->setString(title);
 }
 
-void C2DUIGuiProgressBox::setProgress(float progress) {
+void UIProgressBox::setProgress(float progress) {
 
     float width = progress * (progress_bg->getSize().x - 2);
     progress_fg->setSize(
@@ -69,7 +69,7 @@ void C2DUIGuiProgressBox::setProgress(float progress) {
             progress_fg->getSize().y);
 }
 
-void C2DUIGuiProgressBox::setMessage(std::string message) {
+void UIProgressBox::setMessage(std::string message) {
 
     this->message->setString(message);
 }

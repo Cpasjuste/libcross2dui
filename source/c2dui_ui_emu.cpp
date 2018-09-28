@@ -13,9 +13,9 @@
 using namespace c2d;
 using namespace c2dui;
 
-C2DUIGuiEmu::C2DUIGuiEmu(C2DUIGuiMain *u) : Rectangle(u->getRenderer()->getSize()) {
+UIEmu::UIEmu(UIMain *u) : Rectangle(u->getRenderer()->getSize()) {
 
-    printf("C2DUIGuiEmu()\n");
+    printf("UIEmu()\n");
 
     ui = u;
     setFillColor(Color::Transparent);
@@ -29,7 +29,7 @@ C2DUIGuiEmu::C2DUIGuiEmu(C2DUIGuiMain *u) : Rectangle(u->getRenderer()->getSize(
     setVisibility(Hidden);
 }
 
-void C2DUIGuiEmu::addAudio(c2d::Audio *_audio) {
+void UIEmu::addAudio(c2d::Audio *_audio) {
 
     if (audio) {
         delete (audio);
@@ -39,7 +39,7 @@ void C2DUIGuiEmu::addAudio(c2d::Audio *_audio) {
     audio = _audio;
 }
 
-void C2DUIGuiEmu::addAudio(int rate, int fps, Audio::C2DAudioCallback cb) {
+void UIEmu::addAudio(int rate, int fps, Audio::C2DAudioCallback cb) {
 
     if (audio) {
         delete (audio);
@@ -50,7 +50,7 @@ void C2DUIGuiEmu::addAudio(int rate, int fps, Audio::C2DAudioCallback cb) {
     addAudio(_audio);
 }
 
-void C2DUIGuiEmu::addVideo(C2DUIVideo *_video) {
+void UIEmu::addVideo(C2DUIVideo *_video) {
 
     if (video) {
         delete (video);
@@ -61,7 +61,7 @@ void C2DUIGuiEmu::addVideo(C2DUIVideo *_video) {
     add(video);
 }
 
-void C2DUIGuiEmu::addVideo(C2DUIGuiMain *ui, void **pixels, int *pitch, const c2d::Vector2f &size, int format) {
+void UIEmu::addVideo(UIMain *ui, void **pixels, int *pitch, const c2d::Vector2f &size, int format) {
 
     if (video) {
         delete (video);
@@ -72,9 +72,9 @@ void C2DUIGuiEmu::addVideo(C2DUIGuiMain *ui, void **pixels, int *pitch, const c2
     addVideo(_video);
 }
 
-int C2DUIGuiEmu::run(C2DUIRomList::Rom *rom) {
+int UIEmu::run(RomList::Rom *rom) {
 
-    printf("C2DUIGuiEmu::run()\n");
+    printf("UIEmu::run()\n");
 
     // set fps text on top
     getFpsText()->setLayer(1);
@@ -91,9 +91,9 @@ int C2DUIGuiEmu::run(C2DUIRomList::Rom *rom) {
     return 0;
 }
 
-void C2DUIGuiEmu::resume() {
+void UIEmu::resume() {
 
-    printf("C2DUIGuiEmu::resume()\n");
+    printf("UIEmu::resume()\n");
 
     ui->updateInputMapping(true);
 
@@ -106,9 +106,9 @@ void C2DUIGuiEmu::resume() {
     paused = false;
 }
 
-void C2DUIGuiEmu::stop() {
+void UIEmu::stop() {
 
-    printf("C2DUIGuiEmu::stop()\n");
+    printf("UIEmu::stop()\n");
 
     if (audio) {
         printf("Closing audio...\n");
@@ -127,9 +127,9 @@ void C2DUIGuiEmu::stop() {
     setVisibility(Hidden);
 }
 
-void C2DUIGuiEmu::pause() {
+void UIEmu::pause() {
 
-    printf("C2DUIGuiEmu::pause()\n");
+    printf("UIEmu::pause()\n");
 
     paused = true;
     if (audio) {
@@ -138,39 +138,39 @@ void C2DUIGuiEmu::pause() {
     ui->updateInputMapping(false);
 }
 
-int C2DUIGuiEmu::update() {
+int UIEmu::update() {
     return 0;
 }
 
-C2DUIGuiMain *C2DUIGuiEmu::getUi() {
+UIMain *UIEmu::getUi() {
     return ui;
 }
 
-C2DUIVideo *C2DUIGuiEmu::getVideo() {
+C2DUIVideo *UIEmu::getVideo() {
     return video;
 }
 
-c2d::Audio *C2DUIGuiEmu::getAudio() {
+c2d::Audio *UIEmu::getAudio() {
     return audio;
 }
 
-float C2DUIGuiEmu::getFrameDuration() {
+float UIEmu::getFrameDuration() {
     return frameDuration;
 }
 
-void C2DUIGuiEmu::setFrameDuration(float f) {
+void UIEmu::setFrameDuration(float f) {
     frameDuration = f;
 }
 
-c2d::Text *C2DUIGuiEmu::getFpsText() {
+c2d::Text *UIEmu::getFpsText() {
     return fpsText;
 }
 
-char *C2DUIGuiEmu::getFpsString() {
+char *UIEmu::getFpsString() {
     return fpsString;
 }
 
-bool C2DUIGuiEmu::isPaused() {
+bool UIEmu::isPaused() {
     return paused;
 }
 

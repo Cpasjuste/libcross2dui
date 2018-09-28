@@ -2,20 +2,20 @@
 // Created by cpasjuste on 03/02/18.
 //
 
-#ifndef C2DUI_GUI_EMU_H
-#define C2DUI_GUI_EMU_H
+#ifndef C2DUI_UI_EMU_H
+#define C2DUI_UI_EMU_H
 
 #include <sys/time.h>
 
 namespace c2dui {
 
-    class C2DUIGuiEmu : public c2d::Rectangle {
+    class UIEmu : public c2d::Rectangle {
 
     public:
 
-        C2DUIGuiEmu(C2DUIGuiMain *ui);
+        UIEmu(UIMain *ui);
 
-        virtual int run(C2DUIRomList::Rom *rom);
+        virtual int run(RomList::Rom *rom);
 
         virtual void stop();
 
@@ -31,7 +31,7 @@ namespace c2dui {
 
         virtual void renderFrame(bool draw = true, int drawFps = false, float fps = 0) {};
 
-        C2DUIGuiMain *getUi();
+        UIMain *getUi();
 
         C2DUIVideo *getVideo();
 
@@ -43,7 +43,7 @@ namespace c2dui {
 
         void addVideo(C2DUIVideo *video);
 
-        void addVideo(C2DUIGuiMain *ui, void **pixels, int *pitch,
+        void addVideo(UIMain *ui, void **pixels, int *pitch,
                       const c2d::Vector2f &size, int format = C2D_TEXTURE_FMT_RGB565);
 
         float getFrameDuration();
@@ -58,7 +58,7 @@ namespace c2dui {
 
     private:
 
-        C2DUIGuiMain *ui = nullptr;
+        UIMain *ui = nullptr;
         C2DUIVideo *video = nullptr;
         c2d::Audio *audio = nullptr;
         c2d::Text *fpsText = nullptr;
@@ -68,4 +68,4 @@ namespace c2dui {
     };
 }
 
-#endif //C2DUI_GUI_EMU_H
+#endif //C2DUI_UI_EMU_H

@@ -24,19 +24,19 @@
 
 namespace c2dui {
 
-    class C2DUIGuiMain {
+    class UIMain {
 
     public:
 
-        C2DUIGuiMain(c2d::Renderer *renderer, c2d::Io *io, c2d::Input *input,
-                     c2dui::C2DUIConfig *config, c2dui::C2DUISkin *skin);
+        UIMain(c2d::Renderer *renderer, c2d::Io *io, c2d::Input *input,
+                     c2dui::Config *config, c2dui::Skin *skin);
 
-        virtual ~C2DUIGuiMain();
+        virtual ~UIMain();
 
-        virtual void runRom(C2DUIRomList::Rom *rom);
+        virtual void runRom(RomList::Rom *rom);
 
-        void init(C2DUIGuiRomList *uiRomList, C2DUIGuiMenu *uiMenu,
-                  C2DUIGuiEmu *uiEmu, C2DUIGuiState *uiState);
+        void init(UIRomList *uiRomList, UIMenu *uiMenu,
+                  UIEmu *uiEmu, UIStateMenu *uiState);
 
         void run();
 
@@ -44,21 +44,21 @@ namespace c2dui {
 
         c2d::Renderer *getRenderer();
 
-        c2dui::C2DUISkin *getSkin();
+        c2dui::Skin *getSkin();
 
-        C2DUIConfig *getConfig();
+        Config *getConfig();
 
         c2d::Input *getInput();
 
         c2d::Io *getIo();
 
-        C2DUIGuiRomList *getUiRomList();
+        UIRomList *getUiRomList();
 
-        C2DUIGuiEmu *getUiEmu();
+        UIEmu *getUiEmu();
 
-        C2DUIGuiMenu *getUiMenu();
+        UIMenu *getUiMenu();
 
-        C2DUIGuiProgressBox *getUiProgressBox();
+        UIProgressBox *getUiProgressBox();
 
         c2d::MessageBox *getUiMessageBox();
 
@@ -70,18 +70,18 @@ namespace c2dui {
 
     private:
 
-        c2dui::C2DUIConfig *config = nullptr;
-        c2dui::C2DUISkin *skin = nullptr;
+        c2dui::Config *config = nullptr;
+        c2dui::Skin *skin = nullptr;
 
         c2d::Io *io = nullptr;
         c2d::Renderer *renderer = nullptr;
         c2d::Input *input = nullptr;
 
-        C2DUIGuiMenu *uiMenu = nullptr;
-        C2DUIGuiRomList *uiRomList = nullptr;
-        C2DUIGuiEmu *uiEmu = nullptr;
-        C2DUIGuiState *uiState = nullptr;
-        C2DUIGuiProgressBox *uiProgressBox = nullptr;
+        UIMenu *uiMenu = nullptr;
+        UIRomList *uiRomList = nullptr;
+        UIEmu *uiEmu = nullptr;
+        UIStateMenu *uiState = nullptr;
+        UIProgressBox *uiProgressBox = nullptr;
         c2d::MessageBox *uiMessageBox = nullptr;
 
         float scaling = 1;

@@ -43,11 +43,11 @@
 #include "c2dui_video.h"
 #include "c2dui_config.h"
 
-#include "c2dui_gui_menu.h"
-#include "c2dui_gui_emu.h"
-#include "c2dui_gui_romlist.h"
-#include "c2dui_gui_progressbox.h"
-#include "c2dui_gui_state.h"
-#include "c2dui_gui_main.h"
+#include "c2dui_ui_menu.h"
+#include "c2dui_ui_emu.h"
+#include "c2dui_ui_romlist.h"
+#include "c2dui_ui_progressbox.h"
+#include "c2dui_ui_menu_state.h"
+#include "c2dui_ui_main.h"
 
 #endif //C2DUI_H

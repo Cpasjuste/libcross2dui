@@ -14,14 +14,14 @@
 using namespace c2d;
 using namespace c2dui;
 
-class C2DUIGuiRomInfo : public Rectangle {
+class UIRomInfo : public Rectangle {
 
 public:
 
-    C2DUIGuiRomInfo(C2DUIGuiMain *ui, const Font &font, int fontSize, const FloatRect &rect, float scale)
+    UIRomInfo(UIMain *ui, const Font &font, int fontSize, const FloatRect &rect, float scale)
             : Rectangle(rect) {
 
-        printf("C2DUIGuiRomInfo\n");
+        printf("UIRomInfo\n");
 
         this->ui = ui;
 
@@ -61,11 +61,11 @@ public:
         add(previewBox);
     }
 
-    ~C2DUIGuiRomInfo() {
-        printf("~GuiRomInfo\n");
+    ~UIRomInfo() {
+        printf("~UIRomInfo\n");
     }
 
-    bool loadTexture(C2DUIRomList::Rom *rom, bool isPreview) {
+    bool loadTexture(RomList::Rom *rom, bool isPreview) {
 
         const char *type = isPreview ? "previews" : "titles";
 
@@ -116,7 +116,7 @@ public:
         return true;
     }
 
-    void update(C2DUIRomList::Rom *rom, bool isPreview) {
+    void update(RomList::Rom *rom, bool isPreview) {
 
         if (texture) {
             delete (texture);
@@ -142,13 +142,13 @@ public:
                 }
             }
             snprintf(info, 1024, "FILE: %s\nSTATUS: %s\nSYSTEM: %s\nMANUFACTURER: %s\nYEAR: %s\n%s",
-                     rom->path, rom->state == C2DUIRomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
+                     rom->path, rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
                      rom->system, rom->manufacturer, rom->year, rotation);
             infoText->setString(info);
             infoText->setVisibility(Visible);
 #elif __PSNES__
             snprintf(info, 1023, "FILE: %s\nSTATUS: %s\nMANUFACTURER: %s\nYEAR: %s",
-                     rom->path, rom->state == C2DUIRomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
+                     rom->path, rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
                      rom->manufacturer, rom->year);
             infoText->setString(info);
             infoText->setVisibility(Visible);
@@ -156,7 +156,7 @@ public:
         }
     }
 
-    C2DUIGuiMain *ui = nullptr;
+    UIMain *ui = nullptr;
     Texture *texture = nullptr;
     Rectangle *infoBox = nullptr;
     Text *infoText = nullptr;
@@ -169,9 +169,9 @@ public:
     float scaling = 1;
 };
 
-C2DUIGuiRomList::C2DUIGuiRomList(C2DUIGuiMain *u, C2DUIRomList *romList, const c2d::Vector2f &size) : Rectangle(size) {
+UIRomList::UIRomList(UIMain *u, RomList *romList, const c2d::Vector2f &size) : Rectangle(size) {
 
-    printf("GuiRomList\n");
+    printf("UIRomList\n");
 
     ui = u;
     rom_list = romList;
@@ -184,7 +184,7 @@ C2DUIGuiRomList::C2DUIGuiRomList(C2DUIGuiMain *u, C2DUIRomList *romList, const c
     setSize(Vector2f(getSize().x - getOutlineThickness() * 2, getSize().y - getOutlineThickness() * 2));
 
     // add title image if available
-    C2DUISkin *skin = ui->getSkin();
+    Skin *skin = ui->getSkin();
     if (skin->tex_title->available) {
         skin->tex_title->setPosition(UI_MARGIN * ui->getScaling(), UI_MARGIN * ui->getScaling());
         float scale = (getLocalBounds().width / 3) / skin->tex_title->getTextureRect().width;
@@ -193,7 +193,7 @@ C2DUIGuiRomList::C2DUIGuiRomList(C2DUIGuiMain *u, C2DUIRomList *romList, const c
     }
 
     // add rom info ui
-    rom_info = new C2DUIGuiRomInfo(ui, *skin->font, ui->getFontSize(),
+    rom_info = new UIRomInfo(ui, *skin->font, ui->getFontSize(),
                                    FloatRect(
                                            (getLocalBounds().width / 2) + UI_MARGIN * ui->getScaling(),
                                            UI_MARGIN * ui->getScaling(),
@@ -207,28 +207,28 @@ C2DUIGuiRomList::C2DUIGuiRomList(C2DUIGuiMain *u, C2DUIRomList *romList, const c
     updateRomList();
 }
 
-C2DUIRomList::Rom *C2DUIGuiRomList::getSelection() {
-    return (C2DUIRomList::Rom *) list_box->getSelection();
+RomList::Rom *UIRomList::getSelection() {
+    return (RomList::Rom *) list_box->getSelection();
 }
 
-C2DUIRomList *C2DUIGuiRomList::getRomList() {
+RomList *UIRomList::getRomList() {
     return rom_list;
 }
 
-void C2DUIGuiRomList::updateRomList() {
+void UIRomList::updateRomList() {
 
     rom_index = 0;
     roms.clear();
 
-    static C2DUIRomList *list = rom_list;
-    int showClone = ui->getConfig()->getValue(C2DUIOption::Index::GUI_SHOW_CLONES);
-    int showAll = ui->getConfig()->getValue(C2DUIOption::Index::GUI_SHOW_ALL);
-    int showHardwareCfg = ui->getConfig()->getValue(C2DUIOption::Index::GUI_SHOW_HARDWARE);
+    static RomList *list = rom_list;
+    int showClone = ui->getConfig()->getValue(Option::Index::GUI_SHOW_CLONES);
+    int showAll = ui->getConfig()->getValue(Option::Index::GUI_SHOW_ALL);
+    int showHardwareCfg = ui->getConfig()->getValue(Option::Index::GUI_SHOW_HARDWARE);
     int showHardware = ui->getConfig()->getHardwareList()->at((unsigned int) showHardwareCfg).prefix;
 
     remove_copy_if(rom_list->list.begin(), rom_list->list.end(), back_inserter(roms),
-                   [showAll, showClone, showHardware](C2DUIRomList::Rom *r) {
-                       return (!showAll && r->state != C2DUIRomList::RomState::WORKING)
+                   [showAll, showClone, showHardware](RomList::Rom *r) {
+                       return (!showAll && r->state != RomList::RomState::WORKING)
                               || (!showClone && r->parent != nullptr)
                               || ((unsigned int) showHardware != HARDWARE_PREFIX_ALL
                                   && !list->isHardware(r->hardware, showHardware));
@@ -244,7 +244,7 @@ void C2DUIGuiRomList::updateRomList() {
                 (getLocalBounds().width / 2) - UI_MARGIN * ui->getScaling(),
                 getLocalBounds().height - top - UI_MARGIN * ui->getScaling()};
         list_box = new ListBox(*ui->getSkin()->font, ui->getFontSize(), rect, (std::vector<Io::File *> &) roms,
-                               ui->getConfig()->getValue(C2DUIOption::Index::GUI_SHOW_ICONS) == 1);
+                               ui->getConfig()->getValue(Option::Index::GUI_SHOW_ICONS) == 1);
         list_box->setOutlineThickness(getOutlineThickness());
         list_box->setFillColor(Color::GrayLight);
         list_box->setOutlineColor(COL_ORANGE);
@@ -262,7 +262,7 @@ void C2DUIGuiRomList::updateRomList() {
     }
 }
 
-int C2DUIGuiRomList::update() {
+int UIRomList::update() {
 
     unsigned int key = ui->getInput()->update()[0].state;
 
@@ -302,7 +302,7 @@ int C2DUIGuiRomList::update() {
             title_loaded = 0;
         } else if (key & Input::Key::KEY_FIRE1) {
             if (getSelection() != nullptr
-                && getSelection()->state != C2DUIRomList::RomState::MISSING) {
+                && getSelection()->state != RomList::RomState::MISSING) {
                 show_preview = false;
                 return UI_KEY_RUN_ROM;
             }
@@ -339,8 +339,8 @@ int C2DUIGuiRomList::update() {
     return 0;
 }
 
-C2DUIGuiRomList::~C2DUIGuiRomList() {
+UIRomList::~UIRomList() {
 
-    printf("~C2DUIGuiRomList\n");
+    printf("~UIRomList\n");
     delete (rom_list);
 }

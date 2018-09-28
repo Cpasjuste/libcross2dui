@@ -13,14 +13,14 @@ namespace c2dui {
 
     public:
 
-        C2DUIVideo(C2DUIGuiMain *ui, void **pixels, int *pitch,
+        C2DUIVideo(UIMain *ui, void **pixels, int *pitch,
                    const c2d::Vector2f &size, int format = C2D_TEXTURE_FMT_RGB565);
 
         virtual void updateScaling();
 
     private:
 
-        C2DUIGuiMain *ui = NULL;
+        UIMain *ui = nullptr;
     };
 }
 

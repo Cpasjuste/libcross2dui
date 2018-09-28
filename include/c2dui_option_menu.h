@@ -9,20 +9,20 @@
 
 namespace c2dui {
 
-    class C2DUIOptionMenu {
+    class OptionMenu {
 
     public:
 
-        C2DUIOptionMenu(C2DUIOptionMenu *parent, std::vector<C2DUIOption> *options, bool isRomCfg = false);
+        OptionMenu(OptionMenu *parent, std::vector<Option> *options, bool isRomCfg = false);
 
-        ~C2DUIOptionMenu();
+        ~OptionMenu();
 
         void addChild(const std::string &title);
 
         std::string title;
         std::vector<int> option_ids;
-        std::vector<C2DUIOptionMenu *> childs;
-        C2DUIOptionMenu *parent = NULL;
+        std::vector<OptionMenu *> childs;
+        OptionMenu *parent = NULL;
 
     };
 }

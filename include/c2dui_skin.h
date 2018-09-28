@@ -10,7 +10,7 @@
 
 namespace c2dui {
 
-    class C2DUISkin {
+    class Skin {
 
     public:
 
@@ -25,9 +25,9 @@ namespace c2dui {
             int id = -1;
         };
 
-        C2DUISkin(const std::string &path, const std::vector<Button> &btns);
+        Skin(const std::string &path, const std::vector<Button> &btns);
 
-        ~C2DUISkin();
+        ~Skin();
 
         Button *getButton(int id);
 

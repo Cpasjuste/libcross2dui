@@ -11,9 +11,9 @@
 using namespace c2d;
 using namespace c2dui;
 
-C2DUIRomList::C2DUIRomList(C2DUIGuiMain *_ui, const std::string &emuVersion) {
+RomList::RomList(UIMain *_ui, const std::string &emuVersion) {
 
-    printf("C2DUIRomList()\n");
+    printf("RomList()\n");
 
     ui = _ui;
     hardwareList = ui->getConfig()->getHardwareList();
@@ -54,28 +54,28 @@ C2DUIRomList::C2DUIRomList(C2DUIGuiMain *_ui, const std::string &emuVersion) {
     ui->getRenderer()->add(rect);
     // UI
 
-    printf("C2DUIRomList: building list...\n");
+    printf("RomList: building list...\n");
     time_start = ui->getRenderer()->getElapsedTime().asSeconds();
 
     for (unsigned int i = 0; i < paths->size(); i++) {
-        //printf("C2DUIRomList: path: `%s`\n", paths->at(i).c_str());
+        //printf("RomList: path: `%s`\n", paths->at(i).c_str());
         if (!paths->at(i).empty()) {
-            //printf("C2DUIRomList: getDirList(%s) - (path=%i)\n", paths->at(i).c_str(), (int) paths->at(i).size());
+            //printf("RomList: getDirList(%s) - (path=%i)\n", paths->at(i).c_str(), (int) paths->at(i).size());
             files.emplace_back(ui->getIo()->getDirList(paths->at(i)));
-            //printf("C2DUIRomList: found %i files in `%s`\n", (int) files[i].size(), paths->at(i).c_str());
+            //printf("RomList: found %i files in `%s`\n", (int) files[i].size(), paths->at(i).c_str());
         } else {
             files.emplace_back(std::vector<std::string>());
         }
     }
-    printf("C2DUIRomList()\n");
+    printf("RomList()\n");
 }
 
-void C2DUIRomList::build() {
+void RomList::build() {
 
-    printf("C2DUIRomList::build()\n");
+    printf("RomList::build()\n");
 
     float time_spent = ui->getRenderer()->getElapsedTime().asSeconds() - time_start;
-    printf("C2DUIRomList::build(): list built in %f\n", time_spent);
+    printf("RomList::build(): list built in %f\n", time_spent);
 
     // UI
     // reset title texture for later use
@@ -87,9 +87,9 @@ void C2DUIRomList::build() {
     delete (rect);
 }
 
-C2DUIRomList::~C2DUIRomList() {
+RomList::~RomList() {
 
-    printf("~C2DUIRomList()\n");
+    printf("~RomList()\n");
 
     for (auto &rom : list) {
         if (!rom->parent && rom->icon) {

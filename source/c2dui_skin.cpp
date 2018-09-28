@@ -7,7 +7,7 @@
 using namespace c2d;
 using namespace c2dui;
 
-C2DUISkin::C2DUISkin(const std::string &p, const std::vector<Button> &btns) {
+Skin::Skin(const std::string &p, const std::vector<Button> &btns) {
 
     this->path = p + "skin/";
 
@@ -25,7 +25,7 @@ C2DUISkin::C2DUISkin(const std::string &p, const std::vector<Button> &btns) {
     }
 }
 
-C2DUISkin::Button *C2DUISkin::getButton(int id) {
+Skin::Button *Skin::getButton(int id) {
 
     for (unsigned int i = 0; i < buttons.size(); i++) {
         if (buttons[i].id == id) {
@@ -35,7 +35,7 @@ C2DUISkin::Button *C2DUISkin::getButton(int id) {
     return nullptr;
 }
 
-C2DUISkin::~C2DUISkin() {
+Skin::~Skin() {
 
     if (font) {
         delete (font);

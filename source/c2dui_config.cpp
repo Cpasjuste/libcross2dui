@@ -3,11 +3,12 @@
 //
 
 #include "c2dui.h"
+#include "c2dui_config.h"
 
 using namespace c2d;
 using namespace c2dui;
 
-C2DUIConfig::C2DUIConfig(const std::string &home, int ver) {
+Config::Config(const std::string &home, int ver) {
 
     homePath = home;
     configPath = homePath + "config.cfg";
@@ -24,141 +25,141 @@ C2DUIConfig::C2DUIConfig(const std::string &home, int ver) {
         hardware_names.emplace_back(i.name);
     }
 
-    std::vector<C2DUIOption> *ui_options = get();
+    std::vector<Option> *ui_options = get();
 
     // main/gui config
     ui_options->emplace_back(
-            C2DUIOption("MAIN", {"MAIN"}, 0, C2DUIOption::Index::MENU_MAIN, C2DUIOption::Type::MENU));
-    ui_options->emplace_back(C2DUIOption("SHOW_ALL", {"WORKING", "ALL"}, 1, C2DUIOption::Index::GUI_SHOW_ALL));
-    ui_options->emplace_back(C2DUIOption("SHOW_CLONES", {"OFF", "ON"}, 0, C2DUIOption::Index::GUI_SHOW_CLONES));
-    ui_options->emplace_back(C2DUIOption("SHOW_ICONS", {"OFF", "ON"}, 0, C2DUIOption::Index::GUI_SHOW_ICONS));
+            Option("MAIN", {"MAIN"}, 0, Option::Index::MENU_MAIN, Option::Type::MENU));
+    ui_options->emplace_back(Option("SHOW_ALL", {"WORKING", "ALL"}, 1, Option::Index::GUI_SHOW_ALL));
+    ui_options->emplace_back(Option("SHOW_CLONES", {"OFF", "ON"}, 0, Option::Index::GUI_SHOW_CLONES));
+    ui_options->emplace_back(Option("SHOW_ICONS", {"OFF", "ON"}, 0, Option::Index::GUI_SHOW_ICONS));
     ui_options->at(ui_options->size() - 1).setInfo("Need a restart...");
-    ui_options->emplace_back(C2DUIOption("USE_DATABASE", {"OFF", "ON"}, 0, C2DUIOption::Index::GUI_USE_DATABASE));
+    ui_options->emplace_back(Option("USE_DATABASE", {"OFF", "ON"}, 0, Option::Index::GUI_USE_DATABASE));
     ui_options->at(ui_options->size() - 1).setInfo("Need a restart...");
     ui_options->emplace_back(
-            C2DUIOption("FULLSCREEN", {"OFF", "ON"}, 1, C2DUIOption::Index::GUI_FULLSCREEN, C2DUIOption::Type::HIDDEN));
+            Option("FULLSCREEN", {"OFF", "ON"}, 1, Option::Index::GUI_FULLSCREEN, Option::Type::HIDDEN));
 #ifdef __SWITCH__
-    ui_options->emplace_back(C2DUIOption("SINGLE_JOYCONS", {"OFF", "ON"}, 0, C2DUIOption::Index::JOY_SINGLEJOYCON));
+    ui_options->emplace_back(Option("SINGLE_JOYCONS", {"OFF", "ON"}, 0, Option::Index::JOY_SINGLEJOYCON));
 #endif
 
     // skin config, hidden in gui for now
     ui_options->emplace_back(
-            C2DUIOption("SKIN", {"SKIN"}, 0, C2DUIOption::Index::MENU_SKIN,
-                        C2DUIOption::Type::MENU | C2DUIOption::Type::HIDDEN));
+            Option("SKIN", {"SKIN"}, 0, Option::Index::MENU_SKIN,
+                        Option::Type::MENU | Option::Type::HIDDEN));
     ui_options->emplace_back(
-            C2DUIOption("SKIN_FONT_SIZE", {"20"}, 20, C2DUIOption::Index::SKIN_FONT_SIZE, C2DUIOption::Type::HIDDEN));
+            Option("SKIN_FONT_SIZE", {"20"}, 20, Option::Index::SKIN_FONT_SIZE, Option::Type::HIDDEN));
     // default rom config
     ui_options->emplace_back(
-            C2DUIOption("EMULATION", {"EMULATION"}, 0, C2DUIOption::Index::MENU_ROM_OPTIONS, C2DUIOption::Type::MENU));
+            Option("EMULATION", {"EMULATION"}, 0, Option::Index::MENU_ROM_OPTIONS, Option::Type::MENU));
     ui_options->emplace_back(
-            C2DUIOption("SCALING", {"NONE", "2X", "3X", "FIT", "FIT 4:3", "FULL"}, 2, C2DUIOption::Index::ROM_SCALING));
+            Option("SCALING", {"NONE", "2X", "3X", "FIT", "FIT 4:3", "FULL"}, 2, Option::Index::ROM_SCALING));
     ui_options->emplace_back(
-            C2DUIOption("FILTER", {"POINT", "LINEAR"}, 0, C2DUIOption::Index::ROM_FILTER));
+            Option("FILTER", {"POINT", "LINEAR"}, 0, Option::Index::ROM_FILTER));
     if (c2d_renderer->getShaderList() != nullptr) {
         ui_options->emplace_back(
-                C2DUIOption("EFFECT", c2d_renderer->getShaderList()->getNames(), 0, C2DUIOption::Index::ROM_SHADER));
+                Option("EFFECT", c2d_renderer->getShaderList()->getNames(), 0, Option::Index::ROM_SHADER));
     } else {
         ui_options->emplace_back(
-                C2DUIOption("EFFECT", {"NA"}, 0, C2DUIOption::Index::ROM_SHADER, C2DUIOption::Type::HIDDEN));
+                Option("EFFECT", {"NA"}, 0, Option::Index::ROM_SHADER, Option::Type::HIDDEN));
     }
     ui_options->emplace_back(
-            C2DUIOption("SHOW_FPS", {"OFF", "ON"}, 0, C2DUIOption::Index::ROM_SHOW_FPS));
+            Option("SHOW_FPS", {"OFF", "ON"}, 0, Option::Index::ROM_SHOW_FPS));
 
     // joystick
     ui_options->emplace_back(
-            C2DUIOption("JOYPAD", {"JOYPAD"}, 0, C2DUIOption::Index::MENU_JOYPAD, C2DUIOption::Type::MENU));
+            Option("JOYPAD", {"JOYPAD"}, 0, Option::Index::MENU_JOYPAD, Option::Type::MENU));
     ui_options->emplace_back(
-            C2DUIOption("JOY_UP", {"-1"}, KEY_JOY_UP_DEFAULT, C2DUIOption::Index::JOY_UP, C2DUIOption::Type::INPUT));
+            Option("JOY_UP", {"-1"}, KEY_JOY_UP_DEFAULT, Option::Index::JOY_UP, Option::Type::INPUT));
     ui_options->emplace_back(
-            C2DUIOption("JOY_DOWN", {"-1"}, KEY_JOY_DOWN_DEFAULT, C2DUIOption::Index::JOY_DOWN,
-                        C2DUIOption::Type::INPUT));
+            Option("JOY_DOWN", {"-1"}, KEY_JOY_DOWN_DEFAULT, Option::Index::JOY_DOWN,
+                        Option::Type::INPUT));
     ui_options->emplace_back(
-            C2DUIOption("JOY_LEFT", {"-1"}, KEY_JOY_LEFT_DEFAULT, C2DUIOption::Index::JOY_LEFT,
-                        C2DUIOption::Type::INPUT));
+            Option("JOY_LEFT", {"-1"}, KEY_JOY_LEFT_DEFAULT, Option::Index::JOY_LEFT,
+                        Option::Type::INPUT));
     ui_options->emplace_back(
-            C2DUIOption("JOY_RIGHT", {"-1"}, KEY_JOY_RIGHT_DEFAULT, C2DUIOption::Index::JOY_RIGHT,
-                        C2DUIOption::Type::INPUT));
+            Option("JOY_RIGHT", {"-1"}, KEY_JOY_RIGHT_DEFAULT, Option::Index::JOY_RIGHT,
+                        Option::Type::INPUT));
     ui_options->emplace_back(
-            C2DUIOption("JOY_FIRE1", {"0"}, KEY_JOY_FIRE1_DEFAULT, C2DUIOption::Index::JOY_FIRE1,
-                        C2DUIOption::Type::INPUT));
+            Option("JOY_FIRE1", {"0"}, KEY_JOY_FIRE1_DEFAULT, Option::Index::JOY_FIRE1,
+                        Option::Type::INPUT));
     ui_options->emplace_back(
-            C2DUIOption("JOY_FIRE2", {"1"}, KEY_JOY_FIRE2_DEFAULT, C2DUIOption::Index::JOY_FIRE2,
-                        C2DUIOption::Type::INPUT));
+            Option("JOY_FIRE2", {"1"}, KEY_JOY_FIRE2_DEFAULT, Option::Index::JOY_FIRE2,
+                        Option::Type::INPUT));
     ui_options->emplace_back(
-            C2DUIOption("JOY_FIRE3", {"2"}, KEY_JOY_FIRE3_DEFAULT, C2DUIOption::Index::JOY_FIRE3,
-                        C2DUIOption::Type::INPUT));
+            Option("JOY_FIRE3", {"2"}, KEY_JOY_FIRE3_DEFAULT, Option::Index::JOY_FIRE3,
+                        Option::Type::INPUT));
     ui_options->emplace_back(
-            C2DUIOption("JOY_FIRE4", {"3"}, KEY_JOY_FIRE4_DEFAULT, C2DUIOption::Index::JOY_FIRE4,
-                        C2DUIOption::Type::INPUT));
+            Option("JOY_FIRE4", {"3"}, KEY_JOY_FIRE4_DEFAULT, Option::Index::JOY_FIRE4,
+                        Option::Type::INPUT));
     ui_options->emplace_back(
-            C2DUIOption("JOY_FIRE5", {"4"}, KEY_JOY_FIRE5_DEFAULT, C2DUIOption::Index::JOY_FIRE5,
-                        C2DUIOption::Type::INPUT));
+            Option("JOY_FIRE5", {"4"}, KEY_JOY_FIRE5_DEFAULT, Option::Index::JOY_FIRE5,
+                        Option::Type::INPUT));
     ui_options->emplace_back(
-            C2DUIOption("JOY_FIRE6", {"5"}, KEY_JOY_FIRE6_DEFAULT, C2DUIOption::Index::JOY_FIRE6,
-                        C2DUIOption::Type::INPUT));
+            Option("JOY_FIRE6", {"5"}, KEY_JOY_FIRE6_DEFAULT, Option::Index::JOY_FIRE6,
+                        Option::Type::INPUT));
     ui_options->emplace_back(
-            C2DUIOption("JOY_COIN1", {"6"}, KEY_JOY_COIN1_DEFAULT, C2DUIOption::Index::JOY_COIN1,
-                        C2DUIOption::Type::INPUT));
+            Option("JOY_COIN1", {"6"}, KEY_JOY_COIN1_DEFAULT, Option::Index::JOY_COIN1,
+                        Option::Type::INPUT));
     ui_options->emplace_back(
-            C2DUIOption("JOY_START1", {"7"}, KEY_JOY_START1_DEFAULT, C2DUIOption::Index::JOY_START1,
-                        C2DUIOption::Type::INPUT));
+            Option("JOY_START1", {"7"}, KEY_JOY_START1_DEFAULT, Option::Index::JOY_START1,
+                        Option::Type::INPUT));
     // TODO: add gui option for axis in option menu
     ui_options->emplace_back(
-            C2DUIOption("JOY_AXIS_LX", {"0"}, KEY_JOY_AXIS_LX, C2DUIOption::Index::JOY_AXIS_LX,
-                        C2DUIOption::Type::HIDDEN));
+            Option("JOY_AXIS_LX", {"0"}, KEY_JOY_AXIS_LX, Option::Index::JOY_AXIS_LX,
+                        Option::Type::HIDDEN));
     ui_options->emplace_back(
-            C2DUIOption("JOY_AXIS_LY", {"1"}, KEY_JOY_AXIS_LY, C2DUIOption::Index::JOY_AXIS_LY,
-                        C2DUIOption::Type::HIDDEN));
+            Option("JOY_AXIS_LY", {"1"}, KEY_JOY_AXIS_LY, Option::Index::JOY_AXIS_LY,
+                        Option::Type::HIDDEN));
     ui_options->emplace_back(
-            C2DUIOption("JOY_AXIS_RX", {"2"}, KEY_JOY_AXIS_RX, C2DUIOption::Index::JOY_AXIS_RX,
-                        C2DUIOption::Type::HIDDEN));
+            Option("JOY_AXIS_RX", {"2"}, KEY_JOY_AXIS_RX, Option::Index::JOY_AXIS_RX,
+                        Option::Type::HIDDEN));
     ui_options->emplace_back(
-            C2DUIOption("JOY_AXIS_RY", {"3"}, KEY_JOY_AXIS_RY, C2DUIOption::Index::JOY_AXIS_RY,
-                        C2DUIOption::Type::HIDDEN));
-    ui_options->emplace_back(C2DUIOption("JOY_DEADZONE",
+            Option("JOY_AXIS_RY", {"3"}, KEY_JOY_AXIS_RY, Option::Index::JOY_AXIS_RY,
+                        Option::Type::HIDDEN));
+    ui_options->emplace_back(Option("JOY_DEADZONE",
                                          {"2000", "4000", "6000", "8000", "10000", "12000", "14000", "16000",
                                           "18000", "20000", "22000", "24000", "26000", "28000", "30000"}, 3,
-                                         C2DUIOption::Index::JOY_DEADZONE, C2DUIOption::Type::INTEGER));
+                                         Option::Index::JOY_DEADZONE, Option::Type::INTEGER));
 
 #ifndef NO_KEYBOARD
     // keyboard
     ui_options->emplace_back(
-            C2DUIOption("KEYBOARD", {"KEYBOARD"}, 0, C2DUIOption::Index::MENU_KEYBOARD, C2DUIOption::Type::MENU));
-    ui_options->emplace_back(C2DUIOption("KEY_UP", {std::to_string(KEY_KB_UP_DEFAULT)}, KEY_KB_UP_DEFAULT,
-                                         C2DUIOption::Index::KEY_UP, C2DUIOption::Type::INPUT));        // KP_UP
-    ui_options->emplace_back(C2DUIOption("KEY_DOWN", {std::to_string(KEY_KB_DOWN_DEFAULT)}, KEY_KB_DOWN_DEFAULT,
-                                         C2DUIOption::Index::KEY_DOWN, C2DUIOption::Type::INPUT));    // KP_DOWN
-    ui_options->emplace_back(C2DUIOption("KEY_LEFT", {std::to_string(KEY_KB_LEFT_DEFAULT)}, KEY_KB_LEFT_DEFAULT,
-                                         C2DUIOption::Index::KEY_LEFT, C2DUIOption::Type::INPUT));    // KP_LEFT
-    ui_options->emplace_back(C2DUIOption("KEY_RIGHT", {std::to_string(KEY_KB_RIGHT_DEFAULT)}, KEY_KB_RIGHT_DEFAULT,
-                                         C2DUIOption::Index::KEY_RIGHT, C2DUIOption::Type::INPUT));  // KP_RIGHT
-    ui_options->emplace_back(C2DUIOption("KEY_FIRE1", {std::to_string(KEY_KB_FIRE1_DEFAULT)}, KEY_KB_FIRE1_DEFAULT,
-                                         C2DUIOption::Index::KEY_FIRE1, C2DUIOption::Type::INPUT));  // KP_1
-    ui_options->emplace_back(C2DUIOption("KEY_FIRE2", {std::to_string(KEY_KB_FIRE2_DEFAULT)}, KEY_KB_FIRE2_DEFAULT,
-                                         C2DUIOption::Index::KEY_FIRE2, C2DUIOption::Type::INPUT));  // KP_2
-    ui_options->emplace_back(C2DUIOption("KEY_FIRE3", {std::to_string(KEY_KB_FIRE3_DEFAULT)}, KEY_KB_FIRE3_DEFAULT,
-                                         C2DUIOption::Index::KEY_FIRE3, C2DUIOption::Type::INPUT));  // KP_3
-    ui_options->emplace_back(C2DUIOption("KEY_FIRE4", {std::to_string(KEY_KB_FIRE4_DEFAULT)}, KEY_KB_FIRE4_DEFAULT,
-                                         C2DUIOption::Index::KEY_FIRE4, C2DUIOption::Type::INPUT));  // KP_4
-    ui_options->emplace_back(C2DUIOption("KEY_FIRE5", {std::to_string(KEY_KB_FIRE5_DEFAULT)}, KEY_KB_FIRE5_DEFAULT,
-                                         C2DUIOption::Index::KEY_FIRE5, C2DUIOption::Type::INPUT));  // KP_5
-    ui_options->emplace_back(C2DUIOption("KEY_FIRE6", {std::to_string(KEY_KB_FIRE6_DEFAULT)}, KEY_KB_FIRE6_DEFAULT,
-                                         C2DUIOption::Index::KEY_FIRE6, C2DUIOption::Type::INPUT));  // KP_6
-    ui_options->emplace_back(C2DUIOption("KEY_COIN1", {std::to_string(KEY_KB_COIN1_DEFAULT)}, KEY_KB_COIN1_DEFAULT,
-                                         C2DUIOption::Index::KEY_COIN1, C2DUIOption::Type::INPUT));  // ESCAPE
-    ui_options->emplace_back(C2DUIOption("KEY_START1", {std::to_string(KEY_KB_START1_DEFAULT)}, KEY_KB_START1_DEFAULT,
-                                         C2DUIOption::Index::KEY_START1, C2DUIOption::Type::INPUT));// ENTER
+            Option("KEYBOARD", {"KEYBOARD"}, 0, Option::Index::MENU_KEYBOARD, Option::Type::MENU));
+    ui_options->emplace_back(Option("KEY_UP", {std::to_string(KEY_KB_UP_DEFAULT)}, KEY_KB_UP_DEFAULT,
+                                         Option::Index::KEY_UP, Option::Type::INPUT));        // KP_UP
+    ui_options->emplace_back(Option("KEY_DOWN", {std::to_string(KEY_KB_DOWN_DEFAULT)}, KEY_KB_DOWN_DEFAULT,
+                                         Option::Index::KEY_DOWN, Option::Type::INPUT));    // KP_DOWN
+    ui_options->emplace_back(Option("KEY_LEFT", {std::to_string(KEY_KB_LEFT_DEFAULT)}, KEY_KB_LEFT_DEFAULT,
+                                         Option::Index::KEY_LEFT, Option::Type::INPUT));    // KP_LEFT
+    ui_options->emplace_back(Option("KEY_RIGHT", {std::to_string(KEY_KB_RIGHT_DEFAULT)}, KEY_KB_RIGHT_DEFAULT,
+                                         Option::Index::KEY_RIGHT, Option::Type::INPUT));  // KP_RIGHT
+    ui_options->emplace_back(Option("KEY_FIRE1", {std::to_string(KEY_KB_FIRE1_DEFAULT)}, KEY_KB_FIRE1_DEFAULT,
+                                         Option::Index::KEY_FIRE1, Option::Type::INPUT));  // KP_1
+    ui_options->emplace_back(Option("KEY_FIRE2", {std::to_string(KEY_KB_FIRE2_DEFAULT)}, KEY_KB_FIRE2_DEFAULT,
+                                         Option::Index::KEY_FIRE2, Option::Type::INPUT));  // KP_2
+    ui_options->emplace_back(Option("KEY_FIRE3", {std::to_string(KEY_KB_FIRE3_DEFAULT)}, KEY_KB_FIRE3_DEFAULT,
+                                         Option::Index::KEY_FIRE3, Option::Type::INPUT));  // KP_3
+    ui_options->emplace_back(Option("KEY_FIRE4", {std::to_string(KEY_KB_FIRE4_DEFAULT)}, KEY_KB_FIRE4_DEFAULT,
+                                         Option::Index::KEY_FIRE4, Option::Type::INPUT));  // KP_4
+    ui_options->emplace_back(Option("KEY_FIRE5", {std::to_string(KEY_KB_FIRE5_DEFAULT)}, KEY_KB_FIRE5_DEFAULT,
+                                         Option::Index::KEY_FIRE5, Option::Type::INPUT));  // KP_5
+    ui_options->emplace_back(Option("KEY_FIRE6", {std::to_string(KEY_KB_FIRE6_DEFAULT)}, KEY_KB_FIRE6_DEFAULT,
+                                         Option::Index::KEY_FIRE6, Option::Type::INPUT));  // KP_6
+    ui_options->emplace_back(Option("KEY_COIN1", {std::to_string(KEY_KB_COIN1_DEFAULT)}, KEY_KB_COIN1_DEFAULT,
+                                         Option::Index::KEY_COIN1, Option::Type::INPUT));  // ESCAPE
+    ui_options->emplace_back(Option("KEY_START1", {std::to_string(KEY_KB_START1_DEFAULT)}, KEY_KB_START1_DEFAULT,
+                                         Option::Index::KEY_START1, Option::Type::INPUT));// ENTER
 #endif
 
 }
 
-void C2DUIConfig::load(C2DUIRomList::Rom *rom) {
+void Config::load(RomList::Rom *rom) {
 
     config_t cfg;
     config_init(&cfg);
 
     bool isRomCfg = rom != nullptr;
-    std::vector<C2DUIOption> *options = isRomCfg ? &options_rom : &options_gui;
+    std::vector<Option> *options = isRomCfg ? &options_rom : &options_gui;
     std::string path = configPath;
     if (isRomCfg) {
         path = homePath;
@@ -167,7 +168,7 @@ void C2DUIConfig::load(C2DUIRomList::Rom *rom) {
         path += ".cfg";
     }
 
-    printf("C2DUIConfig::load: %s ...", path.c_str());
+    printf("Config::load: %s ...", path.c_str());
 
     if (config_read_file(&cfg, path.c_str())) {
 
@@ -207,7 +208,7 @@ void C2DUIConfig::load(C2DUIRomList::Rom *rom) {
             }
 
             for (auto &option : *options) {
-                if (option.flags & C2DUIOption::Type::MENU) {
+                if (option.flags & Option::Type::MENU) {
                     settings = config_setting_lookup(settings_root, option.getName());
                 }
                 if (settings) {
@@ -238,13 +239,13 @@ void C2DUIConfig::load(C2DUIRomList::Rom *rom) {
     config_destroy(&cfg);
 }
 
-void C2DUIConfig::save(C2DUIRomList::Rom *rom) {
+void Config::save(RomList::Rom *rom) {
 
     config_t cfg{};
     config_init(&cfg);
 
     bool isRomCfg = rom != nullptr;
-    std::vector<C2DUIOption> *options = isRomCfg ? &options_rom : &options_gui;
+    std::vector<Option> *options = isRomCfg ? &options_rom : &options_gui;
     std::string path = configPath;
     if (isRomCfg) {
         path = homePath;
@@ -253,7 +254,7 @@ void C2DUIConfig::save(C2DUIRomList::Rom *rom) {
         path += ".cfg";
     }
 
-    printf("C2DUIConfig::save: %s\n", path.c_str());
+    printf("Config::save: %s\n", path.c_str());
 
     // create root
     config_setting_t *setting_root = config_root_setting(&cfg);
@@ -277,7 +278,7 @@ void C2DUIConfig::save(C2DUIRomList::Rom *rom) {
     }
 
     for (auto &option : *options) {
-        if (option.flags & C2DUIOption::Type::MENU) {
+        if (option.flags & Option::Type::MENU) {
             sub_setting = config_setting_add(setting_fba, option.getName(), CONFIG_TYPE_GROUP);
             continue;
         }
@@ -289,13 +290,13 @@ void C2DUIConfig::save(C2DUIRomList::Rom *rom) {
     config_destroy(&cfg);
 }
 
-void C2DUIConfig::reset(bool isRom) {
+void Config::reset(bool isRom) {
 
     options_rom.clear();
 
     int start = 0, end = (int) options_gui.size();
     for (unsigned int i = 0; i < options_gui.size(); i++) {
-        if (options_gui[i].id == C2DUIOption::Index::MENU_ROM_OPTIONS) {
+        if (options_gui[i].id == Option::Index::MENU_ROM_OPTIONS) {
             start = i;
             break;
         }
@@ -306,11 +307,11 @@ void C2DUIConfig::reset(bool isRom) {
     }
 }
 
-std::string *C2DUIConfig::getHomePath() {
+std::string *Config::getHomePath() {
     return &homePath;
 }
 
-std::string *C2DUIConfig::getRomPath(int n) {
+std::string *Config::getRomPath(int n) {
     if (n >= C2DUI_ROMS_PATHS_MAX) {
         return &roms_paths[0];
     } else {
@@ -318,17 +319,17 @@ std::string *C2DUIConfig::getRomPath(int n) {
     }
 }
 
-std::vector<std::string> *C2DUIConfig::getRomPaths() {
+std::vector<std::string> *Config::getRomPaths() {
     return &roms_paths;
 }
 
-std::vector<C2DUIOption> *C2DUIConfig::get(bool isRom) {
+std::vector<Option> *Config::get(bool isRom) {
     return isRom ? &options_rom : &options_gui;
 }
 
-C2DUIOption *C2DUIConfig::get(int index, bool isRom) {
+Option *Config::get(int index, bool isRom) {
 
-    std::vector<C2DUIOption> *options =
+    std::vector<Option> *options =
             isRom ? &options_rom : &options_gui;
 
     for (auto &option : *options) {
@@ -339,17 +340,17 @@ C2DUIOption *C2DUIConfig::get(int index, bool isRom) {
     return nullptr;
 }
 
-bool C2DUIConfig::add(int target,
+bool Config::add(int target,
                       const std::string &text, const std::vector<std::string> &values,
                       int defaultValue, int index, bool isRom, unsigned int flags) {
 
-    std::vector<C2DUIOption> *options =
+    std::vector<Option> *options =
             isRom ? &options_rom : &options_gui;
 
     for (auto &option : *options) {
         if (option.id == index) {
             options->insert(options->begin() + target + 1,
-                            C2DUIOption(text, values, defaultValue, index, flags));
+                            Option(text, values, defaultValue, index, flags));
             return true;
         }
     }
@@ -357,9 +358,9 @@ bool C2DUIConfig::add(int target,
     return false;
 }
 
-int C2DUIConfig::getValue(int index, bool isRom) {
+int Config::getValue(int index, bool isRom) {
 
-    std::vector<C2DUIOption> *options =
+    std::vector<Option> *options =
             isRom ? &options_rom : &options_gui;
 
     for (auto &option : *options) {
@@ -371,14 +372,14 @@ int C2DUIConfig::getValue(int index, bool isRom) {
     return 0;
 }
 
-bool C2DUIConfig::hide(int index, bool isRom) {
+bool Config::hide(int index, bool isRom) {
 
-    std::vector<C2DUIOption> *options =
+    std::vector<Option> *options =
             isRom ? &options_rom : &options_gui;
 
     for (auto &option : *options) {
         if (option.id == index) {
-            option.flags |= C2DUIOption::HIDDEN;
+            option.flags |= Option::HIDDEN;
             return true;
         }
     }
@@ -386,87 +387,87 @@ bool C2DUIConfig::hide(int index, bool isRom) {
     return false;
 }
 
-int *C2DUIConfig::getGuiPlayerInputKeys(int player) {
+int *Config::getGuiPlayerInputKeys(int player) {
 
 #ifndef NO_KEYBOARD
     // TODO: player > 0 not supported yet
-    keyboard_keys[0] = getValue(C2DUIOption::Index::KEY_UP);
-    keyboard_keys[1] = getValue(C2DUIOption::Index::KEY_DOWN);
-    keyboard_keys[2] = getValue(C2DUIOption::Index::KEY_LEFT);
-    keyboard_keys[3] = getValue(C2DUIOption::Index::KEY_RIGHT);
-    keyboard_keys[4] = getValue(C2DUIOption::Index::KEY_COIN1);
-    keyboard_keys[5] = getValue(C2DUIOption::Index::KEY_START1);
-    keyboard_keys[6] = getValue(C2DUIOption::Index::KEY_FIRE1);
-    keyboard_keys[7] = getValue(C2DUIOption::Index::KEY_FIRE2);
-    keyboard_keys[8] = getValue(C2DUIOption::Index::KEY_FIRE3);
-    keyboard_keys[9] = getValue(C2DUIOption::Index::KEY_FIRE4);
-    keyboard_keys[10] = getValue(C2DUIOption::Index::KEY_FIRE5);
-    keyboard_keys[11] = getValue(C2DUIOption::Index::KEY_FIRE6);
+    keyboard_keys[0] = getValue(Option::Index::KEY_UP);
+    keyboard_keys[1] = getValue(Option::Index::KEY_DOWN);
+    keyboard_keys[2] = getValue(Option::Index::KEY_LEFT);
+    keyboard_keys[3] = getValue(Option::Index::KEY_RIGHT);
+    keyboard_keys[4] = getValue(Option::Index::KEY_COIN1);
+    keyboard_keys[5] = getValue(Option::Index::KEY_START1);
+    keyboard_keys[6] = getValue(Option::Index::KEY_FIRE1);
+    keyboard_keys[7] = getValue(Option::Index::KEY_FIRE2);
+    keyboard_keys[8] = getValue(Option::Index::KEY_FIRE3);
+    keyboard_keys[9] = getValue(Option::Index::KEY_FIRE4);
+    keyboard_keys[10] = getValue(Option::Index::KEY_FIRE5);
+    keyboard_keys[11] = getValue(Option::Index::KEY_FIRE6);
 #endif
 
     return keyboard_keys;
 }
 
-int *C2DUIConfig::getGuiPlayerInputButtons(int player) {
+int *Config::getGuiPlayerInputButtons(int player) {
 
     // TODO: player > 0 not supported yet
-    joystick_keys[0] = getValue(C2DUIOption::Index::JOY_UP);
-    joystick_keys[1] = getValue(C2DUIOption::Index::JOY_DOWN);
-    joystick_keys[2] = getValue(C2DUIOption::Index::JOY_LEFT);
-    joystick_keys[3] = getValue(C2DUIOption::Index::JOY_RIGHT);
-    joystick_keys[4] = getValue(C2DUIOption::Index::JOY_COIN1);
-    joystick_keys[5] = getValue(C2DUIOption::Index::JOY_START1);
-    joystick_keys[6] = getValue(C2DUIOption::Index::JOY_FIRE1);
-    joystick_keys[7] = getValue(C2DUIOption::Index::JOY_FIRE2);
-    joystick_keys[8] = getValue(C2DUIOption::Index::JOY_FIRE3);
-    joystick_keys[9] = getValue(C2DUIOption::Index::JOY_FIRE4);
-    joystick_keys[10] = getValue(C2DUIOption::Index::JOY_FIRE5);
-    joystick_keys[11] = getValue(C2DUIOption::Index::JOY_FIRE6);
+    joystick_keys[0] = getValue(Option::Index::JOY_UP);
+    joystick_keys[1] = getValue(Option::Index::JOY_DOWN);
+    joystick_keys[2] = getValue(Option::Index::JOY_LEFT);
+    joystick_keys[3] = getValue(Option::Index::JOY_RIGHT);
+    joystick_keys[4] = getValue(Option::Index::JOY_COIN1);
+    joystick_keys[5] = getValue(Option::Index::JOY_START1);
+    joystick_keys[6] = getValue(Option::Index::JOY_FIRE1);
+    joystick_keys[7] = getValue(Option::Index::JOY_FIRE2);
+    joystick_keys[8] = getValue(Option::Index::JOY_FIRE3);
+    joystick_keys[9] = getValue(Option::Index::JOY_FIRE4);
+    joystick_keys[10] = getValue(Option::Index::JOY_FIRE5);
+    joystick_keys[11] = getValue(Option::Index::JOY_FIRE6);
 
     return joystick_keys;
 }
 
-int *C2DUIConfig::getRomPlayerInputKeys(int player) {
+int *Config::getRomPlayerInputKeys(int player) {
 
 #ifndef NO_KEYBOARD
     // TODO: player > 0 not supported yet
-    keyboard_keys[0] = getValue(C2DUIOption::Index::KEY_UP, true);
-    keyboard_keys[1] = getValue(C2DUIOption::Index::KEY_DOWN, true);
-    keyboard_keys[2] = getValue(C2DUIOption::Index::KEY_LEFT, true);
-    keyboard_keys[3] = getValue(C2DUIOption::Index::KEY_RIGHT, true);
-    keyboard_keys[4] = getValue(C2DUIOption::Index::KEY_COIN1, true);
-    keyboard_keys[5] = getValue(C2DUIOption::Index::KEY_START1, true);
-    keyboard_keys[6] = getValue(C2DUIOption::Index::KEY_FIRE1, true);
-    keyboard_keys[7] = getValue(C2DUIOption::Index::KEY_FIRE2, true);
-    keyboard_keys[8] = getValue(C2DUIOption::Index::KEY_FIRE3, true);
-    keyboard_keys[9] = getValue(C2DUIOption::Index::KEY_FIRE4, true);
-    keyboard_keys[10] = getValue(C2DUIOption::Index::KEY_FIRE5, true);
-    keyboard_keys[11] = getValue(C2DUIOption::Index::KEY_FIRE6, true);
+    keyboard_keys[0] = getValue(Option::Index::KEY_UP, true);
+    keyboard_keys[1] = getValue(Option::Index::KEY_DOWN, true);
+    keyboard_keys[2] = getValue(Option::Index::KEY_LEFT, true);
+    keyboard_keys[3] = getValue(Option::Index::KEY_RIGHT, true);
+    keyboard_keys[4] = getValue(Option::Index::KEY_COIN1, true);
+    keyboard_keys[5] = getValue(Option::Index::KEY_START1, true);
+    keyboard_keys[6] = getValue(Option::Index::KEY_FIRE1, true);
+    keyboard_keys[7] = getValue(Option::Index::KEY_FIRE2, true);
+    keyboard_keys[8] = getValue(Option::Index::KEY_FIRE3, true);
+    keyboard_keys[9] = getValue(Option::Index::KEY_FIRE4, true);
+    keyboard_keys[10] = getValue(Option::Index::KEY_FIRE5, true);
+    keyboard_keys[11] = getValue(Option::Index::KEY_FIRE6, true);
 #endif
 
     return keyboard_keys;
 }
 
-int *C2DUIConfig::getRomPlayerInputButtons(int player) {
+int *Config::getRomPlayerInputButtons(int player) {
 
     // TODO: player > 0 not supported yet
-    joystick_keys[0] = getValue(C2DUIOption::Index::JOY_UP, true);
-    joystick_keys[1] = getValue(C2DUIOption::Index::JOY_DOWN, true);
-    joystick_keys[2] = getValue(C2DUIOption::Index::JOY_LEFT, true);
-    joystick_keys[3] = getValue(C2DUIOption::Index::JOY_RIGHT, true);
-    joystick_keys[4] = getValue(C2DUIOption::Index::JOY_COIN1, true);
-    joystick_keys[5] = getValue(C2DUIOption::Index::JOY_START1, true);
-    joystick_keys[6] = getValue(C2DUIOption::Index::JOY_FIRE1, true);
-    joystick_keys[7] = getValue(C2DUIOption::Index::JOY_FIRE2, true);
-    joystick_keys[8] = getValue(C2DUIOption::Index::JOY_FIRE3, true);
-    joystick_keys[9] = getValue(C2DUIOption::Index::JOY_FIRE4, true);
-    joystick_keys[10] = getValue(C2DUIOption::Index::JOY_FIRE5, true);
-    joystick_keys[11] = getValue(C2DUIOption::Index::JOY_FIRE6, true);
+    joystick_keys[0] = getValue(Option::Index::JOY_UP, true);
+    joystick_keys[1] = getValue(Option::Index::JOY_DOWN, true);
+    joystick_keys[2] = getValue(Option::Index::JOY_LEFT, true);
+    joystick_keys[3] = getValue(Option::Index::JOY_RIGHT, true);
+    joystick_keys[4] = getValue(Option::Index::JOY_COIN1, true);
+    joystick_keys[5] = getValue(Option::Index::JOY_START1, true);
+    joystick_keys[6] = getValue(Option::Index::JOY_FIRE1, true);
+    joystick_keys[7] = getValue(Option::Index::JOY_FIRE2, true);
+    joystick_keys[8] = getValue(Option::Index::JOY_FIRE3, true);
+    joystick_keys[9] = getValue(Option::Index::JOY_FIRE4, true);
+    joystick_keys[10] = getValue(Option::Index::JOY_FIRE5, true);
+    joystick_keys[11] = getValue(Option::Index::JOY_FIRE6, true);
 
     return joystick_keys;
 }
 
-std::vector<C2DUIRomList::Hardware> *C2DUIConfig::getHardwareList() {
+std::vector<RomList::Hardware> *Config::getHardwareList() {
 
     return &hardwareList;
 }

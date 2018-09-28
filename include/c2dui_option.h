@@ -12,7 +12,7 @@
 
 namespace c2dui {
 
-    class C2DUIOption {
+    class Option {
 
     public:
 
@@ -82,7 +82,7 @@ namespace c2dui {
 #endif
         };
 
-        C2DUIOption(const std::string &text, const std::vector<std::string> &options,
+        Option(const std::string &text, const std::vector<std::string> &options,
                     int defaultValue, int id, unsigned int flags = INTEGER);
 
         unsigned int flags = INTEGER;

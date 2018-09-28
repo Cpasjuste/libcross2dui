@@ -31,11 +31,11 @@ extern int nestopia_state_save(const char *path);
 
 #endif
 
-class GUISaveState : public Rectangle {
+class UIState : public Rectangle {
 
 public:
 
-    GUISaveState(C2DUIGuiMain *ui, const FloatRect &rect, int id) : Rectangle(rect) {
+    UIState(UIMain *ui, const FloatRect &rect, int id) : Rectangle(rect) {
 
         this->ui = ui;
         this->id = id;
@@ -96,7 +96,7 @@ public:
         }
     }
 
-    void setRom(C2DUIRomList::Rom *rom) {
+    void setRom(RomList::Rom *rom) {
 
         memset(path, 0, MAX_PATH);
         memset(shot, 0, MAX_PATH);
@@ -132,7 +132,7 @@ public:
         loadTexture();
     }
 
-    C2DUIGuiMain *ui;
+    UIMain *ui;
     Texture *texture = nullptr;
     Text *middle_text = nullptr;
     Text *bottom_text = nullptr;
@@ -143,11 +143,11 @@ public:
     int id = 0;
 };
 
-class C2DUIGuiSaveStateList : public Rectangle {
+class UIStateList : public Rectangle {
 
 public:
 
-    C2DUIGuiSaveStateList(C2DUIGuiMain *ui, const FloatRect &rect) : Rectangle(rect) {
+    UIStateList(UIMain *ui, const FloatRect &rect) : Rectangle(rect) {
 
         setFillColor(Color::Transparent);
 
@@ -155,7 +155,7 @@ public:
         float width = getSize().x / STATES_COUNT;
         for (int i = 0; i < STATES_COUNT; i++) {
             FloatRect r = {(width * i) + (width / 2), width / 2, width, width};
-            states[i] = new GUISaveState(ui, r, i);
+            states[i] = new UIState(ui, r, i);
             states[i]->setOriginCenter();
             add(states[i]);
         }
@@ -163,13 +163,13 @@ public:
         setSelection(0);
     }
 
-    ~C2DUIGuiSaveStateList() {
+    ~UIStateList() {
         for (auto &state : states) {
             delete state;
         }
     }
 
-    GUISaveState *getSelection() {
+    UIState *getSelection() {
         return states[index];
     }
 
@@ -205,13 +205,13 @@ public:
         setSelection(index);
     }
 
-    GUISaveState *states[STATES_COUNT];
+    UIState *states[STATES_COUNT];
     int index = 0;
 };
 
-C2DUIGuiState::C2DUIGuiState(C2DUIGuiMain *u) : Rectangle(Vector2f(0, 0)) {
+UIStateMenu::UIStateMenu(UIMain *u) : Rectangle(Vector2f(0, 0)) {
 
-    printf("C2DUIGuiState()\n");
+    printf("UIState()\n");
 
     this->ui = u;
 
@@ -235,7 +235,7 @@ C2DUIGuiState::C2DUIGuiState(C2DUIGuiMain *u) : Rectangle(Vector2f(0, 0)) {
     add(title);
 
 
-    uiStateList = new C2DUIGuiSaveStateList(ui, {
+    uiStateList = new UIStateList(ui, {
             getLocalBounds().left + getSize().x / 2, (float) start_y + 32,
             getSize().x - 64, getSize().x / (STATES_COUNT + 1)
     });
@@ -245,7 +245,7 @@ C2DUIGuiState::C2DUIGuiState(C2DUIGuiMain *u) : Rectangle(Vector2f(0, 0)) {
     setVisibility(Hidden);
 }
 
-void C2DUIGuiState::load() {
+void UIStateMenu::show() {
 
     isEmuRunning = ui->getUiEmu()->getVisibility() == Visible;
     // should always be the case...
@@ -267,12 +267,12 @@ void C2DUIGuiState::load() {
     setVisibility(Visible);
 }
 
-void C2DUIGuiState::unload() {
+void UIStateMenu::hide() {
 
     setVisibility(Hidden);
 }
 
-int C2DUIGuiState::update() {
+int UIStateMenu::update() {
 
     int ret = 0;
     unsigned int key = ui->getInput()->update()[0].state;
@@ -288,23 +288,23 @@ int C2DUIGuiState::update() {
         // FIRE1
         if (key & Input::Key::KEY_FIRE1) {
             if (isEmuRunning) {
-                GUISaveState *state = uiStateList->getSelection();
+                UIState *state = uiStateList->getSelection();
                 if (state->exist) {
                     int res = ui->getUiMessageBox()->show(
                             state->bottom_text->getString(),
                             "PRESS FIRE2 TO CANCEL", "LOAD", "SAVE");
                     if (res == MessageBox::LEFT) {
                         state->load();
-                        unload();
+                        hide();
                         ret = UI_KEY_RESUME_ROM;
                     } else if (res == MessageBox::RIGHT) {
                         state->save();
-                        unload();
+                        hide();
                         ret = UI_KEY_RESUME_ROM;
                     }
                 } else {
                     state->save();
-                    unload();
+                    hide();
                     ret = UI_KEY_RESUME_ROM;
                 }
             }
@@ -312,7 +312,7 @@ int C2DUIGuiState::update() {
 
         // FIRE2
         if (key & Input::Key::KEY_FIRE2) {
-            unload();
+            hide();
             if (isEmuRunning) {
                 ret = UI_KEY_RESUME_ROM;
             } else {

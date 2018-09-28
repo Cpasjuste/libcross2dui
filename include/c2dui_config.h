@@ -9,17 +9,17 @@
 
 namespace c2dui {
 
-    class C2DUIConfig {
+    class Config {
 
     public:
 
-        C2DUIConfig(const std::string &homePath, int version);
+        Config(const std::string &homePath, int version);
 
-        virtual ~C2DUIConfig() {};
+        virtual ~Config() {};
 
-        virtual void load(C2DUIRomList::Rom *rom = nullptr);
+        virtual void load(RomList::Rom *rom = nullptr);
 
-        virtual void save(C2DUIRomList::Rom *rom = nullptr);
+        virtual void save(RomList::Rom *rom = nullptr);
 
         virtual void reset(bool isRom = true);
 
@@ -29,20 +29,20 @@ namespace c2dui {
 
         virtual std::vector<std::string> *getRomPaths();
 
-        virtual std::vector<C2DUIOption> *get(bool isRom = false);
+        virtual std::vector<Option> *get(bool isRom = false);
 
-        virtual C2DUIOption *get(int id, bool isRom = false);
+        virtual Option *get(int id, bool isRom = false);
 
         virtual int getValue(int id, bool isRom = false);
 
         virtual bool add(int target,
                          const std::string &text, const std::vector<std::string> &values,
                          int defaultValue, int id, bool isRom,
-                         unsigned int flags = C2DUIOption::INTEGER);
+                         unsigned int flags = Option::INTEGER);
 
         bool hide(int id, bool isRom = false);
 
-        virtual std::vector<C2DUIRomList::Hardware> *getHardwareList();
+        virtual std::vector<RomList::Hardware> *getHardwareList();
 
         virtual int *getGuiPlayerInputKeys(int player);
 
@@ -53,9 +53,9 @@ namespace c2dui {
         virtual int *getRomPlayerInputButtons(int player);
 
     private:
-        std::vector<C2DUIRomList::Hardware> hardwareList;
-        std::vector<C2DUIOption> options_gui;
-        std::vector<C2DUIOption> options_rom;
+        std::vector<RomList::Hardware> hardwareList;
+        std::vector<Option> options_gui;
+        std::vector<Option> options_rom;
         std::vector<std::string> roms_paths;
         std::string homePath;
         std::string configPath;

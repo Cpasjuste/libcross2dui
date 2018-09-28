@@ -2,16 +2,16 @@
 // Created by cpasjuste on 04/02/18.
 //
 
-#ifndef PFBA_GUI_PROGRESSBOX_H
-#define PFBA_GUI_PROGRESSBOX_H
+#ifndef C2D_UI_PROGRESSBOX_H
+#define C2D_UI_PROGRESSBOX_H
 
 namespace c2dui {
 
-    class C2DUIGuiProgressBox : public c2d::Rectangle {
+    class UIProgressBox : public c2d::Rectangle {
 
     public:
 
-        C2DUIGuiProgressBox(C2DUIGuiMain *gui);
+        UIProgressBox(UIMain *gui);
 
         void setTitle(std::string title);
 
@@ -28,4 +28,4 @@ namespace c2dui {
     };
 }
 
-#endif //PFBA_GUI_PROGRESSBOX_H
+#endif //C2D_UI_PROGRESSBOX_H
