@@ -44,7 +44,6 @@ namespace c2dui {
             ROM_SHOW_FPS,
             ROM_FRAMESKIP,
             ROM_NEOBIOS,
-            ROM_AUDIO,
             ROM_HIGH_RES,
             ROM_CHEATS,
             MENU_JOYPAD,
