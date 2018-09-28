@@ -21,6 +21,10 @@ namespace c2dui {
 
         int update();
 
+        virtual bool loadStateCore(const char *path) { return false; };
+
+        virtual bool saveStateCore(const char *path) { return false; };
+
     private:
 
         UIMain *ui = NULL;

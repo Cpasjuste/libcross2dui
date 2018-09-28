@@ -29,7 +29,7 @@ namespace c2dui {
     public:
 
         UIMain(c2d::Renderer *renderer, c2d::Io *io, c2d::Input *input,
-                     c2dui::Config *config, c2dui::Skin *skin);
+               c2dui::Config *config, c2dui::Skin *skin);
 
         virtual ~UIMain();
 
@@ -57,6 +57,8 @@ namespace c2dui {
         UIEmu *getUiEmu();
 
         UIMenu *getUiMenu();
+
+        UIStateMenu *getUiStateMenu();
 
         UIProgressBox *getUiProgressBox();
 

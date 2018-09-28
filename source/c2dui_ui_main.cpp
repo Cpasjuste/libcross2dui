@@ -209,6 +209,9 @@ UIMenu *UIMain::getUiMenu() {
     return uiMenu;
 }
 
+UIStateMenu *UIMain::getUiStateMenu() {
+    return uiState;
+}
 
 UIProgressBox *UIMain::getUiProgressBox() {
     return uiProgressBox;
