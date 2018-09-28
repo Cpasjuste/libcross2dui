@@ -37,8 +37,10 @@ namespace c2dui {
 
         virtual bool add(int target,
                          const std::string &text, const std::vector<std::string> &values,
-                         int defaultValue, int id, bool isRom,
-                         unsigned int flags = Option::INTEGER);
+                         int defaultValue, int id, unsigned int flags = Option::INTEGER);
+
+        virtual void append(const std::string &text, const std::vector<std::string> &values,
+                            int defaultValue, int id, unsigned int flags = Option::INTEGER);
 
         bool hide(int id, bool isRom = false);
 
