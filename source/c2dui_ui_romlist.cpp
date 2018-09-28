@@ -72,7 +72,6 @@ public:
                  ui->getConfig()->getHomePath()->c_str(), type, rom->drv_name);
         texture = new C2DTexture(texture_path);
         if (!texture->available) {
-#ifdef __PSNES__
             // try removing the extension (drv_name has extension (.zip, .smc) with psnes and no db.xml)
             char *drv_name_no_ext = Utility::removeExt(rom->drv_name, '/');
             if (drv_name_no_ext) {
@@ -83,7 +82,6 @@ public:
                 texture = new C2DTexture(texture_path);
                 free(drv_name_no_ext);
             }
-#endif
             if (!texture->available && rom->parent) {
                 // try parent image
                 delete (texture);
