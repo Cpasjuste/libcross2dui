@@ -10,6 +10,8 @@ using namespace c2dui;
 
 Config::Config(const std::string &home, int ver) {
 
+    printf("Config(%s, v%i)\n", home.c_str(), ver);
+
     homePath = home;
     configPath = homePath + "config.cfg";
     version = ver;
@@ -59,7 +61,7 @@ Config::Config(const std::string &home, int ver) {
     if (c2d_renderer->getShaderList() != nullptr) {
         append("EFFECT", c2d_renderer->getShaderList()->getNames(), 0, Option::Index::ROM_SHADER);
     } else {
-        append("EFFECT", {"NONE"}, 0, Option::Index::ROM_SHADER);
+        append("EFFECT", {"NONE"}, 0, Option::Index::ROM_SHADER, Option::Type::HIDDEN);
     }
     append("SHOW_FPS", {"OFF", "ON"}, 0, Option::Index::ROM_SHOW_FPS);
 
@@ -181,8 +183,6 @@ void Config::load(RomList::Rom *rom) {
                             printf("%s: %s\n", p, value);
                         }
                     }
-                } else {
-                    //printf("rom_paths setting not found\n");
                 }
             }
 
@@ -204,7 +204,6 @@ void Config::load(RomList::Rom *rom) {
             config_destroy(&cfg);
             return;
         }
-        //printf("###########################\n");
     } else {
         printf("NOK: file not found\n");
         // reset default rom options for other roms usage
@@ -291,7 +290,7 @@ std::string *Config::getHomePath() {
 }
 
 std::string *Config::getRomPath(int n) {
-    if (n >= C2DUI_ROMS_PATHS_MAX) {
+    if ((size_t) n >= getRomPaths()->size()) {
         return &roms_paths[0];
     } else {
         return &roms_paths[n];
@@ -323,8 +322,8 @@ bool Config::add(int target,
                  int defaultValue, int index, unsigned int flags) {
 
     for (auto &option : options_gui) {
-        if (option.id == index) {
-            options_gui.insert(options_gui.begin() + target + 1,
+        if (option.id == target) {
+            options_gui.insert(options_gui.begin() + target,
                                Option(text, values, defaultValue, index, flags));
             return true;
         }

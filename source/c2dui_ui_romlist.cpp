@@ -5,11 +5,9 @@
 
 #include "c2dui.h"
 
-#ifdef __PFBA__
-// TODO: remove pfba deps
+/// pFBA
 #define BDF_ORIENTATION_FLIPPED     (1 << 1)
 #define BDF_ORIENTATION_VERTICAL    (1 << 2)
-#endif
 
 using namespace c2d;
 using namespace c2dui;
@@ -18,8 +16,8 @@ class UIRomInfo : public Rectangle {
 
 public:
 
-    UIRomInfo(UIMain *ui, const Font &font, int fontSize, const FloatRect &rect, float scale)
-            : Rectangle(rect) {
+    UIRomInfo(UIMain *ui, const Font &font, int fontSize,
+              const FloatRect &rect, float scale) : Rectangle(rect) {
 
         printf("UIRomInfo\n");
 
@@ -133,26 +131,25 @@ public:
             }
 
             // update info text
-#ifdef __PFBA__
-            strcpy(rotation, "ROTATION: HORIZONTAL");
-            if (rom->flags & BDF_ORIENTATION_VERTICAL) {
-                sprintf(rotation, "ROTATION: VERTICAL");
-                if (rom->flags & BDF_ORIENTATION_FLIPPED) {
-                    strncat(rotation, " / FLIPPED", MAX_PATH);
+            Option *rotation_opt = ui->getConfig()->get(Option::Index::ROM_ROTATION);
+            if (rotation_opt && !(rotation_opt->flags & Option::Type::HIDDEN)) {
+                strcpy(rotation, "ROTATION: HORIZONTAL");
+                if (rom->flags & BDF_ORIENTATION_VERTICAL) {
+                    sprintf(rotation, "ROTATION: VERTICAL");
+                    if (rom->flags & BDF_ORIENTATION_FLIPPED) {
+                        strncat(rotation, " / FLIPPED", MAX_PATH);
+                    }
                 }
+                snprintf(info, 1024, "FILE: %s\nSTATUS: %s\nSYSTEM: %s\nMANUFACTURER: %s\nYEAR: %s\n%s",
+                         rom->path, rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
+                         rom->system, rom->manufacturer, rom->year, rotation);
+            } else {
+                snprintf(info, 1023, "FILE: %s\nSTATUS: %s\nMANUFACTURER: %s\nYEAR: %s",
+                         rom->path, rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
+                         rom->manufacturer, rom->year);
             }
-            snprintf(info, 1024, "FILE: %s\nSTATUS: %s\nSYSTEM: %s\nMANUFACTURER: %s\nYEAR: %s\n%s",
-                     rom->path, rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
-                     rom->system, rom->manufacturer, rom->year, rotation);
             infoText->setString(info);
             infoText->setVisibility(Visible);
-#elif __PSNES__
-            snprintf(info, 1023, "FILE: %s\nSTATUS: %s\nMANUFACTURER: %s\nYEAR: %s",
-                     rom->path, rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
-                     rom->manufacturer, rom->year);
-            infoText->setString(info);
-            infoText->setVisibility(Visible);
-#endif
         }
     }
 
@@ -194,12 +191,12 @@ UIRomList::UIRomList(UIMain *u, RomList *romList, const c2d::Vector2f &size) : R
 
     // add rom info ui
     rom_info = new UIRomInfo(ui, *skin->font, ui->getFontSize(),
-                                   FloatRect(
-                                           (getLocalBounds().width / 2) + UI_MARGIN * ui->getScaling(),
-                                           UI_MARGIN * ui->getScaling(),
-                                           (getLocalBounds().width / 2) - UI_MARGIN * ui->getScaling() * 2,
-                                           getLocalBounds().height - UI_MARGIN * ui->getScaling() * 2),
-                                   ui->getScaling());
+                             FloatRect(
+                                     (getLocalBounds().width / 2) + UI_MARGIN * ui->getScaling(),
+                                     UI_MARGIN * ui->getScaling(),
+                                     (getLocalBounds().width / 2) - UI_MARGIN * ui->getScaling() * 2,
+                                     getLocalBounds().height - UI_MARGIN * ui->getScaling() * 2),
+                             ui->getScaling());
     rom_info->infoBox->setOutlineThickness(getOutlineThickness());
     add(rom_info);
 

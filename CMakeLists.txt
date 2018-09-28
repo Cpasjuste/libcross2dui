@@ -12,10 +12,6 @@ option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
 option(BUILD_NX "Build with NX (SWITCH) support" OFF)
 
-option(BUILD_PFBA "Build with PFBA support" OFF)
-option(BUILD_PSNES "Build with SNES9X support" OFF)
-option(BUILD_PNES "Build with NES (NESTOPIA) support" OFF)
-
 option(UPDATE_CONFIG "Force config file updating" OFF)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -49,23 +45,6 @@ file(GLOB LIBCONFIG_SOURCE
 if (UPDATE_CONFIG)
     list(APPEND FLAGS -D__UPDATE_CONFIG__)
 endif ()
-
-if (BUILD_PFBA)
-    #################
-    # PFBA
-    #################
-    list(APPEND FLAGS -D__PFBA__)
-elseif (BUILD_PSNES)
-    ##############
-    # PSNES
-    ##############
-    list(APPEND FLAGS -D__PSNES__)
-elseif (BUILD_PNES)
-    ##############
-    # PNES
-    ##############
-    list(APPEND FLAGS -D__PNES__)
-endif (BUILD_PFBA)
 
 if (BUILD_PSP2)
     #################

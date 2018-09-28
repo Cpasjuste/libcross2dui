@@ -5,20 +5,7 @@
 #ifndef C2DUI_H
 #define C2DUI_H
 
-#define C2DUI_HOME_PATH "./"
-#ifdef __PFBA__
-#define C2DUI_ROMS_PATHS_MAX 20
-#else
-#define C2DUI_ROMS_PATHS_MAX 1
-#endif
-
 #ifdef __PSP2__
-#undef C2DUI_HOME_PATH
-#ifdef __PFBA__
-#define C2DUI_HOME_PATH "ux0:/data/pfba/"
-#else
-#define C2DUI_HOME_PATH "ux0:/data/psnes/"
-#endif
 #define SCR_W   960
 #define SCR_H   544
 #elif __PS3__

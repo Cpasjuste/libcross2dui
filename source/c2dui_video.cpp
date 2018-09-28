@@ -4,15 +4,6 @@
 
 #include "c2dui.h"
 
-#ifdef __PFBA__
-// TODO: remove pfba deps
-#define BDF_ORIENTATION_FLIPPED     (1 << 1)
-#define BDF_ORIENTATION_VERTICAL    (1 << 2)
-
-extern "C" int BurnDrvGetFlags();
-
-#endif
-
 using namespace c2d;
 using namespace c2dui;
 
@@ -34,20 +25,12 @@ C2DUIVideo::C2DUIVideo(UIMain *gui, void **_pixels, int *_pitch,
     updateScaling();
 }
 
-void C2DUIVideo::updateScaling() {
+void C2DUIVideo::updateScaling(bool vertical, bool flip) {
 
     int rotated = 0;
     float rotation = 0;
     int rotation_cfg = ui->getConfig()->getValue(Option::Index::ROM_ROTATION, true);
     int scale_mode = ui->getConfig()->getValue(Option::Index::ROM_SCALING, true);
-
-#ifdef __PFBA__
-    int vertical = BurnDrvGetFlags() & BDF_ORIENTATION_VERTICAL;
-    int flip = BurnDrvGetFlags() & BDF_ORIENTATION_FLIPPED;
-#else
-    int vertical = false;
-    int flip = false;
-#endif
 
     Vector2f screen = ui->getRenderer()->getSize();
     Vector2f scale_max;
