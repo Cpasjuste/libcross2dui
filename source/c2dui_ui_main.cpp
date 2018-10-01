@@ -141,7 +141,7 @@ void UIMain::run() {
                 break;
         }
 
-        if (uiEmu->isPaused()) {
+        if (uiEmu->isPaused() || uiEmu->getVisibility() == C2DObject::Hidden) {
             if (key > 0) {
                 if (timer_input.getElapsedTime().asSeconds() > 12) {
                     getRenderer()->delay(INPUT_DELAY / 8);
