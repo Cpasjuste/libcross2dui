@@ -13,20 +13,20 @@
 using namespace c2d;
 using namespace c2dui;
 
-UIEmu::UIEmu(UIMain *u) : Rectangle(u->getRenderer()->getSize()) {
+UIEmu::UIEmu(UIMain *u) : RectangleShape(u->getRenderer()->getSize()) {
 
     printf("UIEmu()\n");
 
     ui = u;
     setFillColor(Color::Transparent);
 
-    fpsText = new Text("0123456789", *ui->getSkin()->font, (unsigned int) ui->getFontSize());
+    fpsText = new Text("0123456789", (unsigned int) ui->getFontSize(), ui->getSkin()->font);
     fpsText->setString("FPS: 00/60");
     fpsText->setPosition(16, 16);
     fpsText->setVisibility(Visibility::Hidden);
     add(fpsText);
 
-    setVisibility(Hidden);
+    setVisibility(Visibility::Hidden);
 }
 
 void UIEmu::addAudio(c2d::Audio *_audio) {
@@ -61,27 +61,28 @@ void UIEmu::addVideo(C2DUIVideo *_video) {
     add(video);
 }
 
-void UIEmu::addVideo(UIMain *ui, void **pixels, int *pitch, const c2d::Vector2f &size, int format) {
+void UIEmu::addVideo(UIMain *ui, void **pixels, int *pitch,
+                     const c2d::Vector2f &size, Texture::Format format) {
 
     if (video) {
         delete (video);
         video = nullptr;
     }
 
-    C2DUIVideo *_video = new C2DUIVideo(ui, pixels, pitch, size, format);
+    auto *_video = new C2DUIVideo(ui, pixels, pitch, size, format);
     addVideo(_video);
 }
 
 int UIEmu::run(RomList::Rom *rom) {
 
-    printf("UIEmu::run()\n");
+    printf("UIEmu::run(%s)\n", rom->path.c_str());
 
     // set fps text on top
     getFpsText()->setLayer(1);
 
-    setVisibility(Visible);
-    getUi()->getUiProgressBox()->setVisibility(Hidden);
-    getUi()->getUiRomList()->setVisibility(Hidden);
+    setVisibility(Visibility::Visible);
+    getUi()->getUiProgressBox()->setVisibility(Visibility::Hidden);
+    getUi()->getUiRomList()->setVisibility(Visibility::Hidden);
 
     // set per rom input configuration
     getUi()->updateInputMapping(true);
@@ -124,7 +125,7 @@ void UIEmu::stop() {
     }
 
     ui->updateInputMapping(false);
-    setVisibility(Hidden);
+    setVisibility(Visibility::Hidden);
 }
 
 void UIEmu::pause() {
@@ -138,7 +139,7 @@ void UIEmu::pause() {
     ui->updateInputMapping(false);
 }
 
-int UIEmu::update() {
+int UIEmu::loop() {
     return 0;
 }
 

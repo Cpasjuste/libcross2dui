@@ -9,30 +9,30 @@
 using namespace c2d;
 using namespace c2dui;
 
-class UIState : public Rectangle {
+class UIState : public RectangleShape {
 
 public:
 
-    UIState(UIMain *ui, const FloatRect &rect, int id) : Rectangle(rect) {
+    UIState(UIMain *ui, const FloatRect &rect, int id) : RectangleShape(rect) {
 
         this->ui = ui;
         this->id = id;
 
-        setFillColor(Color::GrayLight);
+        setFillColor(Color::Gray);
         setOutlineColor(COL_GREEN);
         setOutlineThickness(2);
 
         // text if no save/screenshot
-        middle_text = new C2DText("NO SAVE", *ui->getFont(), (unsigned int) ui->getFontSize());
+        middle_text = new C2DText("NO SAVE", (unsigned int) ui->getFontSize(), ui->getFont());
         middle_text->setOutlineThickness(2);
-        middle_text->setOriginCenter();
+        middle_text->setOrigin(Origin::Center);
         middle_text->setPosition(getLocalBounds().left + getSize().x / 2,
                                  getLocalBounds().top + getSize().y / 2);
         add(middle_text);
 
         // text for slot id
         snprintf(bottom_text_char, 32, "SLOT %i", id);
-        bottom_text = new C2DText(bottom_text_char, *ui->getFont(), (unsigned int) ui->getFontSize());
+        bottom_text = new C2DText(bottom_text_char, (unsigned int) ui->getFontSize(), ui->getFont());
         bottom_text->setOutlineThickness(2);
         bottom_text->setOrigin(bottom_text->getLocalBounds().width / 2, 0);
         bottom_text->setPosition(getLocalBounds().left + getSize().x / 2,
@@ -57,20 +57,20 @@ public:
                             getSize().y / texture->getTextureRect().height);
                     texture->setScale(tex_scaling, tex_scaling);
                     texture->setPosition(getSize().x / 2, getSize().y / 2);
-                    texture->setOriginCenter();
+                    texture->setOrigin(Origin::Center);
                     add(texture);
-                    middle_text->setVisibility(Hidden);
+                    middle_text->setVisibility(Visibility::Hidden);
                 }
             }
             if (!texture || !texture->available) {
                 middle_text->setString("NO PIC");
-                middle_text->setOriginCenter();
-                middle_text->setVisibility(Visible);
+                middle_text->setOrigin(Origin::Center);
+                middle_text->setVisibility(Visibility::Visible);
             }
         } else {
             middle_text->setString("NO SAVE");
-            middle_text->setOriginCenter();
-            middle_text->setVisibility(Visible);
+            middle_text->setOrigin(Origin::Center);
+            middle_text->setVisibility(Visibility::Visible);
         }
     }
 
@@ -110,11 +110,11 @@ public:
     int id = 0;
 };
 
-class UIStateList : public Rectangle {
+class UIStateList : public RectangleShape {
 
 public:
 
-    UIStateList(UIMain *ui, const FloatRect &rect) : Rectangle(rect) {
+    UIStateList(UIMain *ui, const FloatRect &rect) : RectangleShape(rect) {
 
         setFillColor(Color::Transparent);
 
@@ -123,7 +123,7 @@ public:
         for (int i = 0; i < STATES_COUNT; i++) {
             FloatRect r = {(width * i) + (width / 2), width / 2, width, width};
             states[i] = new UIState(ui, r, i);
-            states[i]->setOriginCenter();
+            states[i]->setOrigin(Origin::Center);
             add(states[i]);
         }
 
@@ -176,7 +176,7 @@ public:
     int index = 0;
 };
 
-UIStateMenu::UIStateMenu(UIMain *u) : Rectangle(Vector2f(0, 0)) {
+UIStateMenu::UIStateMenu(UIMain *u) : RectangleShape(Vector2f(0, 0)) {
 
     printf("UIStateMenu()\n");
 
@@ -191,8 +191,8 @@ UIStateMenu::UIStateMenu(UIMain *u) : Rectangle(Vector2f(0, 0)) {
 
 
     // menu title
-    title = new Text("TITLE_______________________", *ui->getSkin()->font);
-    title->setSizeMax(Vector2f(getSize().x - 16, 0));
+    title = new Text("TITLE_______________________", C2D_DEFAULT_CHAR_SIZE, ui->getSkin()->font);
+    title->setWidth(getSize().x - 16);
     title->setFillColor(Color::White);
     title->setOutlineThickness(2);
     title->setOutlineColor(COL_RED);
@@ -209,12 +209,12 @@ UIStateMenu::UIStateMenu(UIMain *u) : Rectangle(Vector2f(0, 0)) {
     uiStateList->setOrigin(uiStateList->getSize().x / 2, 0);
     add(uiStateList);
 
-    setVisibility(Hidden);
+    setVisibility(Visibility::Hidden);
 }
 
 void UIStateMenu::show() {
 
-    isEmuRunning = ui->getUiEmu()->getVisibility() == Visible;
+    isEmuRunning = ui->getUiEmu()->isVisible();
     // should always be the case...
     if (isEmuRunning) {
         // if frameskip is enabled, we may get a black buffer,
@@ -223,7 +223,7 @@ void UIStateMenu::show() {
     }
 
     char name[128];
-    snprintf(name, 128, "%s__________", ui->getUiRomList()->getSelection()->name);
+    snprintf(name, 128, "%s__________", ui->getUiRomList()->getSelection()->name.c_str());
     title->setString(name);
 
     for (auto &state : uiStateList->states) {
@@ -231,18 +231,18 @@ void UIStateMenu::show() {
     }
     uiStateList->setSelection(0);
 
-    setVisibility(Visible);
+    setVisibility(Visibility::Visible);
 }
 
 void UIStateMenu::hide() {
 
-    setVisibility(Hidden);
+    setVisibility(Visibility::Hidden);
 }
 
-int UIStateMenu::update() {
+int UIStateMenu::loop() {
 
     int ret = 0;
-    unsigned int key = ui->getInput()->update()[0].state;
+    unsigned int key = ui->getInput()->getKeys();
 
     if (key > 0) {
 

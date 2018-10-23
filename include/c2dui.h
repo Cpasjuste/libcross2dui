@@ -22,7 +22,7 @@
 #define SCR_H   720
 #endif
 
-#include "c2d.h"
+#include "cross2d/c2d.h"
 #include "c2dui_option.h"
 #include "c2dui_option_menu.h"
 #include "c2dui_romlist.h"

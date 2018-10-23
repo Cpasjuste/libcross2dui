@@ -8,7 +8,7 @@ using namespace c2d;
 using namespace c2dui;
 
 C2DUIVideo::C2DUIVideo(UIMain *gui, void **_pixels, int *_pitch,
-                       const c2d::Vector2f &size, int format)
+                       const c2d::Vector2f &size, Format format)
         : C2DTexture(size, format) {
 
     printf("game resolution: %ix%i\n", (int) getTextureRect().width, (int) getTextureRect().height);
@@ -21,7 +21,7 @@ C2DUIVideo::C2DUIVideo(UIMain *gui, void **_pixels, int *_pitch,
     }
 
     setShader(ui->getConfig()->getValue(Option::Index::ROM_SHADER, true));
-    setFiltering(ui->getConfig()->getValue(Option::Index::ROM_FILTER, true));
+    setFilter((Filter) ui->getConfig()->getValue(Option::Index::ROM_FILTER, true));
     updateScaling();
 }
 
@@ -127,7 +127,7 @@ void C2DUIVideo::updateScaling(bool vertical, bool flip) {
             break;
     }
 
-    setOriginCenter();
+    setOrigin(Origin::Center);
     setPosition(screen.x / 2, screen.y / 2);
     setScale(sx, sy);
     setRotation(rotation);

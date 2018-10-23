@@ -9,7 +9,7 @@ class MenuLine;
 
 namespace c2dui {
 
-    class UIMenu : public c2d::Rectangle {
+    class UIMenu : public c2d::RectangleShape {
 
     public:
 
@@ -17,7 +17,7 @@ namespace c2dui {
 
         ~UIMenu();
 
-        int update();
+        int loop();
 
         void load(bool isRomMenu = false, OptionMenu *om = NULL);
 
@@ -33,7 +33,7 @@ namespace c2dui {
 
         UIMain *ui = nullptr;
         c2d::Text *title = nullptr;
-        c2d::Rectangle *highlight = nullptr;
+        c2d::RectangleShape *highlight = nullptr;
         std::vector<MenuLine *> lines;
         c2d::Color fillColor[2] = {
                 {55, 55, 55, 230},

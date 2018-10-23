@@ -9,7 +9,7 @@ class UIRomInfo;
 
 namespace c2dui {
 
-    class UIRomList : public c2d::Rectangle {
+    class UIRomList : public c2d::RectangleShape {
 
     public:
 
@@ -17,7 +17,7 @@ namespace c2dui {
 
         ~UIRomList();
 
-        int update();
+        int loop();
 
         void updateRomList();
 

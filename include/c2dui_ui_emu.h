@@ -9,7 +9,7 @@
 
 namespace c2dui {
 
-    class UIEmu : public c2d::Rectangle {
+    class UIEmu : public c2d::RectangleShape {
 
     public:
 
@@ -23,7 +23,7 @@ namespace c2dui {
 
         virtual void resume();
 
-        virtual int update();
+        virtual int loop();
 
         virtual void updateFb() {};
 
@@ -43,8 +43,8 @@ namespace c2dui {
 
         void addVideo(C2DUIVideo *video);
 
-        void addVideo(UIMain *ui, void **pixels, int *pitch,
-                      const c2d::Vector2f &size, int format = C2D_TEXTURE_FMT_RGB565);
+        void addVideo(UIMain *ui, void **pixels, int *pitch, const c2d::Vector2f &size,
+                      c2d::Texture::Format format = c2d::Texture::Format::RGB565);
 
         float getFrameDuration();
 

@@ -12,12 +12,12 @@
 using namespace c2d;
 using namespace c2dui;
 
-class UIRomInfo : public Rectangle {
+class UIRomInfo : public RectangleShape {
 
 public:
 
-    UIRomInfo(UIMain *ui, const Font &font, int fontSize,
-              const FloatRect &rect, float scale) : Rectangle(rect) {
+    UIRomInfo(UIMain *ui, Font *font, int fontSize,
+              const FloatRect &rect, float scale) : RectangleShape(rect) {
 
         printf("UIRomInfo\n");
 
@@ -28,32 +28,32 @@ public:
         margin = UI_MARGIN * scaling;
 
         // info box
-        infoBox = new Rectangle(FloatRect(0, getSize().y / 2 + margin,
-                                          getSize().x, getSize().y / 2 - margin));
-        infoBox->setFillColor(Color::GrayLight);
+        infoBox = new RectangleShape(FloatRect(0, getSize().y / 2 + margin,
+                                               getSize().x, getSize().y / 2 - margin));
+        infoBox->setFillColor(Color::Gray);
         infoBox->setOutlineColor(COL_GREEN);
         infoBox->setOutlineThickness(2);
 
-        infoText = new Text("", font, (unsigned int) fontSize);
+        infoText = new Text("", (unsigned int) fontSize, font);
         infoText->setPosition(margin, margin);
         infoText->setOutlineThickness(2);
-        infoText->setSizeMax(Vector2f(infoBox->getSize().x, 0));
+        infoText->setWidth(infoBox->getSize().x);
         infoText->setLineSpacingModifier((int) (6 * scaling));
         infoBox->add(infoText);
 
         add(infoBox);
 
         // preview box
-        previewBox = new Rectangle(FloatRect(0, 0, getSize().x, getSize().y / 2));
-        previewBox->setFillColor(Color::GrayLight);
+        previewBox = new RectangleShape(FloatRect(0, 0, getSize().x, getSize().y / 2));
+        previewBox->setFillColor(Color::Gray);
         previewBox->setOutlineColor(COL_YELLOW);
         previewBox->setOutlineThickness(2);
 
-        previewText = new Text("No Preview Image Available", font, (unsigned int) fontSize);
+        previewText = new Text("No Preview Image Available", (unsigned int) fontSize, font);
         previewText->setPosition(previewBox->getSize().x / 2, previewBox->getSize().y / 2);
         previewText->setOutlineThickness(2);
-        previewText->setSizeMax(Vector2f(infoBox->getSize().x, 0));
-        previewText->setOriginCenter();
+        previewText->setWidth(infoBox->getSize().x);
+        previewText->setOrigin(Origin::Center);
         previewBox->add(previewText);
 
         add(previewBox);
@@ -95,7 +95,7 @@ public:
         // set image
         if (texture->available) {
             previewText->setVisibility(Visibility::Hidden);
-            texture->setOriginCenter();
+            texture->setOrigin(Origin::Center);
             texture->setPosition(Vector2f(previewBox->getSize().x / 2, previewBox->getSize().y / 2));
             float tex_scaling = std::min(
                     previewBox->getSize().x / texture->getTextureRect().width,
@@ -120,7 +120,7 @@ public:
         }
 
         if (!rom) {
-            infoText->setVisibility(Hidden);
+            infoText->setVisibility(Visibility::Hidden);
             previewText->setVisibility(Visibility::Visible);
         } else {
             // load title/preview texture
@@ -139,23 +139,23 @@ public:
                     }
                 }
                 snprintf(info, 1024, "FILE: %s\nSTATUS: %s\nSYSTEM: %s\nMANUFACTURER: %s\nYEAR: %s\n%s",
-                         rom->path, rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
+                         rom->name.c_str(), rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
                          rom->system, rom->manufacturer, rom->year, rotation);
             } else {
                 snprintf(info, 1023, "FILE: %s\nSTATUS: %s\nMANUFACTURER: %s\nYEAR: %s",
-                         rom->path, rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
+                         rom->name.c_str(), rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
                          rom->manufacturer, rom->year);
             }
             infoText->setString(info);
-            infoText->setVisibility(Visible);
+            infoText->setVisibility(Visibility::Visible);
         }
     }
 
     UIMain *ui = nullptr;
     Texture *texture = nullptr;
-    Rectangle *infoBox = nullptr;
+    RectangleShape *infoBox = nullptr;
     Text *infoText = nullptr;
-    Rectangle *previewBox = nullptr;
+    RectangleShape *previewBox = nullptr;
     Text *previewText = nullptr;
     char texture_path[1024];
     char info[1024];
@@ -164,7 +164,7 @@ public:
     float scaling = 1;
 };
 
-UIRomList::UIRomList(UIMain *u, RomList *romList, const c2d::Vector2f &size) : Rectangle(size) {
+UIRomList::UIRomList(UIMain *u, RomList *romList, const c2d::Vector2f &size) : RectangleShape(size) {
 
     printf("UIRomList\n");
 
@@ -172,7 +172,7 @@ UIRomList::UIRomList(UIMain *u, RomList *romList, const c2d::Vector2f &size) : R
     rom_list = romList;
 
     // set gui main "window"
-    setFillColor(Color::Gray);
+    setFillColor(Color::GrayDark);
     setOutlineColor(COL_ORANGE);
     setOutlineThickness(ui->getScaling() < 1 ? 1 : 2);
     setPosition(getOutlineThickness(), getOutlineThickness());
@@ -188,7 +188,7 @@ UIRomList::UIRomList(UIMain *u, RomList *romList, const c2d::Vector2f &size) : R
     }
 
     // add rom info ui
-    rom_info = new UIRomInfo(ui, *skin->font, ui->getFontSize(),
+    rom_info = new UIRomInfo(ui, skin->font, ui->getFontSize(),
                              FloatRect(
                                      (getLocalBounds().width / 2) + UI_MARGIN * ui->getScaling(),
                                      UI_MARGIN * ui->getScaling(),
@@ -252,13 +252,14 @@ void UIRomList::updateRomList() {
                 UI_MARGIN * ui->getScaling(), top,
                 (getLocalBounds().width / 2) - UI_MARGIN * ui->getScaling(),
                 getLocalBounds().height - top - UI_MARGIN * ui->getScaling()};
-        list_box = new ListBox(*ui->getSkin()->font, ui->getFontSize(), rect, (std::vector<Io::File *> &) roms,
+        list_box = new ListBox(ui->getSkin()->font, ui->getFontSize(), rect, (std::vector<Io::File *> &) roms,
                                ui->getConfig()->getValue(Option::Index::GUI_SHOW_ICONS) == 1);
+        list_box->setHighlightUseFileColor(true);
         list_box->setOutlineThickness(getOutlineThickness());
-        list_box->setFillColor(Color::GrayLight);
+        list_box->setFillColor(Color::Gray);
         list_box->setOutlineColor(COL_ORANGE);
         auto *tween = new TweenAlpha(50, 150, 1.0f, TweenLoop::PingPong);
-        list_box->getHighLight()->add(tween);
+        list_box->getHighlight()->add(tween);
         add(list_box);
     } else {
         list_box->setFiles((std::vector<Io::File *> &) roms);
@@ -271,9 +272,9 @@ void UIRomList::updateRomList() {
     }
 }
 
-int UIRomList::update() {
+int UIRomList::loop() {
 
-    unsigned int key = ui->getInput()->update()[0].state;
+    unsigned int key = ui->getInput()->getKeys();
 
     if (key > 0) {
 
@@ -310,8 +311,7 @@ int UIRomList::update() {
             rom_info->update(nullptr, show_preview);
             title_loaded = 0;
         } else if (key & Input::Key::KEY_FIRE1) {
-            if (getSelection() != nullptr
-                && getSelection()->state != RomList::RomState::MISSING) {
+            if (getSelection() != nullptr && getSelection()->state != RomList::RomState::MISSING) {
                 show_preview = false;
                 return UI_KEY_RUN_ROM;
             }

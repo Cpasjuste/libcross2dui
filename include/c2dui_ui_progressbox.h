@@ -7,7 +7,7 @@
 
 namespace c2dui {
 
-    class UIProgressBox : public c2d::Rectangle {
+    class UIProgressBox : public c2d::RectangleShape {
 
     public:
 
@@ -23,8 +23,8 @@ namespace c2dui {
 
         c2d::Text *title;
         c2d::Text *message;
-        c2d::Rectangle *progress_bg;
-        c2d::Rectangle *progress_fg;
+        c2d::RectangleShape *progress_bg;
+        c2d::RectangleShape *progress_fg;
     };
 }
 

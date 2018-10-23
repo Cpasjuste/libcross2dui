@@ -38,11 +38,11 @@ namespace c2dui {
 
         class Rom : public c2d::Io::File {
         public:
-            const char *parent = NULL;
-            const char *drv_name;
-            const char *year = NULL;
-            const char *manufacturer = NULL;
-            const char *system = NULL;
+            const char *parent = nullptr;
+            const char *drv_name = nullptr;
+            const char *year = nullptr;
+            const char *manufacturer = nullptr;
+            const char *system = nullptr;
             int state = RomState::MISSING;
             unsigned int flags;
             unsigned int hardware;
@@ -67,13 +67,13 @@ namespace c2dui {
         };
 
         UIMain *ui;
-        c2d::Rectangle *rect;
+        c2d::RectangleShape *rect;
         c2d::Texture *texture;
         c2d::Text *text;
         std::vector<Rom *> list;
         std::vector<Hardware> *hardwareList;
         std::vector<std::string> *paths;
-        std::vector<std::vector<std::string>> files;
+        std::vector<std::vector<c2d::Io::File>> files;
         char icon_path[1024];
         char text_str[512];
         float time_start = 0;
@@ -84,7 +84,7 @@ namespace c2dui {
                     return &hardwareList->at(i);
                 }
             }
-            return NULL;
+            return nullptr;
         };
 
         const char *getHardwareName(int hardware_prefix) {

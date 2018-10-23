@@ -9,7 +9,7 @@ class UIStateList;
 
 namespace c2dui {
 
-    class UIStateMenu : public c2d::Rectangle {
+    class UIStateMenu : public c2d::RectangleShape {
 
     public:
 
@@ -19,7 +19,7 @@ namespace c2dui {
 
         void hide();
 
-        int update();
+        int loop();
 
         virtual bool loadStateCore(const char *path) { return false; };
 

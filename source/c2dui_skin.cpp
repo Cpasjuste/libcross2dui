@@ -11,12 +11,10 @@ Skin::Skin(const std::string &p, const std::vector<Button> &btns) {
 
     this->path = p + "skin/";
 
-    tex_title = new C2DTexture((path + "title.png").c_str());
-    tex_title->setFiltering(C2D_TEXTURE_FILTER_POINT);
+    tex_title = new C2DTexture(path + "title.png");
     font = new C2DFont();
     font->loadFromFile(path + "default.ttf");
-    font->setFiltering(C2D_TEXTURE_FILTER_POINT);
-    font->setYOffset(-5);
+    font->setOffset({0, -3});
 
     // load buttons textures
     buttons = btns;

@@ -34,9 +34,9 @@ UIMain::UIMain(Renderer *r, Io *i, Input *in, Config *cfg, Skin *s) {
                     renderer->getSize().y / 2,
                     renderer->getSize().x / 2,
                     renderer->getSize().y / 2),
-            input, *skin->font, getFontSize());
-    uiMessageBox->setOriginCenter();
-    uiMessageBox->setFillColor(Color::GrayLight);
+            input, skin->font, getFontSize());
+    uiMessageBox->setOrigin(Origin::Center);
+    uiMessageBox->setFillColor(Color::Gray);
     uiMessageBox->setOutlineColor(Color::Orange);
     uiMessageBox->setOutlineThickness(2);
     renderer->add(uiMessageBox);
@@ -78,17 +78,17 @@ void UIMain::run() {
 
     while (true) {
 
-        if (uiMenu->getVisibility() == C2DObject::Visible) {
-            action = uiMenu->update();
-        } else if (uiState->getVisibility() == C2DObject::Visible) {
-            action = uiState->update();
-        } else if (uiEmu->getVisibility() == C2DObject::Visible) {
-            action = uiEmu->update();
+        if (uiMenu->isVisible()) {
+            action = uiMenu->loop();
+        } else if (uiState->isVisible()) {
+            action = uiState->loop();
+        } else if (uiEmu->isVisible()) {
+            action = uiEmu->loop();
         } else {
-            action = uiRomList->update();
+            action = uiRomList->loop();
         }
 
-        key = getInput()->players[0].state;
+        key = getInput()->getKeys();
 
         switch (action) {
 
@@ -105,7 +105,7 @@ void UIMain::run() {
             case UI_KEY_STOP_ROM:
                 getInput()->clear(0);
                 uiEmu->stop();
-                uiRomList->setVisibility(C2DObject::Visible);
+                uiRomList->setVisibility(Visibility::Visible);
                 break;
 
             case UI_KEY_SHOW_MEMU_UI:
@@ -130,8 +130,8 @@ void UIMain::run() {
 
             case UI_KEY_SHOW_ROMLIST:
                 getInput()->clear(0);
-                uiMenu->setVisibility(C2DObject::Hidden);
-                uiRomList->setVisibility(C2DObject::Visible);
+                uiMenu->setVisibility(Visibility::Hidden);
+                uiRomList->setVisibility(Visibility::Visible);
                 break;
 
             case EV_QUIT:
@@ -141,7 +141,7 @@ void UIMain::run() {
                 break;
         }
 
-        if (uiEmu->isPaused() || uiEmu->getVisibility() == C2DObject::Hidden) {
+        if (uiEmu->isPaused() || !uiEmu->isVisible()) {
             if (key > 0) {
                 if (timer_input.getElapsedTime().asSeconds() > 12) {
                     getRenderer()->delay(INPUT_DELAY / 8);
@@ -168,8 +168,6 @@ void UIMain::runRom(RomList::Rom *rom) {
     // load rom settings
     printf("C2DUIGuiMain::runRom: config->load(%s)\n", rom->drv_name);
     getConfig()->load(rom);
-
-    printf("C2DUIGuiMain::runRom: uiEmu->run(%s)\n", rom->name);
     getUiEmu()->run(rom);
 }
 

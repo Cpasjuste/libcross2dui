@@ -30,7 +30,7 @@ RomList::RomList(UIMain *_ui, const std::string &emuVersion) {
     rect->setOutlineThickness(4);
 
     texture = ui->getSkin()->tex_title;
-    texture->setOriginCenter();
+    texture->setOrigin(Origin::Center);
     texture->setPosition(Vector2f(rect->getSize().x / 2, rect->getSize().y / 2));
     float scaling = std::min(
             (rect->getSize().x - 64) / texture->getTextureRect().width,
@@ -39,15 +39,15 @@ RomList::RomList(UIMain *_ui, const std::string &emuVersion) {
     rect->add(texture);
 
     strcpy(text_str, "Roms found: 0/0");
-    text = new Text(text_str, *ui->getSkin()->font);
-    text->setOriginBottomLeft();
+    text = new Text(text_str, C2D_DEFAULT_CHAR_SIZE, ui->getSkin()->font);
+    text->setOrigin(Origin::BottomLeft);
     text->setOutlineColor(Color::Black);
     text->setOutlineThickness(2);
     text->setPosition(8, rect->getSize().y - 16);
     rect->add(text);
 
-    auto *version = new Text(emuVersion, *ui->getSkin()->font);
-    version->setOriginBottomRight();
+    auto *version = new Text(emuVersion, C2D_DEFAULT_CHAR_SIZE, ui->getSkin()->font);
+    version->setOrigin(Origin::BottomRight);
     version->setOutlineColor(Color::Black);
     version->setOutlineThickness(2);
     version->setPosition(rect->getSize().x - 16, rect->getSize().y - 16);
@@ -61,14 +61,11 @@ RomList::RomList(UIMain *_ui, const std::string &emuVersion) {
 
     for (auto &path : *paths) {
         //printf("RomList: path: `%s`\n", paths->at(i).c_str());
-        std::vector<std::string> filesList;
         if (!path.empty()) {
             //printf("RomList: getDirList(%s) - (path=%i)\n", paths->at(i).c_str(), (int) paths->at(i).size());
-            filesList = ui->getIo()->getDirList(path);
+            std::vector<Io::File> filesList = ui->getIo()->getDirList(path);
             files.emplace_back(filesList);
             //printf("RomList: found %i files in `%s`\n", (int) files[i].size(), paths->at(i).c_str());
-        } else {
-            files.emplace_back(filesList);
         }
     }
     printf("RomList()\n");
@@ -99,7 +96,7 @@ void RomList::build() {
 
     // UI
     // reset title texture for later use
-    texture->setOriginTopLeft();
+    texture->setOrigin(Origin::TopLeft);
     texture->setPosition(0, 0);
     texture->setScale(1, 1);
     rect->remove(texture);
@@ -153,10 +150,12 @@ RomList::~RomList() {
     printf("~RomList()\n");
 
     for (auto &rom : list) {
-        if (!rom->parent && rom->icon) {
+        if (rom && !rom->parent && rom->icon) {
             delete (rom->icon);
             rom->icon = nullptr;
         }
-        delete (rom);
+        if (rom) {
+            delete (rom);
+        }
     }
 }
