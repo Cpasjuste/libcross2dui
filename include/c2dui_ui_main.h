@@ -15,7 +15,7 @@
 #define UI_KEY_STOP_ROM         107
 
 #define UI_MARGIN   16
-#define INPUT_DELAY 150
+#define INPUT_DELAY 250
 
 #define COL_GREEN   Color(153, 255, 51)
 #define COL_YELLOW  Color(255, 225, 51)

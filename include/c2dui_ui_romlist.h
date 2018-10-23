@@ -5,6 +5,9 @@
 #ifndef GUI_ROMIST_H
 #define GUI_ROMIST_H
 
+#include "cross2d/skeleton/sfml/RectangleShape.hpp"
+#include "cross2d/widgets/listbox.h"
+
 class UIRomInfo;
 
 namespace c2dui {

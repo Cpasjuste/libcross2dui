@@ -45,6 +45,8 @@ UIMain::UIMain(Renderer *r, Io *i, Input *in, Config *cfg, Skin *s) {
     renderer->add(uiProgressBox);
 
     updateInputMapping(false);
+    input->setRepeatEnable(true);
+    input->setRepeatDelay(INPUT_DELAY);
 }
 
 void UIMain::init(UIRomList *uiRomList, UIMenu *uiMenu,
@@ -143,14 +145,14 @@ void UIMain::run() {
 
         if (uiEmu->isPaused() || !uiEmu->isVisible()) {
             if (key > 0) {
-                if (timer_input.getElapsedTime().asSeconds() > 12) {
-                    getRenderer()->delay(INPUT_DELAY / 8);
-                } else if (timer_input.getElapsedTime().asSeconds() > 6) {
-                    getRenderer()->delay(INPUT_DELAY / 5);
+                if (timer_input.getElapsedTime().asSeconds() > 6) {
+                    input->setRepeatDelay(INPUT_DELAY / 8);
+                } else if (timer_input.getElapsedTime().asSeconds() > 4) {
+                    input->setRepeatDelay(INPUT_DELAY / 5);
                 } else if (timer_input.getElapsedTime().asSeconds() > 2) {
-                    getRenderer()->delay(INPUT_DELAY / 2);
+                    input->setRepeatDelay(INPUT_DELAY / 2);
                 } else {
-                    getRenderer()->delay(INPUT_DELAY);
+                    input->setRepeatDelay(INPUT_DELAY);
                 }
             } else {
                 timer_input.restart();

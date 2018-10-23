@@ -28,7 +28,7 @@ public:
         name = new Text("OPTION NAME,)'", (unsigned int) fontSize, font);
         name->setOutlineThickness(1);
         name->setOutlineColor(Color::Black);
-        name->setOrigin(0, name->getLocalBounds().height / 2);
+        name->setOrigin(Origin::Left);
         name->setPosition(16, getSize().y / 2);
         name->setWidth((getSize().x * 0.66f) - 32);
         add(name);
@@ -36,7 +36,7 @@ public:
         value = new Text("OPTION VALUE,)'", (unsigned int) fontSize, font);
         value->setOutlineThickness(1);
         value->setOutlineColor(Color::Black);
-        value->setOrigin(0, value->getLocalBounds().height / 2);
+        value->setOrigin(Origin::Left);
         value->setPosition((getSize().x * 0.66f) + 16, getSize().y / 2);
         value->setWidth((getSize().x * 0.33f) - 32);
         add(value);
@@ -71,7 +71,7 @@ public:
                                 (getSize().y / 2 + 4) / texture->getTextureRect().height);
                         texture->setScale(tex_scaling, tex_scaling);
                         texture->setPosition((getSize().x * 0.66f) + 16, getSize().y / 2 - 3);
-                        texture->setOrigin(0, texture->getTextureRect().height / 2);
+                        texture->setOrigin(0, (float) texture->getTextureRect().height / 2);
                         add(texture);
                     } else {
                         delete (texture);
