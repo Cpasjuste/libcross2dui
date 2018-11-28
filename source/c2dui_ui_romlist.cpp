@@ -73,15 +73,13 @@ public:
         texture = new C2DTexture(texture_path);
         if (!texture->available) {
             // try removing the extension (drv_name has extension (.zip, .smc) with psnes and no db.xml)
-            char *drv_name_no_ext = Utility::removeExt(rom->drv_name, '/');
-            if (drv_name_no_ext) {
-                delete (texture);
-                memset(texture_path, 0, 1024);
-                snprintf(texture_path, 1023, "%s%s/%s.png",
-                         ui->getConfig()->getHomePath()->c_str(), type, drv_name_no_ext);
-                texture = new C2DTexture(texture_path);
-                free(drv_name_no_ext);
-            }
+            std::string path = Utility::removeExt(rom->drv_name);
+            delete (texture);
+            memset(texture_path, 0, 1024);
+            snprintf(texture_path, 1023, "%s%s/%s.png",
+                     ui->getConfig()->getHomePath()->c_str(), type, path.c_str());
+            texture = new C2DTexture(texture_path);
+
             if (!texture->available && rom->parent) {
                 // try parent image
                 delete (texture);
