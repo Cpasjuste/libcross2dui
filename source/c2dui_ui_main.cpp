@@ -93,36 +93,44 @@ void UIMain::run() {
         switch (action) {
 
             case UI_KEY_RUN_ROM:
+                getInput()->clear();
                 runRom(uiRomList->getSelection());
                 break;
 
             case UI_KEY_RESUME_ROM:
+                getInput()->clear();
                 uiEmu->resume();
                 break;
 
             case UI_KEY_STOP_ROM:
+                getInput()->clear();
                 uiEmu->stop();
                 uiRomList->setVisibility(Visibility::Visible);
                 break;
 
             case UI_KEY_SHOW_MEMU_UI:
+                getInput()->clear();
                 uiMenu->load();
                 break;
 
             case UI_KEY_SHOW_MEMU_ROM:
+                getInput()->clear();
                 getConfig()->load(uiRomList->getSelection());
                 uiMenu->load(true);
                 break;
 
             case UI_KEY_SHOW_MEMU_STATE:
+                getInput()->clear();
                 uiState->show();
                 break;
 
             case UI_KEY_FILTER_ROMS:
+                getInput()->clear();
                 uiRomList->updateRomList();
                 break;
 
             case UI_KEY_SHOW_ROMLIST:
+                getInput()->clear();
                 uiMenu->setVisibility(Visibility::Hidden);
                 uiRomList->setVisibility(Visibility::Visible);
                 break;
@@ -135,9 +143,8 @@ void UIMain::run() {
         }
 
         if (uiEmu->isPaused() || !uiEmu->isVisible()) {
-            if(key != EV_DELAY) {
+            if (key != EV_DELAY) {
                 if (key > 0) {
-                    printf("KEY: %x\n", key);
                     if (timer_input.getElapsedTime().asSeconds() > 6) {
                         getInput()->setRepeatDelay(INPUT_DELAY / 8);
                     } else if (timer_input.getElapsedTime().asSeconds() > 4) {

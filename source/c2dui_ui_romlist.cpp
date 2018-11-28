@@ -276,7 +276,7 @@ int UIRomList::loop() {
 
     unsigned int key = ui->getInput()->getKeys();
 
-    if (key > 0) {
+    if (key > 0 && key != EV_DELAY) {
 
         if (key & Input::Key::KEY_UP) {
             rom_index--;
