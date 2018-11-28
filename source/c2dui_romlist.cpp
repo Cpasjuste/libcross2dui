@@ -54,18 +54,18 @@ RomList::RomList(UIMain *_ui, const std::string &emuVersion) {
     rect->add(version);
 
     ui->getRenderer()->add(rect);
+    ui->getRenderer()->flip();
     // UI
 
     printf("RomList: building list...\n");
     time_start = ui->getRenderer()->getElapsedTime().asSeconds();
 
     for (auto &path : *paths) {
-        //printf("RomList: path: `%s`\n", paths->at(i).c_str());
         if (!path.empty()) {
-            //printf("RomList: getDirList(%s) - (path=%i)\n", paths->at(i).c_str(), (int) paths->at(i).size());
+            printf("RomList: scanning path: `%s`\n", path.c_str());
             std::vector<Io::File> filesList = ui->getIo()->getDirList(path);
             files.emplace_back(filesList);
-            //printf("RomList: found %i files in `%s`\n", (int) files[i].size(), paths->at(i).c_str());
+            printf("RomList: found %i files in `%s`\n", (int) filesList.size(), path.c_str());
         }
     }
     printf("RomList()\n");
