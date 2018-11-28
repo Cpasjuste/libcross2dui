@@ -15,13 +15,11 @@ extern "C" {
 using namespace c2d;
 using namespace c2dui;
 
-UIMain::UIMain(Renderer *r, Io *i, Input *in, Config *cfg, Skin *s) {
+UIMain::UIMain(Renderer *r, Config *cfg, Skin *s) {
 
-    io = i;
     renderer = r;
     skin = s;
     config = cfg;
-    input = in;
 
     // scaling factor mainly used for borders,
     // based on vita resolution..
@@ -34,7 +32,7 @@ UIMain::UIMain(Renderer *r, Io *i, Input *in, Config *cfg, Skin *s) {
                     renderer->getSize().y / 2,
                     renderer->getSize().x / 2,
                     renderer->getSize().y / 2),
-            input, skin->font, getFontSize());
+            getInput(), skin->font, getFontSize());
     uiMessageBox->setOrigin(Origin::Center);
     uiMessageBox->setFillColor(Color::Gray);
     uiMessageBox->setOutlineColor(Color::Orange);
@@ -45,8 +43,8 @@ UIMain::UIMain(Renderer *r, Io *i, Input *in, Config *cfg, Skin *s) {
     renderer->add(uiProgressBox);
 
     updateInputMapping(false);
-    input->setRepeatEnable(true);
-    input->setRepeatDelay(INPUT_DELAY);
+    getInput()->setRepeatEnable(true);
+    getInput()->setRepeatDelay(INPUT_DELAY);
 }
 
 void UIMain::init(UIRomList *uiRomList, UIMenu *uiMenu,
@@ -95,34 +93,28 @@ void UIMain::run() {
         switch (action) {
 
             case UI_KEY_RUN_ROM:
-                getInput()->clear(0);
                 runRom(uiRomList->getSelection());
                 break;
 
             case UI_KEY_RESUME_ROM:
-                getInput()->clear(0);
                 uiEmu->resume();
                 break;
 
             case UI_KEY_STOP_ROM:
-                getInput()->clear(0);
                 uiEmu->stop();
                 uiRomList->setVisibility(Visibility::Visible);
                 break;
 
             case UI_KEY_SHOW_MEMU_UI:
-                getInput()->clear(0);
                 uiMenu->load();
                 break;
 
             case UI_KEY_SHOW_MEMU_ROM:
-                getInput()->clear(0);
                 getConfig()->load(uiRomList->getSelection());
                 uiMenu->load(true);
                 break;
 
             case UI_KEY_SHOW_MEMU_STATE:
-                getInput()->clear(0);
                 uiState->show();
                 break;
 
@@ -131,7 +123,6 @@ void UIMain::run() {
                 break;
 
             case UI_KEY_SHOW_ROMLIST:
-                getInput()->clear(0);
                 uiMenu->setVisibility(Visibility::Hidden);
                 uiRomList->setVisibility(Visibility::Visible);
                 break;
@@ -144,18 +135,21 @@ void UIMain::run() {
         }
 
         if (uiEmu->isPaused() || !uiEmu->isVisible()) {
-            if (key > 0) {
-                if (timer_input.getElapsedTime().asSeconds() > 6) {
-                    input->setRepeatDelay(INPUT_DELAY / 8);
-                } else if (timer_input.getElapsedTime().asSeconds() > 4) {
-                    input->setRepeatDelay(INPUT_DELAY / 5);
-                } else if (timer_input.getElapsedTime().asSeconds() > 2) {
-                    input->setRepeatDelay(INPUT_DELAY / 2);
+            if(key != EV_DELAY) {
+                if (key > 0) {
+                    printf("KEY: %x\n", key);
+                    if (timer_input.getElapsedTime().asSeconds() > 6) {
+                        getInput()->setRepeatDelay(INPUT_DELAY / 8);
+                    } else if (timer_input.getElapsedTime().asSeconds() > 4) {
+                        getInput()->setRepeatDelay(INPUT_DELAY / 5);
+                    } else if (timer_input.getElapsedTime().asSeconds() > 2) {
+                        getInput()->setRepeatDelay(INPUT_DELAY / 2);
+                    } else {
+                        getInput()->setRepeatDelay(INPUT_DELAY);
+                    }
                 } else {
-                    input->setRepeatDelay(INPUT_DELAY);
+                    timer_input.restart();
                 }
-            } else {
-                timer_input.restart();
             }
         }
     }
@@ -178,7 +172,7 @@ float UIMain::getScaling() {
 }
 
 Input *UIMain::getInput() {
-    return input;
+    return renderer->getInput();
 }
 
 Renderer *UIMain::getRenderer() {
@@ -194,7 +188,7 @@ Config *UIMain::getConfig() {
 }
 
 Io *UIMain::getIo() {
-    return io;
+    return renderer->getIo();
 }
 
 UIRomList *UIMain::getUiRomList() {
@@ -232,24 +226,24 @@ int UIMain::getFontSize() {
 void UIMain::updateInputMapping(bool isRomConfig) {
 
     if (isRomConfig) {
-        input->setKeyboardMapping(config->getRomPlayerInputKeys(0));
+        getInput()->setKeyboardMapping(config->getRomPlayerInputKeys(0));
         int dz = 2000 + config->getValue(Option::Index::JOY_DEADZONE, true) * 2000;
         for (int i = 0; i < PLAYER_COUNT; i++) {
-            input->setJoystickMapping(i, config->getRomPlayerInputButtons(i), dz);
-            input->players[i].lx.id = config->getValue(Option::Index::JOY_AXIS_LX, true);
-            input->players[i].ly.id = config->getValue(Option::Index::JOY_AXIS_LY, true);
-            input->players[i].rx.id = config->getValue(Option::Index::JOY_AXIS_RX, true);
-            input->players[i].ry.id = config->getValue(Option::Index::JOY_AXIS_RY, true);
+            getInput()->setJoystickMapping(i, config->getRomPlayerInputButtons(i), dz);
+            getInput()->players[i].lx.id = config->getValue(Option::Index::JOY_AXIS_LX, true);
+            getInput()->players[i].ly.id = config->getValue(Option::Index::JOY_AXIS_LY, true);
+            getInput()->players[i].rx.id = config->getValue(Option::Index::JOY_AXIS_RX, true);
+            getInput()->players[i].ry.id = config->getValue(Option::Index::JOY_AXIS_RY, true);
         }
     } else {
-        input->setKeyboardMapping(config->getGuiPlayerInputKeys(0));
+        getInput()->setKeyboardMapping(config->getGuiPlayerInputKeys(0));
         int dz = 2000 + config->getValue(Option::Index::JOY_DEADZONE) * 2000;
         for (int i = 0; i < PLAYER_COUNT; i++) {
-            input->setJoystickMapping(i, config->getGuiPlayerInputButtons(i), dz);
-            input->players[i].lx.id = config->getValue(Option::Index::JOY_AXIS_LX);
-            input->players[i].ly.id = config->getValue(Option::Index::JOY_AXIS_LY);
-            input->players[i].rx.id = config->getValue(Option::Index::JOY_AXIS_RX);
-            input->players[i].ry.id = config->getValue(Option::Index::JOY_AXIS_RY);
+            getInput()->setJoystickMapping(i, config->getGuiPlayerInputButtons(i), dz);
+            getInput()->players[i].lx.id = config->getValue(Option::Index::JOY_AXIS_LX);
+            getInput()->players[i].ly.id = config->getValue(Option::Index::JOY_AXIS_LY);
+            getInput()->players[i].rx.id = config->getValue(Option::Index::JOY_AXIS_RX);
+            getInput()->players[i].ry.id = config->getValue(Option::Index::JOY_AXIS_RY);
         }
     }
 
