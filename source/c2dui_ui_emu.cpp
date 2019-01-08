@@ -81,11 +81,8 @@ int UIEmu::run(RomList::Rom *rom) {
     getFpsText()->setLayer(1);
 
     setVisibility(Visibility::Visible);
-    getUi()->getUiProgressBox()->setVisibility(Visibility::Hidden);
-    getUi()->getUiRomList()->setVisibility(Visibility::Hidden);
-
-    // set per rom input configuration
-    getUi()->updateInputMapping(true);
+    ui->getUiProgressBox()->setVisibility(Visibility::Hidden);
+    ui->getUiRomList()->setVisibility(Visibility::Hidden);
 
     resume();
 
@@ -96,7 +93,10 @@ void UIEmu::resume() {
 
     printf("UIEmu::resume()\n");
 
+    // set per rom input configuration
     ui->updateInputMapping(true);
+    // disable auto repeat delay
+    ui->getInput()->setRepeatEnable(false);
 
     if (audio) {
         audio->pause(0);
@@ -136,7 +136,11 @@ void UIEmu::pause() {
     if (audio) {
         audio->pause(1);
     }
+
+    // set ui input configuration
     ui->updateInputMapping(false);
+    // enable auto repeat delay
+    ui->getInput()->setRepeatEnable(true);
 }
 
 int UIEmu::loop() {

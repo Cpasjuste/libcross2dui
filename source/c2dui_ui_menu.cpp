@@ -71,7 +71,7 @@ public:
                                 (getSize().y / 2 + 4) / texture->getTextureRect().height);
                         texture->setScale(tex_scaling, tex_scaling);
                         texture->setPosition((getSize().x * 0.66f) + 16, getSize().y / 2 - 3);
-                        texture->setOrigin(0, (float) texture->getTextureRect().height / 2);
+                        texture->setOrigin(Origin::Left);
                         add(texture);
                     } else {
                         delete (texture);
@@ -266,8 +266,9 @@ void UIMenu::load(bool isRom, OptionMenu *om) {
 
 void UIMenu::updateHighlight() {
 
-    highlight->setPosition(lines[optionIndex]->value->getGlobalBounds().left - 2,
-                           lines[optionIndex]->getGlobalBounds().top);
+    Vector2f pos = {lines[optionIndex]->value->getPosition().x - 2,
+                    lines[optionIndex]->getPosition().y};
+    highlight->setPosition(pos);
 }
 
 int UIMenu::loop() {
@@ -279,21 +280,21 @@ int UIMenu::loop() {
     if (key > 0) {
 
         // UP
-        if (key & Input::Key::KEY_UP) {
+        if (key & Input::Key::Up) {
             optionIndex--;
             if (optionIndex < 0)
                 optionIndex = optionCount - 1;
             updateHighlight();
         }
         // DOWN
-        if (key & Input::Key::KEY_DOWN) {
+        if (key & Input::Key::Down) {
             optionIndex++;
             if (optionIndex >= optionCount)
                 optionIndex = 0;
             updateHighlight();
         }
         // LEFT /RIGHT
-        if ((key & Input::Key::KEY_LEFT || key & Input::Key::KEY_RIGHT)
+        if ((key & Input::Key::Left || key & Input::Key::Right)
             && (unsigned int) optionIndex < optionMenu->option_ids.size()) {
             Option *option = lines[optionIndex]->option;
             if (!option) {
@@ -301,7 +302,7 @@ int UIMenu::loop() {
             }
             option_changed = true;
             if (option->flags == Option::Type::INTEGER) {
-                if (key & Input::Key::KEY_LEFT) {
+                if (key & Input::Key::Left) {
                     option->prev();
                 } else {
                     option->next();
@@ -353,7 +354,7 @@ int UIMenu::loop() {
         }
 
         // FIRE1
-        if (key & Input::Key::KEY_FIRE1) {
+        if (key & Input::Key::Fire1) {
             if ((unsigned int) optionIndex < optionMenu->option_ids.size()) {
                 Option *option = lines[optionIndex]->option;
                 if (option->flags == Option::Type::INPUT) {
@@ -384,9 +385,9 @@ int UIMenu::loop() {
         }
 
         // FIRE2
-        if (key & Input::Key::KEY_FIRE2
-            || (key & Input::Key::KEY_START && !isRomMenu)
-            || (key & Input::Key::KEY_COIN && isRomMenu)) {
+        if (key & Input::Key::Fire2
+            || (key & Input::Key::Start && !isRomMenu)
+            || (key & Input::Key::Select && isRomMenu)) {
             if (optionMenu->parent == nullptr) {
                 if (isEmuRunning) {
                     setVisibility(Visibility::Hidden);

@@ -143,7 +143,7 @@ void UIMain::run() {
         }
 
         if (uiEmu->isPaused() || !uiEmu->isVisible()) {
-            if (key != EV_DELAY) {
+            if (key != Input::Delay) {
                 if (key > 0) {
                     if (timer_input.getElapsedTime().asSeconds() > 6) {
                         getInput()->setRepeatDelay(INPUT_DELAY / 8);
@@ -235,7 +235,7 @@ void UIMain::updateInputMapping(bool isRomConfig) {
     if (isRomConfig) {
         getInput()->setKeyboardMapping(config->getRomPlayerInputKeys(0));
         int dz = 2000 + config->getValue(Option::Index::JOY_DEADZONE, true) * 2000;
-        for (int i = 0; i < PLAYER_COUNT; i++) {
+        for (int i = 0; i < PLAYER_MAX; i++) {
             getInput()->setJoystickMapping(i, config->getRomPlayerInputButtons(i), dz);
             getInput()->players[i].lx.id = config->getValue(Option::Index::JOY_AXIS_LX, true);
             getInput()->players[i].ly.id = config->getValue(Option::Index::JOY_AXIS_LY, true);
@@ -245,7 +245,7 @@ void UIMain::updateInputMapping(bool isRomConfig) {
     } else {
         getInput()->setKeyboardMapping(config->getGuiPlayerInputKeys(0));
         int dz = 2000 + config->getValue(Option::Index::JOY_DEADZONE) * 2000;
-        for (int i = 0; i < PLAYER_COUNT; i++) {
+        for (int i = 0; i < PLAYER_MAX; i++) {
             getInput()->setJoystickMapping(i, config->getGuiPlayerInputButtons(i), dz);
             getInput()->players[i].lx.id = config->getValue(Option::Index::JOY_AXIS_LX);
             getInput()->players[i].ly.id = config->getValue(Option::Index::JOY_AXIS_LY);

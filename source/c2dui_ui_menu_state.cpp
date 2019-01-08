@@ -34,7 +34,7 @@ public:
         snprintf(bottom_text_char, 32, "SLOT %i", id);
         bottom_text = new C2DText(bottom_text_char, (unsigned int) ui->getFontSize(), ui->getFont());
         bottom_text->setOutlineThickness(2);
-        bottom_text->setOrigin(bottom_text->getLocalBounds().width / 2, 0);
+        bottom_text->setOrigin(Origin::Left);
         bottom_text->setPosition(getLocalBounds().left + getSize().x / 2,
                                  getLocalBounds().top + getLocalBounds().width + 8);
         add(bottom_text);
@@ -206,7 +206,7 @@ UIStateMenu::UIStateMenu(UIMain *u) : RectangleShape(Vector2f(0, 0)) {
             getLocalBounds().left + getSize().x / 2, (float) start_y + 32,
             getSize().x - 64, getSize().x / (STATES_COUNT + 1)
     });
-    uiStateList->setOrigin(uiStateList->getSize().x / 2, 0);
+    uiStateList->setOrigin(Origin::Left);
     add(uiStateList);
 
     setVisibility(Visibility::Hidden);
@@ -246,14 +246,14 @@ int UIStateMenu::loop() {
 
     if (key > 0) {
 
-        if (key & Input::Key::KEY_LEFT) {
+        if (key & Input::Key::Left) {
             uiStateList->left();
-        } else if (key & Input::Key::KEY_RIGHT) {
+        } else if (key & Input::Key::Right) {
             uiStateList->right();
         }
 
         // FIRE1
-        if (key & Input::Key::KEY_FIRE1) {
+        if (key & Input::Key::Fire1) {
             if (isEmuRunning) {
                 UIState *state = uiStateList->getSelection();
                 if (state->exist) {
@@ -278,7 +278,7 @@ int UIStateMenu::loop() {
         }
 
         // FIRE2
-        if (key & Input::Key::KEY_FIRE2) {
+        if (key & Input::Key::Fire2) {
             hide();
             if (isEmuRunning) {
                 ret = UI_KEY_RESUME_ROM;

@@ -274,9 +274,9 @@ int UIRomList::loop() {
 
     unsigned int key = ui->getInput()->getKeys();
 
-    if (key > 0 && key != EV_DELAY) {
+    if (key > 0 && key != Input::Key::Delay) {
 
-        if (key & Input::Key::KEY_UP) {
+        if (key & Input::Key::Up) {
             rom_index--;
             if (rom_index < 0)
                 rom_index = (int) (roms.size() - 1);
@@ -284,7 +284,7 @@ int UIRomList::loop() {
             show_preview = false;
             rom_info->update(nullptr, show_preview);
             title_loaded = 0;
-        } else if (key & Input::Key::KEY_DOWN) {
+        } else if (key & Input::Key::Down) {
             rom_index++;
             if ((unsigned int) rom_index >= roms.size())
                 rom_index = 0;
@@ -292,7 +292,7 @@ int UIRomList::loop() {
             show_preview = false;
             rom_info->update(nullptr, show_preview);
             title_loaded = 0;
-        } else if (key & Input::Key::KEY_RIGHT) {
+        } else if (key & Input::Key::Right) {
             rom_index += list_box->getMaxLines();
             if ((unsigned int) rom_index >= roms.size())
                 rom_index = (int) (roms.size() - 1);
@@ -300,7 +300,7 @@ int UIRomList::loop() {
             show_preview = false;
             rom_info->update(nullptr, show_preview);
             title_loaded = 0;
-        } else if (key & Input::Key::KEY_LEFT) {
+        } else if (key & Input::Key::Left) {
             rom_index -= list_box->getMaxLines();
             if (rom_index < 0)
                 rom_index = 0;
@@ -308,12 +308,12 @@ int UIRomList::loop() {
             show_preview = false;
             rom_info->update(nullptr, show_preview);
             title_loaded = 0;
-        } else if (key & Input::Key::KEY_FIRE1) {
+        } else if (key & Input::Key::Fire1) {
             if (getSelection() != nullptr && getSelection()->state != RomList::RomState::MISSING) {
                 show_preview = false;
                 return UI_KEY_RUN_ROM;
             }
-        } else if (key & Input::Key::KEY_FIRE3) {
+        } else if (key & Input::Key::Fire3) {
             if (getSelection() != nullptr) {
                 // remove from favorites
                 if (getSelection()->hardware & HARDWARE_PREFIX_FAV) {
@@ -329,7 +329,7 @@ int UIRomList::loop() {
                     }
                 }
             }
-        } else if (key & Input::Key::KEY_FIRE4) {
+        } else if (key & Input::Key::Fire4) {
             if (getSelection() != nullptr) {
                 // add to favorites
                 if (!(getSelection()->hardware & HARDWARE_PREFIX_FAV)) {
@@ -340,17 +340,17 @@ int UIRomList::loop() {
                     }
                 }
             }
-        } else if (key & Input::Key::KEY_FIRE5) {
+        } else if (key & Input::Key::Fire5) {
             show_preview = !show_preview;
             rom_info->update(roms.size() > (unsigned int) rom_index ?
                              roms[rom_index] : nullptr, show_preview);
-        } else if (key & Input::Key::KEY_FIRE6) {
+        } else if (key & Input::Key::Fire6) {
             show_preview = !show_preview;
             rom_info->update(roms.size() > (unsigned int) rom_index ?
                              roms[rom_index] : nullptr, show_preview);
-        } else if (key & Input::Key::KEY_START) {
+        } else if (key & Input::Key::Start) {
             return UI_KEY_SHOW_MEMU_UI;
-        } else if (key & Input::Key::KEY_COIN) {
+        } else if (key & Input::Key::Select) {
             if (getSelection() != nullptr) {
                 return UI_KEY_SHOW_MEMU_ROM;
             }
