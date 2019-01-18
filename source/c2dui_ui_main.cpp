@@ -256,7 +256,7 @@ void UIMain::updateInputMapping(bool isRomConfig) {
 
 #ifdef __SWITCH__
     int single_joy = config->getValue(Option::Index::JOY_SINGLEJOYCON);
-    for (int i = 0; i < PLAYER_COUNT; i++) {
+    for (int i = 0; i < PLAYER_MAX; i++) {
         if (single_joy > 0) {
             hidSetNpadJoyAssignmentModeSingleByDefault((HidControllerID) i);
         } else {

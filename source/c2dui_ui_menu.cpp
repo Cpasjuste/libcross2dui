@@ -338,7 +338,7 @@ int UIMenu::loop() {
                         break;
 #ifdef __SWITCH__
                     case Option::Index::JOY_SINGLEJOYCON:
-                        for (int i = 0; i < PLAYER_COUNT; i++) {
+                        for (int i = 0; i < PLAYER_MAX; i++) {
                             if (option->value > 0) {
                                 hidSetNpadJoyAssignmentModeSingleByDefault((HidControllerID) i);
                             } else {
