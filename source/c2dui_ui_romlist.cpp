@@ -256,8 +256,10 @@ void UIRomList::updateRomList() {
         list_box->setOutlineThickness(getOutlineThickness());
         list_box->setFillColor(Color::Gray);
         list_box->setOutlineColor(COL_ORANGE);
-        auto *tween = new TweenAlpha(50, 150, 1.0f, TweenLoop::PingPong);
-        list_box->getHighlight()->add(tween);
+        list_box->setTextOutlineThickness(1);
+        list_box->getHighlight()->setOutlineThickness(1);
+        list_box->getHighlight()->setAlpha(75);
+        //list_box->getHighlight()->add(new TweenAlpha(50, 150, 1.0f, TweenLoop::PingPong));
         add(list_box);
     } else {
         list_box->setFiles((std::vector<Io::File *> &) roms);
