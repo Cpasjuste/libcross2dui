@@ -328,12 +328,12 @@ int UIMenu::loop() {
                         break;
                     case Option::Index::ROM_FILTER:
                         if (isEmuRunning) {
-                            ui->getUiEmu()->getVideo()->setFilter((Texture::Filter) option->value);
+                            ui->getUiEmu()->getVideo()->getTexture()->setFilter((Texture::Filter) option->value);
                         }
                         break;
                     case Option::Index::ROM_SHADER:
                         if (isEmuRunning) {
-                            ui->getUiEmu()->getVideo()->setShader(option->value);
+                            ui->getUiEmu()->getVideo()->getTexture()->setShader(option->value);
                         }
                         break;
 #ifdef __SWITCH__

@@ -7,22 +7,38 @@
 using namespace c2d;
 using namespace c2dui;
 
-C2DUIVideo::C2DUIVideo(UIMain *gui, void **_pixels, int *_pitch,
-                       const c2d::Vector2f &size, Format format)
-        : C2DTexture(size, format) {
+static int p2(int size) {
+    int p2 = 1;
+    while (p2 < size)
+        p2 *= 2;
+    return p2;
+}
 
-    printf("game resolution: %ix%i\n", (int) getTextureRect().width, (int) getTextureRect().height);
+C2DUIVideo::C2DUIVideo(UIMain *gui, void **_pixels, int *_pitch,
+                       const c2d::Vector2f &size, Texture::Format format) : Sprite() {
+
+    texture = new C2DTexture({p2((int) size.x), p2((int) size.y)}, format);
+    setTexture(texture);
+    setTextureRect({0, 0, (int) size.x, (int) size.y});
+
+    printf("game: %ix%i\n, texture: %ix%i",
+           (int) size.x, (int) size.y,
+           (int) texture->getSize().x, (int) texture->getSize().y);
 
     this->ui = gui;
 
     if (_pixels) {
-        lock(nullptr, _pixels, _pitch);
-        unlock();
+        texture->lock(nullptr, _pixels, _pitch);
+        texture->unlock();
     }
 
-    setShader(ui->getConfig()->getValue(Option::Index::ROM_SHADER, true));
-    setFilter((Filter) ui->getConfig()->getValue(Option::Index::ROM_FILTER, true));
+    texture->setShader(ui->getConfig()->getValue(Option::Index::ROM_SHADER, true));
+    texture->setFilter((Texture::Filter) ui->getConfig()->getValue(Option::Index::ROM_FILTER, true));
     updateScaling();
+}
+
+C2DUIVideo::~C2DUIVideo() {
+    delete (texture);
 }
 
 void C2DUIVideo::updateScaling(bool vertical, bool flip) {

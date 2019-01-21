@@ -9,18 +9,21 @@
 
 namespace c2dui {
 
-    class C2DUIVideo : public c2d::C2DTexture {
+    class C2DUIVideo : public c2d::Sprite {
 
     public:
 
         C2DUIVideo(UIMain *ui, void **pixels, int *pitch,
-                   const c2d::Vector2f &size, Format format = Format::RGB565);
+                   const c2d::Vector2f &size, c2d::Texture::Format format = c2d::Texture::Format::RGB565);
+
+        ~C2DUIVideo();
 
         virtual void updateScaling(bool vertical = false, bool flip = false);
 
     private:
 
         UIMain *ui = nullptr;
+        c2d::Texture *texture = nullptr;
     };
 }
 
