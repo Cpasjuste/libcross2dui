@@ -68,30 +68,30 @@ public:
         const char *type = isPreview ? "previews" : "titles";
 
         // load image
+        // TODO: verify loading with psnes and no db.xml)
+        std::string path = Utility::removeExt(rom->drv_name);
         snprintf(texture_path, 1023, "%s%s/%s.png",
-                 ui->getConfig()->getHomePath()->c_str(), type, rom->drv_name);
-        texture = new C2DTexture(texture_path);
-        if (!texture->available) {
-            // try removing the extension (drv_name has extension (.zip, .smc) with psnes and no db.xml)
-            std::string path = Utility::removeExt(rom->drv_name);
-            delete (texture);
-            memset(texture_path, 0, 1024);
-            snprintf(texture_path, 1023, "%s%s/%s.png",
+                 ui->getConfig()->getHomePath()->c_str(), type, path.c_str());
+        if (!ui->getIo()->exist(texture_path)) {
+            snprintf(texture_path, 1023, "%s%s/%s.jpg",
                      ui->getConfig()->getHomePath()->c_str(), type, path.c_str());
-            texture = new C2DTexture(texture_path);
-
-            if (!texture->available && rom->parent) {
-                // try parent image
-                delete (texture);
-                memset(texture_path, 0, 1024);
+            if (!ui->getIo()->exist(texture_path) && rom->parent) {
+                path = Utility::removeExt(rom->parent);
                 snprintf(texture_path, 1023, "%s%s/%s.png",
-                         ui->getConfig()->getHomePath()->c_str(), type, rom->parent);
-                texture = new C2DTexture(texture_path);
+                         ui->getConfig()->getHomePath()->c_str(), type, path.c_str());
+                if (!ui->getIo()->exist(texture_path)) {
+                    snprintf(texture_path, 1023, "%s%s/%s.jpg",
+                             ui->getConfig()->getHomePath()->c_str(), type, path.c_str());
+                }
             }
         }
 
+        if (ui->getIo()->exist(texture_path)) {
+            texture = new C2DTexture(texture_path);
+        }
+
         // set image
-        if (texture->available) {
+        if (texture && texture->available) {
             previewText->setVisibility(Visibility::Hidden);
             texture->setOrigin(Origin::Center);
             texture->setPosition(Vector2f(previewBox->getSize().x / 2, previewBox->getSize().y / 2));
@@ -102,8 +102,10 @@ public:
             add(texture);
         } else {
             previewText->setVisibility(Visibility::Visible);
-            delete (texture);
-            texture = nullptr;
+            if (texture) {
+                delete (texture);
+                texture = nullptr;
+            }
             return false;
         }
 
