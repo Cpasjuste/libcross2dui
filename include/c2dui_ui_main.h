@@ -15,7 +15,7 @@
 #define UI_KEY_STOP_ROM         107
 
 #define UI_MARGIN   16
-#define INPUT_DELAY 250
+#define INPUT_DELAY 500
 
 #define COL_GREEN   Color(153, 255, 51)
 #define COL_YELLOW  Color(255, 225, 51)
@@ -24,7 +24,7 @@
 
 namespace c2dui {
 
-    class UIMain {
+    class UIMain : public c2d::Rectangle {
 
     public:
 
@@ -32,12 +32,12 @@ namespace c2dui {
 
         virtual ~UIMain();
 
-        virtual void runRom(RomList::Rom *rom);
-
         void init(UIRomList *uiRomList, UIMenu *uiMenu,
                   UIEmu *uiEmu, UIStateMenu *uiState);
 
-        void run();
+        bool onInput(c2d::Input::Player *players) override;
+
+        void onDraw(c2d::Transform &transform) override;
 
         void updateInputMapping(bool isRomCfg);
 
@@ -69,6 +69,8 @@ namespace c2dui {
 
         float getScaling();
 
+        bool done = false;
+
     private:
 
         c2dui::Config *config = nullptr;
@@ -81,10 +83,10 @@ namespace c2dui {
         UIStateMenu *uiState = nullptr;
         UIProgressBox *uiProgressBox = nullptr;
         c2d::MessageBox *uiMessageBox = nullptr;
+        c2d::C2DClock timer;
 
         float scaling = 1;
 
-        c2d::C2DClock timer_input;
     };
 }
 

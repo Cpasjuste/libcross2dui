@@ -17,9 +17,11 @@ namespace c2dui {
 
         ~UIMenu();
 
-        int loop();
+        bool onInput(c2d::Input::Player *players) override;
 
-        void load(bool isRomMenu = false, OptionMenu *om = NULL);
+        void onDraw(c2d::Transform &transform) override;
+
+        void load(bool isRomMenu = false, OptionMenu *om = nullptr);
 
         UIMain *getUi();
 
@@ -42,7 +44,7 @@ namespace c2dui {
         OptionMenu *optionMenuGui = nullptr;
         OptionMenu *optionMenuRom = nullptr;
         OptionMenu *optionMenu = nullptr;
-        std::vector <Option> *options;
+        std::vector<Option> *options;
         c2d::TweenPosition *tweenPosition;
         int optionIndex = 0;
         int optionCount = 0;

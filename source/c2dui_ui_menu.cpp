@@ -271,138 +271,143 @@ void UIMenu::updateHighlight() {
     highlight->setPosition(pos);
 }
 
-int UIMenu::loop() {
+bool UIMenu::onInput(c2d::Input::Player *players) {
 
-    int ret = 0;
     bool option_changed = false;
-    unsigned int key = ui->getInput()->getKeys();
+    unsigned int keys = players[0].keys;
 
-    if (key > 0) {
+    // UP
+    if (keys & Input::Key::Up) {
+        optionIndex--;
+        if (optionIndex < 0)
+            optionIndex = optionCount - 1;
+        updateHighlight();
+    }
 
-        // UP
-        if (key & Input::Key::Up) {
-            optionIndex--;
-            if (optionIndex < 0)
-                optionIndex = optionCount - 1;
-            updateHighlight();
+    // DOWN
+    if (keys & Input::Key::Down) {
+        optionIndex++;
+        if (optionIndex >= optionCount)
+            optionIndex = 0;
+        updateHighlight();
+    }
+
+    // LEFT /RIGHT
+    if ((keys & Input::Key::Left || keys & Input::Key::Right)
+        && (unsigned int) optionIndex < optionMenu->option_ids.size()) {
+        Option *option = lines[optionIndex]->option;
+        if (!option) {
+            // should never happen
+            return true;
         }
-        // DOWN
-        if (key & Input::Key::Down) {
-            optionIndex++;
-            if (optionIndex >= optionCount)
-                optionIndex = 0;
-            updateHighlight();
-        }
-        // LEFT /RIGHT
-        if ((key & Input::Key::Left || key & Input::Key::Right)
-            && (unsigned int) optionIndex < optionMenu->option_ids.size()) {
-            Option *option = lines[optionIndex]->option;
-            if (!option) {
-                return ret;
+        option_changed = true;
+        if (option->flags == Option::Type::INTEGER) {
+            if (keys & Input::Key::Left) {
+                option->prev();
+            } else {
+                option->next();
             }
-            option_changed = true;
-            if (option->flags == Option::Type::INTEGER) {
-                if (key & Input::Key::Left) {
-                    option->prev();
-                } else {
-                    option->next();
-                }
-                lines[optionIndex]->update(option);
+            lines[optionIndex]->update(option);
 
-                if (!option->getInfo().empty()) {
-                    ui->getUiMessageBox()->show("WARNING", option->getInfo(), "OK");
-                }
-
-                switch (option->id) {
-                    case Option::Index::GUI_SHOW_CLONES:
-                    case Option::Index::GUI_SHOW_ALL:
-                    case Option::Index::GUI_SHOW_HARDWARE:
-                        ret = UI_KEY_FILTER_ROMS;
-                        break;
-
-                    case Option::ROM_ROTATION:
-                    case Option::Index::ROM_SCALING:
-                        if (isEmuRunning) {
-                            ui->getUiEmu()->getVideo()->updateScaling();
-                        }
-                        break;
-                    case Option::Index::ROM_FILTER:
-                        if (isEmuRunning) {
-                            ui->getUiEmu()->getVideo()->getTexture()->setFilter((Texture::Filter) option->value);
-                        }
-                        break;
-                    case Option::Index::ROM_SHADER:
-                        if (isEmuRunning) {
-                            ui->getUiEmu()->getVideo()->getTexture()->setShader(option->value);
-                        }
-                        break;
-#ifdef __SWITCH__
-                    case Option::Index::JOY_SINGLEJOYCON:
-                        for (int i = 0; i < PLAYER_MAX; i++) {
-                            if (option->value > 0) {
-                                hidSetNpadJoyAssignmentModeSingleByDefault((HidControllerID) i);
-                            } else {
-                                hidSetNpadJoyAssignmentModeDual((HidControllerID) i);
-                            }
-                        }
-                        break;
-#endif
-                    default:
-                        break;
-                }
+            if (!option->getInfo().empty()) {
+                ui->getUiMessageBox()->show("WARNING", option->getInfo(), "OK");
             }
-        }
 
-        // FIRE1
-        if (key & Input::Key::Fire1) {
-            if ((unsigned int) optionIndex < optionMenu->option_ids.size()) {
-                Option *option = lines[optionIndex]->option;
-                if (option->flags == Option::Type::INPUT) {
-                    int new_key = 0;
-                    int res = ui->getUiMessageBox()->show("NEW INPUT", "PRESS A BUTTON", "", "", &new_key, 5);
-                    if (res != MessageBox::TIMEOUT) {
-                        option->value = new_key;
-                        option_changed = true;
-                        lines[optionIndex]->update(option);
+            switch (option->id) {
+                case Option::Index::GUI_SHOW_CLONES:
+                case Option::Index::GUI_SHOW_ALL:
+                case Option::Index::GUI_SHOW_HARDWARE:
+                    ui->getUiRomList()->updateRomList();
+                    break;
+
+                case Option::ROM_ROTATION:
+                case Option::Index::ROM_SCALING:
+                    if (isEmuRunning) {
+                        ui->getUiEmu()->getVideo()->updateScaling();
                     }
-                }
-            } else {
-                // extra options in menu (manually added)
-                OptionMenu *menu = optionMenu->childs[optionIndex - optionMenu->option_ids.size()];
-                if (menu->title == "EXIT") {
-                    setVisibility(Visibility::Hidden);
-                    ret = isRomMenu ? UI_KEY_STOP_ROM : EV_QUIT;
-                } else if (menu->title == "STATES") {
-                    setVisibility(Visibility::Hidden);
-                    ret = UI_KEY_SHOW_MEMU_STATE;
-                } else if (menu->title == "RETURN") {
-                    setVisibility(Visibility::Hidden);
-                    ret = UI_KEY_RESUME_ROM;
-                } else {
-                    load(isRomMenu, menu);
-                }
+                    break;
+                case Option::Index::ROM_FILTER:
+                    if (isEmuRunning) {
+                        ui->getUiEmu()->getVideo()->getTexture()->setFilter((Texture::Filter) option->value);
+                    }
+                    break;
+                case Option::Index::ROM_SHADER:
+                    if (isEmuRunning) {
+                        ui->getUiEmu()->getVideo()->getTexture()->setShader(option->value);
+                    }
+                    break;
+#ifdef __SWITCH__
+                case Option::Index::JOY_SINGLEJOYCON:
+                    for (int i = 0; i < PLAYER_MAX; i++) {
+                        if (option->value > 0) {
+                            hidSetNpadJoyAssignmentModeSingleByDefault((HidControllerID) i);
+                        } else {
+                            hidSetNpadJoyAssignmentModeDual((HidControllerID) i);
+                        }
+                    }
+                    break;
+#endif
+                default:
+                    break;
             }
         }
+    }
 
-        // FIRE2
-        if (key & Input::Key::Fire2
-            || (key & Input::Key::Start && !isRomMenu)
-            || (key & Input::Key::Select && isRomMenu)) {
-            if (optionMenu->parent == nullptr) {
-                if (isEmuRunning) {
-                    setVisibility(Visibility::Hidden);
-                    ret = UI_KEY_RESUME_ROM;
-                } else {
-                    ret = UI_KEY_SHOW_ROMLIST;
+    // FIRE1
+    if (keys & Input::Key::Fire1) {
+        if ((unsigned int) optionIndex < optionMenu->option_ids.size()) {
+            Option *option = lines[optionIndex]->option;
+            if (option->flags == Option::Type::INPUT) {
+                int new_key = 0;
+                int res = ui->getUiMessageBox()->show("NEW INPUT", "PRESS A BUTTON", "", "", &new_key, 5);
+                if (res != MessageBox::TIMEOUT) {
+                    option->value = new_key;
+                    option_changed = true;
+                    lines[optionIndex]->update(option);
                 }
+            }
+        } else {
+            // extra options in menu (manually added)
+            OptionMenu *menu = optionMenu->childs[optionIndex - optionMenu->option_ids.size()];
+            if (menu->title == "EXIT") {
+                setVisibility(Visibility::Hidden);
+                if (isRomMenu) {
+                    ui->getUiEmu()->stop();
+                    ui->getUiRomList()->setVisibility(Visibility::Visible);
+                } else {
+                    ui->done = true;
+                }
+            } else if (menu->title == "STATES") {
+                setVisibility(Visibility::Hidden);
+                ui->getUiStateMenu()->show();
+            } else if (menu->title == "RETURN") {
+                setVisibility(Visibility::Hidden);
+                ui->getUiEmu()->resume();
             } else {
-                load(isRomMenu, optionMenu->parent);
+                load(isRomMenu, menu);
             }
         }
+    }
 
-        if (key & EV_QUIT) {
-            return EV_QUIT;
+    // FIRE2
+    if (keys & Input::Key::Fire2
+        || (keys & Input::Key::Start && !isRomMenu)
+        || (keys & Input::Key::Select && isRomMenu)) {
+        if (optionMenu->parent == nullptr) {
+            if (isEmuRunning) {
+                setVisibility(Visibility::Hidden);
+                ui->getUiEmu()->resume();
+            } else {
+                setVisibility(Visibility::Hidden);
+                ui->getUiRomList()->setVisibility(Visibility::Visible);
+            }
+        } else {
+            load(isRomMenu, optionMenu->parent);
         }
+    }
+
+    if (keys & EV_QUIT) {
+        ui->done = true;
     }
 
     if (option_changed) {
@@ -413,9 +418,11 @@ int UIMenu::loop() {
         }
     }
 
-    ui->getRenderer()->flip();
+    return true;
+}
 
-    return ret;
+void UIMenu::onDraw(c2d::Transform &transform) {
+    return RectangleShape::onDraw(transform);
 }
 
 bool UIMenu::isOptionHidden(Option *option) {

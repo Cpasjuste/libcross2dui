@@ -112,7 +112,7 @@ public:
         return true;
     }
 
-    void update(RomList::Rom *rom, bool isPreview) {
+    void load(RomList::Rom *rom, bool isPreview = false) {
 
         if (texture) {
             delete (texture);
@@ -261,6 +261,7 @@ void UIRomList::updateRomList() {
         list_box->setTextOutlineThickness(1);
         list_box->getHighlight()->setOutlineThickness(1);
         list_box->getHighlight()->setAlpha(75);
+        list_box->setSelection(0);
         //list_box->getHighlight()->add(new TweenAlpha(50, 150, 1.0f, TweenLoop::PingPong));
         add(list_box);
     } else {
@@ -268,117 +269,128 @@ void UIRomList::updateRomList() {
     }
 
     if (rom_info) {
-        rom_info->update(nullptr, show_preview);
+        rom_info->load(nullptr);
         title_loaded = 0;
         timer_load.restart();
     }
 }
 
-int UIRomList::loop() {
+bool UIRomList::onInput(c2d::Input::Player *players) {
+
+    if (ui->getUiMenu()->isVisible()) {
+        return false;
+    }
+
+    unsigned int keys = players[0].keys;
+    if (keys & Input::Key::Up) {
+        rom_index--;
+        if (rom_index < 0)
+            rom_index = (int) (roms.size() - 1);
+        list_box->setSelection(rom_index);
+        show_preview = false;
+        rom_info->load(nullptr);
+        title_loaded = 0;
+    } else if (keys & Input::Key::Down) {
+        rom_index++;
+        if ((unsigned int) rom_index >= roms.size())
+            rom_index = 0;
+        list_box->setSelection(rom_index);
+        show_preview = false;
+        rom_info->load(nullptr);
+        title_loaded = 0;
+    } else if (keys & Input::Key::Right) {
+        rom_index += list_box->getMaxLines();
+        if ((unsigned int) rom_index >= roms.size())
+            rom_index = (int) (roms.size() - 1);
+        list_box->setSelection(rom_index);
+        show_preview = false;
+        rom_info->load(nullptr);
+        title_loaded = 0;
+    } else if (keys & Input::Key::Left) {
+        rom_index -= list_box->getMaxLines();
+        if (rom_index < 0)
+            rom_index = 0;
+        list_box->setSelection(rom_index);
+        show_preview = false;
+        rom_info->load(nullptr);
+        title_loaded = 0;
+    } else if (keys & Input::Key::Fire1) {
+        RomList::Rom *rom = getSelection();
+        if (rom && rom->state != RomList::RomState::MISSING) {
+            show_preview = false;
+            setVisibility(Visibility::Hidden);
+            ui->getConfig()->load(rom);
+            ui->getUiEmu()->run(rom);
+            return true;
+        }
+    } else if (keys & Input::Key::Fire3) {
+        if (getSelection() != nullptr) {
+            // remove from favorites
+            if (getSelection()->hardware & HARDWARE_PREFIX_FAV) {
+                int res = ui->getUiMessageBox()->show("FAVORITES",
+                                                      "remove selection from favorites ?", "OK", "CANCEL");
+                if (res == MessageBox::LEFT) {
+                    rom_list->removeFav(getSelection());
+                    Option *opt = ui->getConfig()->get(Option::Index::GUI_SHOW_ALL);
+                    if (strcmp(opt->getValue(), "FAVORITES") == 0) {
+                        // update list if we are in favorites
+                        updateRomList();
+                    }
+                }
+            }
+        }
+    } else if (keys & Input::Key::Fire4) {
+        if (getSelection() != nullptr) {
+            // add to favorites
+            if (!(getSelection()->hardware & HARDWARE_PREFIX_FAV)) {
+                int res = ui->getUiMessageBox()->show("FAVORITES",
+                                                      "add selection to favorites ?", "OK", "CANCEL");
+                if (res == MessageBox::LEFT) {
+                    rom_list->addFav(getSelection());
+                }
+            }
+        }
+    } else if (keys & Input::Key::Fire5) {
+        show_preview = !show_preview;
+        rom_info->load(roms.size() > (unsigned int) rom_index ?
+                       roms[rom_index] : nullptr, show_preview);
+    } else if (keys & Input::Key::Fire6) {
+        show_preview = !show_preview;
+        rom_info->load(roms.size() > (unsigned int) rom_index ?
+                       roms[rom_index] : nullptr, show_preview);
+    } else if (keys & Input::Key::Start) {
+        ui->getUiMenu()->load();
+    } else if (keys & Input::Key::Select) {
+        if (getSelection() != nullptr) {
+            //return UI_KEY_SHOW_MEMU_ROM;
+            // TODO:
+            //return true;
+        }
+    } else if (keys & EV_QUIT) {
+        ui->done = true;
+    }
+
+    return true;
+}
+
+void UIRomList::onDraw(c2d::Transform &transform) {
 
     unsigned int key = ui->getInput()->getKeys();
 
     if (key > 0 && key != Input::Key::Delay) {
-
-        if (key & Input::Key::Up) {
-            rom_index--;
-            if (rom_index < 0)
-                rom_index = (int) (roms.size() - 1);
-            list_box->setSelection(rom_index);
-            show_preview = false;
-            rom_info->update(nullptr, show_preview);
-            title_loaded = 0;
-        } else if (key & Input::Key::Down) {
-            rom_index++;
-            if ((unsigned int) rom_index >= roms.size())
-                rom_index = 0;
-            list_box->setSelection(rom_index);
-            show_preview = false;
-            rom_info->update(nullptr, show_preview);
-            title_loaded = 0;
-        } else if (key & Input::Key::Right) {
-            rom_index += list_box->getMaxLines();
-            if ((unsigned int) rom_index >= roms.size())
-                rom_index = (int) (roms.size() - 1);
-            list_box->setSelection(rom_index);
-            show_preview = false;
-            rom_info->update(nullptr, show_preview);
-            title_loaded = 0;
-        } else if (key & Input::Key::Left) {
-            rom_index -= list_box->getMaxLines();
-            if (rom_index < 0)
-                rom_index = 0;
-            list_box->setSelection(rom_index);
-            show_preview = false;
-            rom_info->update(nullptr, show_preview);
-            title_loaded = 0;
-        } else if (key & Input::Key::Fire1) {
-            if (getSelection() != nullptr && getSelection()->state != RomList::RomState::MISSING) {
-                show_preview = false;
-                return UI_KEY_RUN_ROM;
-            }
-        } else if (key & Input::Key::Fire3) {
-            if (getSelection() != nullptr) {
-                // remove from favorites
-                if (getSelection()->hardware & HARDWARE_PREFIX_FAV) {
-                    int res = ui->getUiMessageBox()->show("FAVORITES",
-                                                          "remove selection from favorites ?", "OK", "CANCEL");
-                    if (res == MessageBox::LEFT) {
-                        rom_list->removeFav(getSelection());
-                        Option *opt = ui->getConfig()->get(Option::Index::GUI_SHOW_ALL);
-                        if (strcmp(opt->getValue(), "FAVORITES") == 0) {
-                            // update list if we are in favorites
-                            updateRomList();
-                        }
-                    }
-                }
-            }
-        } else if (key & Input::Key::Fire4) {
-            if (getSelection() != nullptr) {
-                // add to favorites
-                if (!(getSelection()->hardware & HARDWARE_PREFIX_FAV)) {
-                    int res = ui->getUiMessageBox()->show("FAVORITES",
-                                                          "add selection to favorites ?", "OK", "CANCEL");
-                    if (res == MessageBox::LEFT) {
-                        rom_list->addFav(getSelection());
-                    }
-                }
-            }
-        } else if (key & Input::Key::Fire5) {
-            show_preview = !show_preview;
-            rom_info->update(roms.size() > (unsigned int) rom_index ?
-                             roms[rom_index] : nullptr, show_preview);
-        } else if (key & Input::Key::Fire6) {
-            show_preview = !show_preview;
-            rom_info->update(roms.size() > (unsigned int) rom_index ?
-                             roms[rom_index] : nullptr, show_preview);
-        } else if (key & Input::Key::Start) {
-            return UI_KEY_SHOW_MEMU_UI;
-        } else if (key & Input::Key::Select) {
-            if (getSelection() != nullptr) {
-                return UI_KEY_SHOW_MEMU_ROM;
-            }
-        } else if (key & EV_QUIT) {
-            return EV_QUIT;
-        }
-
         timer_load.restart();
-
     } else {
         if (!title_loaded && timer_load.getElapsedTime().asMilliseconds() > load_delay) {
-            rom_info->update(roms.size() > (unsigned int) rom_index ?
-                             roms[rom_index] : nullptr, show_preview);
+            rom_info->load(roms.size() > (unsigned int) rom_index ?
+                           roms[rom_index] : nullptr, show_preview);
             title_loaded = 1;
         }
     }
 
-    ui->getRenderer()->flip();
-
-    return 0;
+    RectangleShape::onDraw(transform);
 }
 
 UIRomList::~UIRomList() {
-
     printf("~UIRomList\n");
     delete (rom_list);
 }

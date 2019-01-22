@@ -21,7 +21,7 @@ C2DUIVideo::C2DUIVideo(UIMain *gui, void **_pixels, int *_pitch,
     setTexture(texture);
     setTextureRect({0, 0, (int) size.x, (int) size.y});
 
-    printf("game: %ix%i\n, texture: %ix%i",
+    printf("game: %ix%i, texture: %ix%i\n",
            (int) size.x, (int) size.y,
            (int) texture->getSize().x, (int) texture->getSize().y);
 

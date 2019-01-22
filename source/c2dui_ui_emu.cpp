@@ -143,10 +143,6 @@ void UIEmu::pause() {
     ui->getInput()->setRepeatEnable(true);
 }
 
-int UIEmu::loop() {
-    return 0;
-}
-
 UIMain *UIEmu::getUi() {
     return ui;
 }

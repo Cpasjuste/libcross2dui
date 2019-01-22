@@ -15,16 +15,16 @@ extern "C" {
 using namespace c2d;
 using namespace c2dui;
 
-UIMain::UIMain(Renderer *r, Config *cfg, Skin *s) {
+UIMain::UIMain(Renderer *r, Config *cfg, Skin *s) : Rectangle({r->getSize().x, r->getSize().y}) {
 
     renderer = r;
     skin = s;
     config = cfg;
 
     // scaling factor mainly used for borders,
-    // based on vita resolution..
-    scaling = std::min(renderer->getSize().x / 960, 1.0f);
-    printf("scaling: %f\n", scaling);
+    // based on switch resolution..
+    scaling = std::min(renderer->getSize().x / 1280, 1.0f);
+    //printf("scaling: %f\n", scaling);
 
     uiMessageBox = new MessageBox(
             FloatRect(
@@ -69,109 +69,28 @@ UIMain::~UIMain() {
     // are deleted by the renderer
 }
 
-void UIMain::run() {
-
-    printf("C2DUIGuiMain::run()\n");
-
-    int action = 0;
-    unsigned int key = 0;
-
-    while (true) {
-
-        if (uiMenu->isVisible()) {
-            action = uiMenu->loop();
-        } else if (uiState->isVisible()) {
-            action = uiState->loop();
-        } else if (uiEmu->isVisible()) {
-            action = uiEmu->loop();
-        } else {
-            action = uiRomList->loop();
-        }
-
-        key = getInput()->getKeys();
-
-        switch (action) {
-
-            case UI_KEY_RUN_ROM:
-                getInput()->clear();
-                runRom(uiRomList->getSelection());
-                break;
-
-            case UI_KEY_RESUME_ROM:
-                getInput()->clear();
-                uiEmu->resume();
-                break;
-
-            case UI_KEY_STOP_ROM:
-                getInput()->clear();
-                uiEmu->stop();
-                uiRomList->setVisibility(Visibility::Visible);
-                break;
-
-            case UI_KEY_SHOW_MEMU_UI:
-                getInput()->clear();
-                uiMenu->load();
-                break;
-
-            case UI_KEY_SHOW_MEMU_ROM:
-                getInput()->clear();
-                getConfig()->load(uiRomList->getSelection());
-                uiMenu->load(true);
-                break;
-
-            case UI_KEY_SHOW_MEMU_STATE:
-                getInput()->clear();
-                uiState->show();
-                break;
-
-            case UI_KEY_FILTER_ROMS:
-                getInput()->clear();
-                uiRomList->updateRomList();
-                break;
-
-            case UI_KEY_SHOW_ROMLIST:
-                getInput()->clear();
-                uiMenu->setVisibility(Visibility::Hidden);
-                uiRomList->setVisibility(Visibility::Visible);
-                break;
-
-            case EV_QUIT:
-                return;
-
-            default:
-                break;
-        }
-
-        if (uiEmu->isPaused() || !uiEmu->isVisible()) {
-            if (key != Input::Delay) {
-                if (key > 0) {
-                    if (timer_input.getElapsedTime().asSeconds() > 6) {
-                        getInput()->setRepeatDelay(INPUT_DELAY / 8);
-                    } else if (timer_input.getElapsedTime().asSeconds() > 4) {
-                        getInput()->setRepeatDelay(INPUT_DELAY / 5);
-                    } else if (timer_input.getElapsedTime().asSeconds() > 2) {
-                        getInput()->setRepeatDelay(INPUT_DELAY / 2);
-                    } else {
-                        getInput()->setRepeatDelay(INPUT_DELAY);
-                    }
-                } else {
-                    timer_input.restart();
-                }
-            }
-        }
-    }
+bool UIMain::onInput(c2d::Input::Player *players) {
+    return Rectangle::onInput(players);
 }
 
-void UIMain::runRom(RomList::Rom *rom) {
+void UIMain::onDraw(c2d::Transform &transform) {
 
-    if (!rom) {
-        return;
+    unsigned int keys = getInput()->getKeys(0);
+
+    if (keys != Input::Key::Delay) {
+        if (keys && timer.getElapsedTime().asSeconds() > 5) {
+            getInput()->setRepeatDelay(INPUT_DELAY / 20);
+        } else if (keys && timer.getElapsedTime().asSeconds() > 2) {
+            getInput()->setRepeatDelay(INPUT_DELAY / 10);
+        } else if (keys && timer.getElapsedTime().asMilliseconds() > INPUT_DELAY) {
+            getInput()->setRepeatDelay(INPUT_DELAY / 5);
+        } else if (!keys) {
+            getInput()->setRepeatDelay(INPUT_DELAY);
+            timer.restart();
+        }
     }
 
-    // load rom settings
-    printf("C2DUIGuiMain::runRom: config->load(%s)\n", rom->drv_name);
-    getConfig()->load(rom);
-    getUiEmu()->run(rom);
+    Rectangle::onDraw(transform);
 }
 
 float UIMain::getScaling() {

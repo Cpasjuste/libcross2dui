@@ -23,8 +23,6 @@ namespace c2dui {
 
         virtual void resume();
 
-        virtual int loop();
-
         virtual void updateFb() {};
 
         virtual void updateFrame() {};

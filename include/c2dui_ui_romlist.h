@@ -20,7 +20,9 @@ namespace c2dui {
 
         ~UIRomList();
 
-        int loop();
+        bool onInput(c2d::Input::Player *players) override;
+
+        void onDraw(c2d::Transform &transform) override;
 
         void updateRomList();
 
