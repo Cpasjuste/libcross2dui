@@ -184,14 +184,19 @@ UIStateMenu::UIStateMenu(UIMain *u) : RectangleShape(Vector2f(0, 0)) {
 
     setFillColor({55, 55, 55, 180});
     setOutlineColor(COL_ORANGE);
-    setOutlineThickness(4);
-    setPosition(UI_MARGIN * ui->getScaling(), UI_MARGIN * ui->getScaling());
-    setSize(ui->getSize().x - (UI_MARGIN * ui->getScaling() * 2),
-            ui->getSize().y - (UI_MARGIN * ui->getScaling() * 2));
-
+    setOutlineThickness(2);
+    if (ui->getSize().y < 544) {
+        setPosition(UI_MARGIN * ui->getScaling(), UI_MARGIN * ui->getScaling());
+        setSize(ui->getSize().x - (UI_MARGIN * ui->getScaling() * 2),
+                ui->getSize().y - (UI_MARGIN * ui->getScaling() * 2));
+    } else {
+        setPosition(UI_MARGIN * ui->getScaling() * 4, UI_MARGIN * ui->getScaling() * 4);
+        setSize(ui->getSize().x - (UI_MARGIN * ui->getScaling() * 8),
+                ui->getSize().y - (UI_MARGIN * ui->getScaling() * 8));
+    }
 
     // menu title
-    title = new Text("TITLE_______________________", C2D_DEFAULT_CHAR_SIZE, ui->getSkin()->font);
+    title = new Text("TITLE", C2D_DEFAULT_CHAR_SIZE, ui->getSkin()->font);
     title->setWidth(getSize().x - 16);
     title->setFillColor(Color::White);
     title->setOutlineThickness(2);
@@ -206,94 +211,79 @@ UIStateMenu::UIStateMenu(UIMain *u) : RectangleShape(Vector2f(0, 0)) {
             getLocalBounds().left + getSize().x / 2, (float) start_y + 32,
             getSize().x - 64, getSize().x / (STATES_COUNT + 1)
     });
-    uiStateList->setOrigin(Origin::Left);
+    uiStateList->setOrigin(Origin::Top);
     add(uiStateList);
 
     setVisibility(Visibility::Hidden);
 }
 
-void UIStateMenu::show() {
+void UIStateMenu::setVisibility(c2d::Visibility visibility, bool tweenPlay) {
 
-    isEmuRunning = ui->getUiEmu()->isVisible();
-    // should always be the case...
-    if (isEmuRunning) {
-        // if frameskip is enabled, we may get a black buffer,
-        // force a frame to be drawn
-        ui->getUiEmu()->updateFb();
-    }
-
-    char name[128];
-    snprintf(name, 128, "%s__________", ui->getUiRomList()->getSelection()->name.c_str());
-    title->setString(name);
-
-    for (auto &state : uiStateList->states) {
-        state->setRom(ui->getUiRomList()->getSelection());
-    }
-    uiStateList->setSelection(0);
-
-    setVisibility(Visibility::Visible);
-}
-
-void UIStateMenu::hide() {
-
-    setVisibility(Visibility::Hidden);
-}
-
-int UIStateMenu::loop() {
-
-    int ret = 0;
-    unsigned int key = ui->getInput()->getKeys();
-
-    if (key > 0) {
-
-        if (key & Input::Key::Left) {
-            uiStateList->left();
-        } else if (key & Input::Key::Right) {
-            uiStateList->right();
+    if (ui->getUiEmu()) {
+        isEmuRunning = ui->getUiEmu()->isVisible();
+        // should always be the case...
+        if (isEmuRunning) {
+            // if frameskip is enabled, we may get a black buffer,
+            // force a frame to be drawn
+            ui->getUiEmu()->updateFb();
         }
 
-        // FIRE1
-        if (key & Input::Key::Fire1) {
-            if (isEmuRunning) {
-                UIState *state = uiStateList->getSelection();
-                if (state->exist) {
-                    int res = ui->getUiMessageBox()->show(
-                            state->bottom_text->getString(),
-                            "PRESS FIRE2 TO CANCEL", "LOAD", "SAVE");
-                    if (res == MessageBox::LEFT) {
-                        state->load();
-                        hide();
-                        ret = UI_KEY_RESUME_ROM;
-                    } else if (res == MessageBox::RIGHT) {
-                        state->save();
-                        hide();
-                        ret = UI_KEY_RESUME_ROM;
-                    }
-                } else {
+        title->setString(ui->getUiRomList()->getSelection()->name);
+
+        for (auto &state : uiStateList->states) {
+            state->setRom(ui->getUiRomList()->getSelection());
+        }
+        uiStateList->setSelection(0);
+    }
+
+    RectangleShape::setVisibility(visibility, tweenPlay);
+}
+
+bool UIStateMenu::onInput(c2d::Input::Player *players) {
+
+    unsigned int key = players[0].keys;
+
+    if (key & Input::Key::Left) {
+        uiStateList->left();
+    } else if (key & Input::Key::Right) {
+        uiStateList->right();
+    }
+
+    // FIRE1
+    if (key & Input::Key::Fire1) {
+        if (isEmuRunning) {
+            UIState *state = uiStateList->getSelection();
+            if (state->exist) {
+                int res = ui->getUiMessageBox()->show(
+                        state->bottom_text->getString(),
+                        "PRESS FIRE2 TO CANCEL", "LOAD", "SAVE");
+                if (res == MessageBox::LEFT) {
+                    state->load();
+                    setVisibility(Visibility::Hidden);
+                    ui->getUiEmu()->resume();
+                } else if (res == MessageBox::RIGHT) {
                     state->save();
-                    hide();
-                    ret = UI_KEY_RESUME_ROM;
+                    setVisibility(Visibility::Hidden);
+                    ui->getUiEmu()->resume();
                 }
-            }
-        }
-
-        // FIRE2
-        if (key & Input::Key::Fire2) {
-            hide();
-            if (isEmuRunning) {
-                ret = UI_KEY_RESUME_ROM;
             } else {
-                ret = UI_KEY_SHOW_ROMLIST;
+                state->save();
+                setVisibility(Visibility::Hidden);
+                ui->getUiEmu()->resume();
             }
-        }
-
-        // QUIT
-        if (key & EV_QUIT) {
-            return EV_QUIT;
         }
     }
 
-    ui->flip();
+    // FIRE2
+    if (key & Input::Key::Fire2) {
+        setVisibility(Visibility::Hidden);
+        ui->getUiMenu()->setVisibility(Visibility::Visible);
+    }
 
-    return ret;
+    // QUIT
+    if (key & EV_QUIT) {
+        return EV_QUIT;
+    }
+
+    return true;
 }

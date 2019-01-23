@@ -13,13 +13,11 @@ namespace c2dui {
 
     public:
 
-        UIStateMenu(UIMain *ui);
+        explicit UIStateMenu(UIMain *ui);
 
-        void show();
+        void setVisibility(c2d::Visibility visibility, bool tweenPlay = false) override;
 
-        void hide();
-
-        int loop();
+        bool onInput(c2d::Input::Player *players) override;
 
         virtual bool loadStateCore(const char *path) { return false; };
 
@@ -27,9 +25,9 @@ namespace c2dui {
 
     private:
 
-        UIMain *ui = NULL;
-        UIStateList *uiStateList = NULL;
-        c2d::Text *title = NULL;
+        UIMain *ui = nullptr;
+        UIStateList *uiStateList = nullptr;
+        c2d::Text *title = nullptr;
         bool isEmuRunning = false;
     };
 }

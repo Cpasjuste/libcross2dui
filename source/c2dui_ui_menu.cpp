@@ -141,8 +141,7 @@ UIMenu::UIMenu(UIMain *ui) : RectangleShape(Vector2f(0, 0)) {
     highlight->setOutlineThickness(1);
     highlight->setOutlineColor(COL_ORANGE);
     highlight->setFillColor(Color(153, 255, 51, 100));
-    auto *tween = new TweenAlpha(50, 150, 1.0f, TweenLoop::PingPong);
-    highlight->add(tween);
+    //highlight->add(new TweenAlpha(50, 150, 1.0f, TweenLoop::PingPong));
     add(highlight);
 
     // add lines of text
@@ -379,7 +378,7 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
                 }
             } else if (menu->title == "STATES") {
                 setVisibility(Visibility::Hidden);
-                ui->getUiStateMenu()->show();
+                ui->getUiStateMenu()->setVisibility(Visibility::Visible);
             } else if (menu->title == "RETURN") {
                 setVisibility(Visibility::Hidden);
                 ui->getUiEmu()->resume();
@@ -391,8 +390,8 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
 
     // FIRE2
     if (keys & Input::Key::Fire2
-        || (keys & Input::Key::Start && !isRomMenu)
-        || (keys & Input::Key::Select && isRomMenu)) {
+        || (!isEmuRunning && (keys & Input::Key::Start && !isRomMenu))
+        || (!isEmuRunning && (keys & Input::Key::Select && isRomMenu))) {
         if (optionMenu->parent == nullptr) {
             if (isEmuRunning) {
                 setVisibility(Visibility::Hidden);

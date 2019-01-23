@@ -318,9 +318,8 @@ bool UIRomList::onInput(c2d::Input::Player *players) {
         RomList::Rom *rom = getSelection();
         if (rom && rom->state != RomList::RomState::MISSING) {
             show_preview = false;
-            setVisibility(Visibility::Hidden);
             ui->getConfig()->load(rom);
-            ui->getUiEmu()->run(rom);
+            ui->getUiEmu()->load(rom);
             return true;
         }
     } else if (keys & Input::Key::Fire3) {
@@ -362,9 +361,9 @@ bool UIRomList::onInput(c2d::Input::Player *players) {
         ui->getUiMenu()->load();
     } else if (keys & Input::Key::Select) {
         if (getSelection() != nullptr) {
-            //return UI_KEY_SHOW_MEMU_ROM;
-            // TODO:
-            //return true;
+            ui->getConfig()->load(getSelection());
+            ui->getUiMenu()->load(true);
+
         }
     } else if (keys & EV_QUIT) {
         ui->done = true;

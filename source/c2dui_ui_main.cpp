@@ -92,7 +92,6 @@ void UIMain::init(UIRomList *uiRomList, UIMenu *uiMenu,
     add(uiProgressBox);
 
     updateInputMapping(false);
-    getInput()->setRepeatEnable(true);
     getInput()->setRepeatDelay(INPUT_DELAY);
 
 }
@@ -111,18 +110,19 @@ bool UIMain::onInput(c2d::Input::Player *players) {
 
 void UIMain::onDraw(c2d::Transform &transform) {
 
-    unsigned int keys = getInput()->getKeys(0);
-
-    if (keys != Input::Key::Delay) {
-        if (keys && timer.getElapsedTime().asSeconds() > 5) {
-            getInput()->setRepeatDelay(INPUT_DELAY / 20);
-        } else if (keys && timer.getElapsedTime().asSeconds() > 2) {
-            getInput()->setRepeatDelay(INPUT_DELAY / 10);
-        } else if (keys && timer.getElapsedTime().asMilliseconds() > INPUT_DELAY) {
-            getInput()->setRepeatDelay(INPUT_DELAY / 5);
-        } else if (!keys) {
-            getInput()->setRepeatDelay(INPUT_DELAY);
-            timer.restart();
+    if (uiEmu && !uiEmu->isVisible()) {
+        unsigned int keys = getInput()->getKeys(0);
+        if (keys != Input::Key::Delay) {
+            if (keys && timer.getElapsedTime().asSeconds() > 4) {
+                getInput()->setRepeatDelay(INPUT_DELAY / 20);
+            } else if (keys && timer.getElapsedTime().asSeconds() > 2) {
+                getInput()->setRepeatDelay(INPUT_DELAY / 10);
+            } else if (keys && timer.getElapsedTime().asMilliseconds() > INPUT_DELAY) {
+                getInput()->setRepeatDelay(INPUT_DELAY / 5);
+            } else if (!keys) {
+                getInput()->setRepeatDelay(INPUT_DELAY);
+                timer.restart();
+            }
         }
     }
 

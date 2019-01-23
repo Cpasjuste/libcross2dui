@@ -2,12 +2,6 @@
 // Created by cpasjuste on 03/02/18.
 //
 
-#ifdef __SWITCH__
-
-#include <switch.h>
-
-#endif
-
 #include "c2dui.h"
 
 using namespace c2d;
@@ -46,8 +40,8 @@ void UIEmu::addAudio(int rate, int fps, Audio::C2DAudioCallback cb) {
         audio = nullptr;
     }
 
-    C2DAudio *_audio = new C2DAudio(rate, fps, cb);
-    addAudio(_audio);
+    auto *aud = new C2DAudio(rate, fps, cb);
+    addAudio(aud);
 }
 
 void UIEmu::addVideo(C2DUIVideo *_video) {
@@ -73,12 +67,12 @@ void UIEmu::addVideo(UIMain *ui, void **pixels, int *pitch,
     addVideo(_video);
 }
 
-int UIEmu::run(RomList::Rom *rom) {
+int UIEmu::load(RomList::Rom *rom) {
 
-    printf("UIEmu::run(%s)\n", rom->path.c_str());
+    printf("UIEmu::load(%s)\n", rom->path.c_str());
 
     // set fps text on top
-    getFpsText()->setLayer(1);
+    getFpsText()->setLayer(2);
 
     setVisibility(Visibility::Visible);
     ui->getUiProgressBox()->setVisibility(Visibility::Hidden);
@@ -89,6 +83,21 @@ int UIEmu::run(RomList::Rom *rom) {
     return 0;
 }
 
+void UIEmu::pause() {
+
+    printf("UIEmu::pause()\n");
+
+    if (audio) {
+        audio->pause(1);
+    }
+    // set ui input configuration
+    ui->updateInputMapping(false);
+    // enable auto repeat delay
+    ui->getInput()->setRepeatDelay(INPUT_DELAY);
+
+    paused = true;
+}
+
 void UIEmu::resume() {
 
     printf("UIEmu::resume()\n");
@@ -96,13 +105,11 @@ void UIEmu::resume() {
     // set per rom input configuration
     ui->updateInputMapping(true);
     // disable auto repeat delay
-    ui->getInput()->setRepeatEnable(false);
+    ui->getInput()->setRepeatDelay(0);
 
     if (audio) {
         audio->pause(0);
     }
-
-    ui->clear();
 
     paused = false;
 }
@@ -126,21 +133,6 @@ void UIEmu::stop() {
 
     ui->updateInputMapping(false);
     setVisibility(Visibility::Hidden);
-}
-
-void UIEmu::pause() {
-
-    printf("UIEmu::pause()\n");
-
-    paused = true;
-    if (audio) {
-        audio->pause(1);
-    }
-
-    // set ui input configuration
-    ui->updateInputMapping(false);
-    // enable auto repeat delay
-    ui->getInput()->setRepeatEnable(true);
 }
 
 UIMain *UIEmu::getUi() {
