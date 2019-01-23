@@ -15,38 +15,7 @@ extern "C" {
 using namespace c2d;
 using namespace c2dui;
 
-UIMain::UIMain(const Vector2f &size) : C2DRenderer({size.x, size.y}) {
-
-    /*
-    renderer = r;
-    skin = s;
-    config = cfg;
-
-    // scaling factor mainly used for borders,
-    // based on switch resolution..
-    scaling = std::min(renderer->getSize().x / 1280, 1.0f);
-    //printf("scaling: %f\n", scaling);
-
-    uiMessageBox = new MessageBox(
-            FloatRect(
-                    renderer->getSize().x / 2,
-                    renderer->getSize().y / 2,
-                    renderer->getSize().x / 2,
-                    renderer->getSize().y / 2),
-            getInput(), skin->font, getFontSize());
-    uiMessageBox->setOrigin(Origin::Center);
-    uiMessageBox->setFillColor(Color::Gray);
-    uiMessageBox->setOutlineColor(Color::Orange);
-    uiMessageBox->setOutlineThickness(2);
-    renderer->add(uiMessageBox);
-
-    uiProgressBox = new UIProgressBox(this);
-    renderer->add(uiProgressBox);
-
-    updateInputMapping(false);
-    getInput()->setRepeatEnable(true);
-    getInput()->setRepeatDelay(INPUT_DELAY);
-    */
+UIMain::UIMain(const Vector2f &size) : C2DRenderer(size) {
 }
 
 UIMain::~UIMain() {
