@@ -23,7 +23,7 @@ RomList::RomList(UIMain *_ui, const std::string &emuVersion) {
 
     // UI
     rect = new C2DRectangle(
-            Vector2f(ui->getRenderer()->getSize().x - 8, ui->getRenderer()->getSize().y - 8));
+            Vector2f(ui->getSize().x - 8, ui->getSize().y - 8));
     rect->setPosition(4, 4);
     rect->setFillColor(Color::Gray);
     rect->setOutlineColor(Color::Orange);
@@ -53,12 +53,12 @@ RomList::RomList(UIMain *_ui, const std::string &emuVersion) {
     version->setPosition(rect->getSize().x - 16, rect->getSize().y - 16);
     rect->add(version);
 
-    ui->getRenderer()->add(rect);
-    ui->getRenderer()->flip();
+    ui->add(rect);
+    ui->flip();
     // UI
 
     printf("RomList: building list...\n");
-    time_start = ui->getRenderer()->getElapsedTime().asSeconds();
+    time_start = ui->getElapsedTime().asSeconds();
 
     for (auto &path : *paths) {
         if (!path.empty()) {
@@ -91,7 +91,7 @@ void RomList::build() {
         favFile.close();
     }
 
-    float time_spent = ui->getRenderer()->getElapsedTime().asSeconds() - time_start;
+    float time_spent = ui->getElapsedTime().asSeconds() - time_start;
     printf("RomList::build(): list built in %f\n", time_spent);
 
     // UI

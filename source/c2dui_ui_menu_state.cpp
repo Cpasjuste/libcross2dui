@@ -186,8 +186,8 @@ UIStateMenu::UIStateMenu(UIMain *u) : RectangleShape(Vector2f(0, 0)) {
     setOutlineColor(COL_ORANGE);
     setOutlineThickness(4);
     setPosition(UI_MARGIN * ui->getScaling(), UI_MARGIN * ui->getScaling());
-    setSize(ui->getRenderer()->getSize().x - (UI_MARGIN * ui->getScaling() * 2),
-            ui->getRenderer()->getSize().y - (UI_MARGIN * ui->getScaling() * 2));
+    setSize(ui->getSize().x - (UI_MARGIN * ui->getScaling() * 2),
+            ui->getSize().y - (UI_MARGIN * ui->getScaling() * 2));
 
 
     // menu title
@@ -293,7 +293,7 @@ int UIStateMenu::loop() {
         }
     }
 
-    ui->getRenderer()->flip();
+    ui->flip();
 
     return ret;
 }

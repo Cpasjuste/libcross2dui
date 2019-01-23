@@ -8,8 +8,8 @@ using namespace c2d;
 using namespace c2dui;
 
 UIProgressBox::UIProgressBox(UIMain *gui)
-        : RectangleShape(Vector2f(gui->getRenderer()->getSize().x / 2,
-                                  gui->getRenderer()->getSize().y / 2)) {
+        : RectangleShape(Vector2f(gui->getSize().x / 2,
+                                  gui->getSize().y / 2)) {
 
     float w = getSize().x;
     float h = getSize().y;

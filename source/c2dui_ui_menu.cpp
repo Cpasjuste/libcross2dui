@@ -110,14 +110,14 @@ UIMenu::UIMenu(UIMain *ui) : RectangleShape(Vector2f(0, 0)) {
     setFillColor(fillColor[0]);
     setOutlineColor(COL_RED);
     setOutlineThickness(2);
-    if (ui->getRenderer()->getSize().y < 544) {
+    if (ui->getSize().y < 544) {
         setPosition(UI_MARGIN * ui->getScaling(), UI_MARGIN * ui->getScaling());
-        setSize(ui->getRenderer()->getSize().x - (UI_MARGIN * ui->getScaling() * 2),
-                ui->getRenderer()->getSize().y - (UI_MARGIN * ui->getScaling() * 2));
+        setSize(ui->getSize().x - (UI_MARGIN * ui->getScaling() * 2),
+                ui->getSize().y - (UI_MARGIN * ui->getScaling() * 2));
     } else {
         setPosition(UI_MARGIN * ui->getScaling() * 4, UI_MARGIN * ui->getScaling() * 4);
-        setSize(ui->getRenderer()->getSize().x - (UI_MARGIN * ui->getScaling() * 8),
-                ui->getRenderer()->getSize().y - (UI_MARGIN * ui->getScaling() * 8));
+        setSize(ui->getSize().x - (UI_MARGIN * ui->getScaling() * 8),
+                ui->getSize().y - (UI_MARGIN * ui->getScaling() * 8));
     }
 
     // menu title

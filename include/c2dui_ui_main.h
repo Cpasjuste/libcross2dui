@@ -24,16 +24,20 @@
 
 namespace c2dui {
 
-    class UIMain : public c2d::Rectangle {
+    class UIMain : public c2d::C2DRenderer {
 
     public:
 
-        UIMain(c2d::Renderer *renderer, c2dui::Config *config, c2dui::Skin *skin);
+        UIMain(const c2d::Vector2f &size);
 
         virtual ~UIMain();
 
         void init(UIRomList *uiRomList, UIMenu *uiMenu,
                   UIEmu *uiEmu, UIStateMenu *uiState);
+
+        void setConfig(Config *cfg);
+
+        void setSkin(Skin *skin);
 
         bool onInput(c2d::Input::Player *players) override;
 
@@ -41,15 +45,9 @@ namespace c2dui {
 
         void updateInputMapping(bool isRomCfg);
 
-        c2d::Renderer *getRenderer();
-
         c2dui::Skin *getSkin();
 
         Config *getConfig();
-
-        c2d::Input *getInput();
-
-        c2d::Io *getIo();
 
         UIRomList *getUiRomList();
 
@@ -63,7 +61,7 @@ namespace c2dui {
 
         c2d::MessageBox *getUiMessageBox();
 
-        c2d::Font *getFont();
+        c2d::Font *getFont() override;
 
         int getFontSize();
 
@@ -75,8 +73,6 @@ namespace c2dui {
 
         c2dui::Config *config = nullptr;
         c2dui::Skin *skin = nullptr;
-        c2d::Renderer *renderer = nullptr;
-
         UIMenu *uiMenu = nullptr;
         UIRomList *uiRomList = nullptr;
         UIEmu *uiEmu = nullptr;

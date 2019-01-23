@@ -13,7 +13,7 @@
 using namespace c2d;
 using namespace c2dui;
 
-UIEmu::UIEmu(UIMain *u) : RectangleShape(u->getRenderer()->getSize()) {
+UIEmu::UIEmu(UIMain *u) : RectangleShape(u->getSize()) {
 
     printf("UIEmu()\n");
 
@@ -102,7 +102,7 @@ void UIEmu::resume() {
         audio->pause(0);
     }
 
-    ui->getRenderer()->clear();
+    ui->clear();
 
     paused = false;
 }

@@ -15,8 +15,9 @@ extern "C" {
 using namespace c2d;
 using namespace c2dui;
 
-UIMain::UIMain(Renderer *r, Config *cfg, Skin *s) : Rectangle({r->getSize().x, r->getSize().y}) {
+UIMain::UIMain(const Vector2f &size) : C2DRenderer({size.x, size.y}) {
 
+    /*
     renderer = r;
     skin = s;
     config = cfg;
@@ -45,23 +46,7 @@ UIMain::UIMain(Renderer *r, Config *cfg, Skin *s) : Rectangle({r->getSize().x, r
     updateInputMapping(false);
     getInput()->setRepeatEnable(true);
     getInput()->setRepeatDelay(INPUT_DELAY);
-}
-
-void UIMain::init(UIRomList *uiRomList, UIMenu *uiMenu,
-                  UIEmu *uiEmu, UIStateMenu *uiState) {
-
-    this->uiRomList = uiRomList;
-    renderer->add(this->uiRomList);
-
-    // build menus from options
-    this->uiMenu = uiMenu;
-    renderer->add(this->uiMenu);
-
-    this->uiEmu = uiEmu;
-    renderer->add(this->uiEmu);
-
-    this->uiState = uiState;
-    renderer->add(this->uiState);
+    */
 }
 
 UIMain::~UIMain() {
@@ -69,8 +54,59 @@ UIMain::~UIMain() {
     // are deleted by the renderer
 }
 
+void UIMain::init(UIRomList *uiRomList, UIMenu *uiMenu,
+                  UIEmu *uiEmu, UIStateMenu *uiState) {
+
+    this->uiRomList = uiRomList;
+    add(this->uiRomList);
+
+    // build menus from options
+    this->uiMenu = uiMenu;
+    add(this->uiMenu);
+
+    this->uiEmu = uiEmu;
+    add(this->uiEmu);
+
+    this->uiState = uiState;
+    add(this->uiState);
+
+    // scaling factor mainly used for borders,
+    // based on switch resolution..
+    scaling = std::min(getSize().x / 1280, 1.0f);
+    //printf("scaling: %f\n", scaling);
+
+    uiMessageBox = new MessageBox(
+            FloatRect(
+                    getSize().x / 2,
+                    getSize().y / 2,
+                    getSize().x / 2,
+                    getSize().y / 2),
+            getInput(), skin->font, getFontSize());
+    uiMessageBox->setOrigin(Origin::Center);
+    uiMessageBox->setFillColor(Color::Gray);
+    uiMessageBox->setOutlineColor(Color::Orange);
+    uiMessageBox->setOutlineThickness(2);
+    add(uiMessageBox);
+
+    uiProgressBox = new UIProgressBox(this);
+    add(uiProgressBox);
+
+    updateInputMapping(false);
+    getInput()->setRepeatEnable(true);
+    getInput()->setRepeatDelay(INPUT_DELAY);
+
+}
+
+void UIMain::setConfig(Config *cfg) {
+    config = cfg;
+}
+
+void UIMain::setSkin(Skin *s) {
+    skin = s;
+}
+
 bool UIMain::onInput(c2d::Input::Player *players) {
-    return Rectangle::onInput(players);
+    return Renderer::onInput(players);
 }
 
 void UIMain::onDraw(c2d::Transform &transform) {
@@ -90,19 +126,11 @@ void UIMain::onDraw(c2d::Transform &transform) {
         }
     }
 
-    Rectangle::onDraw(transform);
+    Renderer::onDraw(transform);
 }
 
 float UIMain::getScaling() {
     return scaling;
-}
-
-Input *UIMain::getInput() {
-    return renderer->getInput();
-}
-
-Renderer *UIMain::getRenderer() {
-    return renderer;
 }
 
 Skin *UIMain::getSkin() {
@@ -111,10 +139,6 @@ Skin *UIMain::getSkin() {
 
 Config *UIMain::getConfig() {
     return config;
-}
-
-Io *UIMain::getIo() {
-    return renderer->getIo();
 }
 
 UIRomList *UIMain::getUiRomList() {
