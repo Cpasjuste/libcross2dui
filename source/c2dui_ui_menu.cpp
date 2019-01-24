@@ -373,6 +373,7 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
                 if (isRomMenu) {
                     ui->getUiEmu()->stop();
                     ui->getUiRomList()->setVisibility(Visibility::Visible);
+                    ui->getInput()->clear();
                 } else {
                     ui->done = true;
                 }
