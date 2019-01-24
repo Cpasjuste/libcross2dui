@@ -358,7 +358,7 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
             Option *option = lines[optionIndex]->option;
             if (option->flags == Option::Type::INPUT) {
                 int new_key = 0;
-                int res = ui->getUiMessageBox()->show("NEW INPUT", "PRESS A BUTTON", "", "", &new_key, 5);
+                int res = ui->getUiMessageBox()->show("NEW INPUT", "PRESS A BUTTON", "", "", &new_key, 9);
                 if (res != MessageBox::TIMEOUT) {
                     option->value = new_key;
                     option_changed = true;
