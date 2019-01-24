@@ -40,6 +40,8 @@ namespace c2dui {
             ROM_SCALING,
             ROM_FILTER,
             ROM_SHADER,
+            ROM_FORCE_60HZ,
+            ROM_AUDIO_SYNC,
             ROM_ROTATION,
             ROM_SHOW_FPS,
             ROM_FRAMESKIP,

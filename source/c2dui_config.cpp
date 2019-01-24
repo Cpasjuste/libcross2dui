@@ -315,9 +315,9 @@ bool Config::add(int target,
                  const std::string &text, const std::vector<std::string> &values,
                  int defaultValue, int index, unsigned int flags) {
 
-    for (auto &option : options_gui) {
-        if (option.id == target) {
-            options_gui.insert(options_gui.begin() + target,
+    for (unsigned int i = 0; i < options_gui.size(); i++) {
+        if (options_gui[i].id == target) {
+            options_gui.insert(options_gui.begin() + i + 1,
                                Option(text, values, defaultValue, index, flags));
             return true;
         }
