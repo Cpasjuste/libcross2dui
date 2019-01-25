@@ -33,14 +33,15 @@ namespace c2dui {
 
         virtual Option *get(int id, bool isRom = false);
 
-        virtual int getValue(int id, bool isRom = false);
-
         virtual bool add(int target,
                          const std::string &text, const std::vector<std::string> &values,
                          int defaultValue, int id, unsigned int flags = Option::INTEGER);
 
         virtual void append(const std::string &text, const std::vector<std::string> &values,
                             int defaultValue, int id, unsigned int flags = Option::INTEGER);
+
+        virtual void append(const std::string &text, int value, int id,
+                            unsigned int flags = Option::INTEGER);
 
         bool hide(int id, bool isRom = false);
 

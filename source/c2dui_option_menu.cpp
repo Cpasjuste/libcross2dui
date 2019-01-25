@@ -21,11 +21,11 @@ OptionMenu::OptionMenu(OptionMenu *parent, std::vector<Option> *options, bool is
 
         Option option = options->at(i);
 
-        if (option.flags & Option::Type::HIDDEN) {
+        if (option.getFlags() & Option::Flags::HIDDEN) {
             continue;
         }
 
-        if (option.flags & Option::Type::MENU) {
+        if (option.getFlags() & Option::Flags::MENU) {
             //printf("NEW MENU: %s (%i)\n", option.getName(), option.index);
             if (i == 0 && !isRomCfg) {
                 menu->title = option.getName();
@@ -36,7 +36,7 @@ OptionMenu::OptionMenu(OptionMenu *parent, std::vector<Option> *options, bool is
             }
         } else {
             //printf("NEW OPTION: %s (%i)\n", option.getName(), option.index);
-            menu->option_ids.push_back(option.id);
+            menu->option_ids.push_back(option.getId());
         }
     }
 }

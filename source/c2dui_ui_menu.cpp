@@ -58,10 +58,10 @@ public:
             return;
         }
 
-        if (option->flags == Option::Type::INPUT) {
-            Skin::Button *button = ui->getSkin()->getButton(option->value);
+        if (option->getFlags() == Option::Flags::INPUT) {
+            Skin::Button *button = ui->getSkin()->getButton(option->getIndex());
             // don't use button textures on keyboard for now
-            if (button && option->id < Option::Index::JOY_DEADZONE) {
+            if (button && option->getId() < Option::Index::JOY_DEADZONE) {
                 if (ui->getIo()->exist(button->path)) {
                     texture = new C2DTexture(button->path);
                     if (texture->available) {
@@ -85,13 +85,13 @@ public:
                 }
             } else {
                 char btn[16];
-                snprintf(btn, 16, "%i", option->value);
+                snprintf(btn, 16, "%i", option->getIndex());
                 value->setVisibility(Visibility::Visible);
                 value->setString(btn);
             }
         } else {
             value->setVisibility(Visibility::Visible);
-            value->setString(option->getValue());
+            value->setString(option->getValueString());
         }
     }
 
@@ -222,7 +222,7 @@ void UIMenu::load(bool isRom, OptionMenu *om) {
         }
 
         // skip rotation option if not needed
-        if ((isOptionHidden(option)) || option->flags & Option::Type::HIDDEN) {
+        if ((isOptionHidden(option)) || option->getFlags() & Option::Flags::HIDDEN) {
             optionCount--;
             continue;
         }
@@ -300,7 +300,7 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
             return true;
         }
         option_changed = true;
-        if (option->flags == Option::Type::INTEGER) {
+        if (option->getFlags() == Option::Flags::INTEGER) {
             if (keys & Input::Key::Left) {
                 option->prev();
             } else {
@@ -312,7 +312,7 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
                 ui->getUiMessageBox()->show("WARNING", option->getInfo(), "OK");
             }
 
-            switch (option->id) {
+            switch (option->getId()) {
                 case Option::Index::GUI_SHOW_CLONES:
                 case Option::Index::GUI_SHOW_ALL:
                 case Option::Index::GUI_SHOW_HARDWARE:
@@ -327,12 +327,12 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
                     break;
                 case Option::Index::ROM_FILTER:
                     if (isEmuRunning) {
-                        ui->getUiEmu()->getVideo()->getTexture()->setFilter((Texture::Filter) option->value);
+                        ui->getUiEmu()->getVideo()->getTexture()->setFilter((Texture::Filter) option->getIndex());
                     }
                     break;
                 case Option::Index::ROM_SHADER:
                     if (isEmuRunning) {
-                        ui->getUiEmu()->getVideo()->getTexture()->setShader(option->value);
+                        ui->getUiEmu()->getVideo()->getTexture()->setShader(option->getIndex());
                     }
                     break;
 #ifdef __SWITCH__
@@ -356,11 +356,11 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
     if (keys & Input::Key::Fire1) {
         if ((unsigned int) optionIndex < optionMenu->option_ids.size()) {
             Option *option = lines[optionIndex]->option;
-            if (option->flags == Option::Type::INPUT) {
+            if (option->getFlags() == Option::Flags::INPUT) {
                 int new_key = 0;
                 int res = ui->getUiMessageBox()->show("NEW INPUT", "PRESS A BUTTON", "", "", &new_key, 9);
                 if (res != MessageBox::TIMEOUT) {
-                    option->value = new_key;
+                    option->setValueInt(new_key);
                     option_changed = true;
                     lines[optionIndex]->update(option);
                 }

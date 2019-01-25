@@ -16,7 +16,7 @@ namespace c2dui {
 
     public:
 
-        enum Type {
+        enum Flags {
             MENU = BIT(0),
             INTEGER = BIT(1),
             INPUT = BIT(2),
@@ -42,6 +42,7 @@ namespace c2dui {
             ROM_SHADER,
             ROM_FORCE_60HZ,
             ROM_AUDIO_SYNC,
+            ROM_AUDIO_FREQ,
             ROM_ROTATION,
             ROM_SHOW_FPS,
             ROM_FRAMESKIP,
@@ -86,19 +87,37 @@ namespace c2dui {
         Option(const std::string &text, const std::vector<std::string> &options,
                int defaultValue, int id, unsigned int flags = INTEGER);
 
-        unsigned int flags = INTEGER;
-        int id = 0;
-        int value = 0;
-
         const char *getName();
 
         std::string getInfo() const;
 
         void setInfo(const std::string &info);
 
-        const char *getValue();
+        const char *getValueString();
+
+        void setValueString(const std::string &value);
+
+        int getValueInt();
+
+        void setValueInt(int value);
+
+        bool getValueBool();
+
+        void setValueBool(bool value);
 
         std::vector<std::string> *getValues();
+
+        int getId();
+
+        void setId(int id);
+
+        int getIndex();
+
+        void setIndex(int idx);
+
+        unsigned int getFlags();
+
+        void setFlags(unsigned int flags);
 
         void next();
 
@@ -108,6 +127,9 @@ namespace c2dui {
         std::string text;
         std::string info;
         std::vector<std::string> options;
+        unsigned int flags = INTEGER;
+        int id = 0;
+        int idx = 0;
     };
 }
 

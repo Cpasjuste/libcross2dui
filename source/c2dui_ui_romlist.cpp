@@ -130,7 +130,7 @@ public:
 
             // update info text
             Option *rotation_opt = ui->getConfig()->get(Option::Index::ROM_ROTATION);
-            if (rotation_opt && !(rotation_opt->flags & Option::Type::HIDDEN)) {
+            if (rotation_opt && !(rotation_opt->getFlags() & Option::Flags::HIDDEN)) {
                 strcpy(rotation, "ROTATION: HORIZONTAL");
                 if (rom->flags & BDF_ORIENTATION_VERTICAL) {
                     sprintf(rotation, "ROTATION: VERTICAL");
@@ -216,14 +216,14 @@ void UIRomList::updateRomList() {
     roms.clear();
 
     static RomList *list = rom_list;
-    int showClone = ui->getConfig()->getValue(Option::Index::GUI_SHOW_CLONES);
-    int showHardwareCfg = ui->getConfig()->getValue(Option::Index::GUI_SHOW_HARDWARE);
+    int showClone = ui->getConfig()->get(Option::Index::GUI_SHOW_CLONES)->getValueBool();
+    int showHardwareCfg = ui->getConfig()->get(Option::Index::GUI_SHOW_HARDWARE)->getValueBool();
     int showHardware = ui->getConfig()->getHardwareList()->at((unsigned int) showHardwareCfg).prefix;
 
     // psnes and pnes have only 2 (0/1) values, so work with value string
     Option *opt = ui->getConfig()->get(Option::Index::GUI_SHOW_ALL);
-    int showAll = opt->value;
-    if (strcmp(opt->getValue(), "FAVORITES") == 0) {
+    int showAll = opt->getIndex();
+    if (strcmp(opt->getValueString(), "FAVORITES") == 0) {
         showAll = 2;
     }
 
@@ -253,7 +253,7 @@ void UIRomList::updateRomList() {
                 (getLocalBounds().width / 2) - UI_MARGIN * ui->getScaling(),
                 getLocalBounds().height - top - UI_MARGIN * ui->getScaling()};
         list_box = new ListBox(ui->getSkin()->font, ui->getFontSize(), rect, (std::vector<Io::File *> &) roms,
-                               ui->getConfig()->getValue(Option::Index::GUI_SHOW_ICONS) == 1);
+                               ui->getConfig()->get(Option::Index::GUI_SHOW_ICONS)->getValueBool());
         list_box->setHighlightUseFileColor(true);
         list_box->setOutlineThickness(getOutlineThickness());
         list_box->setFillColor(Color::Gray);
@@ -331,7 +331,7 @@ bool UIRomList::onInput(c2d::Input::Player *players) {
                 if (res == MessageBox::LEFT) {
                     rom_list->removeFav(getSelection());
                     Option *opt = ui->getConfig()->get(Option::Index::GUI_SHOW_ALL);
-                    if (strcmp(opt->getValue(), "FAVORITES") == 0) {
+                    if (strcmp(opt->getValueString(), "FAVORITES") == 0) {
                         // update list if we are in favorites
                         updateRomList();
                     }

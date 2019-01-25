@@ -2,6 +2,8 @@
 // Created by cpasjuste on 05/12/16.
 //
 
+#include <c2dui_option.h>
+
 #include "c2dui_option.h"
 
 using namespace c2dui;
@@ -12,7 +14,7 @@ Option::Option(const std::string &text,
     this->flags = flags;
     this->text = text;
     this->options = options;
-    this->value = defaultValue;
+    this->idx = defaultValue;
     this->id = id;
 }
 
@@ -28,25 +30,82 @@ void Option::setInfo(const std::string &inf) {
     info = inf;
 }
 
-const char *Option::getValue() {
-    if ((size_t) value >= options.size()) {
-        return "NONE";
-    }
-    return options[value].c_str();
-}
-
 std::vector<std::string> *Option::getValues() {
     return &options;
 }
 
+const char *Option::getValueString() {
+    if ((size_t) idx >= options.size()) {
+        return "NONE";
+    }
+    return options[idx].c_str();
+}
+
+
+void Option::setValueString(const std::string &value) {
+    if ((size_t) idx < options.size()) {
+        options[idx] = value;
+    }
+}
+
+int Option::getValueInt() {
+    if ((size_t) idx >= options.size()) {
+        return 0;
+    }
+    return std::stoi(options[idx]);
+}
+
+void Option::setValueInt(int value) {
+    if ((size_t) idx < options.size()) {
+        options[idx] = std::to_string(value);
+    }
+}
+
+bool Option::getValueBool() {
+    if ((size_t) idx >= options.size()) {
+        return false;
+    }
+    return idx == 1;
+}
+
+void Option::setValueBool(bool value) {
+    idx = value;
+}
+
+int Option::getId() {
+    return id;
+}
+
+void Option::setId(int _id) {
+    id = _id;
+}
+
+unsigned int Option::getFlags() {
+    return flags;
+}
+
+void Option::setFlags(unsigned int _flags) {
+    flags = _flags;
+}
+
+int Option::getIndex() {
+    return idx;
+}
+
+void Option::setIndex(int _index) {
+    idx = _index;
+}
+
 void Option::next() {
-    value++;
-    if ((size_t) value >= options.size())
-        value = 0;
+    idx++;
+    if ((size_t) idx >= options.size())
+        idx = 0;
 }
 
 void Option::prev() {
-    value--;
-    if (value < 0)
-        value = (int) (options.size() - 1);
+    idx--;
+    if (idx < 0)
+        idx = (int) (options.size() - 1);
 }
+
+

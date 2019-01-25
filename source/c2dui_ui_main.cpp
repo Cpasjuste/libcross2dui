@@ -139,35 +139,35 @@ Font *UIMain::getFont() {
 }
 
 int UIMain::getFontSize() {
-    return config->getValue(Option::Index::SKIN_FONT_SIZE);
+    return config->get(Option::Index::SKIN_FONT_SIZE)->getValueInt();
 }
 
 void UIMain::updateInputMapping(bool isRomConfig) {
 
     if (isRomConfig) {
         getInput()->setKeyboardMapping(config->getRomPlayerInputKeys(0));
-        int dz = 2000 + config->getValue(Option::Index::JOY_DEADZONE, true) * 2000;
+        int dz = config->get(Option::Index::JOY_DEADZONE, true)->getValueInt();
         for (int i = 0; i < PLAYER_MAX; i++) {
             getInput()->setJoystickMapping(i, config->getRomPlayerInputButtons(i), dz);
-            getInput()->players[i].lx.id = config->getValue(Option::Index::JOY_AXIS_LX, true);
-            getInput()->players[i].ly.id = config->getValue(Option::Index::JOY_AXIS_LY, true);
-            getInput()->players[i].rx.id = config->getValue(Option::Index::JOY_AXIS_RX, true);
-            getInput()->players[i].ry.id = config->getValue(Option::Index::JOY_AXIS_RY, true);
+            getInput()->players[i].lx.id = config->get(Option::Index::JOY_AXIS_LX, true)->getValueInt();
+            getInput()->players[i].ly.id = config->get(Option::Index::JOY_AXIS_LY, true)->getValueInt();
+            getInput()->players[i].rx.id = config->get(Option::Index::JOY_AXIS_RX, true)->getValueInt();
+            getInput()->players[i].ry.id = config->get(Option::Index::JOY_AXIS_RY, true)->getValueInt();
         }
     } else {
         getInput()->setKeyboardMapping(config->getGuiPlayerInputKeys(0));
-        int dz = 2000 + config->getValue(Option::Index::JOY_DEADZONE) * 2000;
+        int dz = config->get(Option::Index::JOY_DEADZONE)->getValueInt();
         for (int i = 0; i < PLAYER_MAX; i++) {
             getInput()->setJoystickMapping(i, config->getGuiPlayerInputButtons(i), dz);
-            getInput()->players[i].lx.id = config->getValue(Option::Index::JOY_AXIS_LX);
-            getInput()->players[i].ly.id = config->getValue(Option::Index::JOY_AXIS_LY);
-            getInput()->players[i].rx.id = config->getValue(Option::Index::JOY_AXIS_RX);
-            getInput()->players[i].ry.id = config->getValue(Option::Index::JOY_AXIS_RY);
+            getInput()->players[i].lx.id = config->get(Option::Index::JOY_AXIS_LX)->getValueInt();
+            getInput()->players[i].ly.id = config->get(Option::Index::JOY_AXIS_LY)->getValueInt();
+            getInput()->players[i].rx.id = config->get(Option::Index::JOY_AXIS_RX)->getValueInt();
+            getInput()->players[i].ry.id = config->get(Option::Index::JOY_AXIS_RY)->getValueInt();
         }
     }
 
 #ifdef __SWITCH__
-    int single_joy = config->getValue(Option::Index::JOY_SINGLEJOYCON);
+    int single_joy = config->get(Option::Index::JOY_SINGLEJOYCON);
     for (int i = 0; i < PLAYER_MAX; i++) {
         if (single_joy > 0) {
             hidSetNpadJoyAssignmentModeSingleByDefault((HidControllerID) i);
