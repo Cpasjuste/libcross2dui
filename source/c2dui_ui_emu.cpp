@@ -33,7 +33,7 @@ void UIEmu::addAudio(c2d::Audio *_audio) {
     audio = _audio;
 }
 
-void UIEmu::addAudio(int rate, int fps, Audio::C2DAudioCallback cb) {
+void UIEmu::addAudio(int rate, float fps, Audio::C2DAudioCallback cb) {
 
     if (audio) {
         delete (audio);
