@@ -43,6 +43,8 @@ namespace c2dui {
             ROM_FORCE_60HZ,
             ROM_AUDIO_SYNC,
             ROM_AUDIO_FREQ,
+            ROM_AUDIO_INTERPOLATION,
+            ROM_AUDIO_FMINTERPOLATION,
             ROM_ROTATION,
             ROM_SHOW_FPS,
             ROM_FRAMESKIP,
