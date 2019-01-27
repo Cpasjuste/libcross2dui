@@ -16,6 +16,8 @@
 #include "c2dui_ui_menu.h"
 #include "c2dui_ui_emu.h"
 #include "c2dui_ui_romlist.h"
+#include "c2dui_ui_romlist_classic.h"
+#include "c2dui_ui_romlist_new.h"
 #include "c2dui_ui_progressbox.h"
 #include "c2dui_ui_menu_state.h"
 #include "c2dui_ui_main.h"
