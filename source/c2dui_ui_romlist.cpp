@@ -217,7 +217,8 @@ void UIRomList::updateRomList() {
 
     static RomList *list = rom_list;
     int showClone = ui->getConfig()->get(Option::Index::GUI_SHOW_CLONES)->getValueBool();
-    int showHardwareCfg = ui->getConfig()->get(Option::Index::GUI_SHOW_HARDWARE)->getValueBool();
+    int showHardwareCfg = ui->getConfig()->get(Option::Index::GUI_SHOW_HARDWARE) ?
+                          ui->getConfig()->get(Option::Index::GUI_SHOW_HARDWARE)->getValueBool() : 0;
     int showHardware = ui->getConfig()->getHardwareList()->at((unsigned int) showHardwareCfg).prefix;
 
     // psnes and pnes have only 2 (0/1) values, so work with value string
