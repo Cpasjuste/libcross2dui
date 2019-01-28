@@ -421,8 +421,8 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
     return true;
 }
 
-void UIMenu::onDraw(c2d::Transform &transform) {
-    return RectangleShape::onDraw(transform);
+void UIMenu::onDraw(c2d::Transform &transform, bool draw) {
+    return RectangleShape::onDraw(transform, draw);
 }
 
 bool UIMenu::isOptionHidden(Option *option) {

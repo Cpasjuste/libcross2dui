@@ -19,7 +19,7 @@ namespace c2dui {
 
         bool onInput(c2d::Input::Player *players) override;
 
-        void onDraw(c2d::Transform &transform) override;
+        void onDraw(c2d::Transform &transform, bool draw = true) override;
 
         void load(bool isRomMenu = false, OptionMenu *om = nullptr);
 

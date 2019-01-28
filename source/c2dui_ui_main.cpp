@@ -77,7 +77,7 @@ bool UIMain::onInput(c2d::Input::Player *players) {
     return Renderer::onInput(players);
 }
 
-void UIMain::onDraw(c2d::Transform &transform) {
+void UIMain::onDraw(c2d::Transform &transform, bool draw) {
 
     if (uiEmu && !uiEmu->isVisible()) {
         unsigned int keys = getInput()->getKeys(0);
@@ -95,7 +95,7 @@ void UIMain::onDraw(c2d::Transform &transform) {
         }
     }
 
-    Renderer::onDraw(transform);
+    Renderer::onDraw(transform, draw);
 }
 
 float UIMain::getScaling() {

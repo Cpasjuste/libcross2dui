@@ -316,7 +316,7 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
     return true;
 }
 
-void UIRomListClassic::onDraw(c2d::Transform &transform) {
+void UIRomListClassic::onDraw(c2d::Transform &transform, bool draw) {
 
     unsigned int key = ui->getInput()->getKeys();
 
@@ -330,7 +330,7 @@ void UIRomListClassic::onDraw(c2d::Transform &transform) {
         }
     }
 
-    RectangleShape::onDraw(transform);
+    RectangleShape::onDraw(transform, draw);
 }
 
 UIRomListClassic::~UIRomListClassic() {

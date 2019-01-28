@@ -24,7 +24,7 @@ namespace c2dui {
 
         bool onInput(c2d::Input::Player *players) override;
 
-        void onDraw(c2d::Transform &transform) override;
+        void onDraw(c2d::Transform &transform, bool draw = true) override;
 
         void updateRomList() override;
 
@@ -36,6 +36,7 @@ namespace c2dui {
         UIRomHighlight *highlight = nullptr;
         std::vector<UIRomItem *> rom_items;
         c2d::Rectangle *rom_items_layer = nullptr;
+        c2d::TweenPosition *rom_items_layer_tween = nullptr;
         c2d::Vector2f rom_item_size;
     };
 }
