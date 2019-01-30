@@ -120,10 +120,6 @@ UIRomListNew::UIRomListNew(UIMain *u, RomList *romList, const c2d::Vector2f &siz
     updateRomList();
 }
 
-RomList::Rom *UIRomListNew::getSelection() {
-    return nullptr;
-}
-
 void UIRomListNew::updateRomList() {
 
     filterRomList();
@@ -153,18 +149,22 @@ void UIRomListNew::updateRomList() {
     highlight->setVisibility(roms.empty() ? Visibility::Hidden : Visibility::Visible);
 }
 
+RomList::Rom *UIRomListNew::getSelection() {
+    return nullptr;
+}
+
 c2d::Vector2f UIRomListNew::getPosition(int index) {
-    return {ROM_ITEM_MARGIN + (index * rom_item_size.x)
-            + (index * ROM_ITEM_MARGIN) - ROM_ITEM_OUTLINE, getSize().y / 2};
+
+    int page = index / 5;
+    int index_start = page * 5;
+    int item_pos = index - index_start;
+    return {ROM_ITEM_MARGIN + (item_pos * rom_item_size.x)
+            + (item_pos * ROM_ITEM_MARGIN) - ROM_ITEM_OUTLINE, getSize().y / 2};
 }
 
 void UIRomListNew::updateHighlight() {
-    Vector2f to = getPosition(rom_index);
-    if (rom_index < 5 && (int) highlight->getPosition().x != (int) to.x) {
-        highlight_tween->setFromTo(highlight->getPosition(), to,
-                                   ((float) ui->getInput()->getRepeatDelay() * 0.001f) / 3);
-        highlight_tween->play(TweenDirection::Forward, true);
-    }
+
+
 }
 
 bool UIRomListNew::onInput(c2d::Input::Player *players) {
@@ -179,17 +179,30 @@ bool UIRomListNew::onInput(c2d::Input::Player *players) {
         rom_index--;
         if (rom_index < 0) {
             rom_index = (int) (roms.size() - 1);
-            rom_items_layer->setPosition(rom_index * -(rom_item_size.x - ROM_ITEM_MARGIN), getSize().y / 2);
+            Vector2f pos = rom_items_layer->getPosition();
+            rom_items_layer->setPosition((rom_index - 4) * -(rom_item_size.x + ROM_ITEM_MARGIN), pos.y);
             rom_items_layer_tween->reset();
             rom_items_layer_tween->setState(TweenState::Stopped);
         } else if (highlight->getPosition().x < rom_item_size.x) {
             //TODO
             Vector2f pos = rom_items_layer->getPosition();
-            Vector2f to = {rom_index * -(rom_item_size.x - ROM_ITEM_MARGIN), pos.y};
+            Vector2f to = {(rom_index - 4) * -(rom_item_size.x + ROM_ITEM_MARGIN), pos.y};
             rom_items_layer_tween->setFromTo(pos, to, ((float) ui->getInput()->getRepeatDelay() * 0.001f) / 3);
             rom_items_layer_tween->play(TweenDirection::Forward, true);
         }
-        updateHighlight();
+        //updateHighlight();
+        int page = rom_index / 5;
+        int index_start = page * 5;
+        int item_pos = rom_index - index_start;
+
+        printf("index: %i, page: %i, index_start: %i, item_pos: %i\n", rom_index, page, index_start, item_pos);
+        Vector2f to = getPosition(rom_index);
+        if (item_pos >= 0) {
+            highlight_tween->setFromTo(highlight->getPosition(), to,
+                                       ((float) ui->getInput()->getRepeatDelay() * 0.001f) / 3);
+            highlight_tween->play(TweenDirection::Forward, true);
+        }
+
     } else if (keys & Input::Right) {
         rom_index++;
         if (rom_index >= (int) roms.size()) {
@@ -203,7 +216,13 @@ bool UIRomListNew::onInput(c2d::Input::Player *players) {
             rom_items_layer_tween->setFromTo(pos, to, ((float) ui->getInput()->getRepeatDelay() * 0.001f) / 3);
             rom_items_layer_tween->play(TweenDirection::Forward, true);
         }
-        updateHighlight();
+
+        Vector2f to = getPosition(rom_index);
+        if (rom_index < 5) {
+            highlight_tween->setFromTo(highlight->getPosition(), to,
+                                       ((float) ui->getInput()->getRepeatDelay() * 0.001f) / 3);
+            highlight_tween->play(TweenDirection::Forward, true);
+        }
     }
 
     if (keys & EV_QUIT) {
