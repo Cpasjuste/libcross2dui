@@ -32,14 +32,12 @@ namespace c2dui {
 
     private:
 
-        c2d::Vector2f getHighlightPosition(int rom_index);
-
-        void updateHighlight();
+        c2d::Vector2f getHighlightPosition(int index);
 
         int rom_index = 0;
         c2d::Text *title = nullptr;
         UIRomHighlight *highlight = nullptr;
-        c2d::TweenPosition *highlight_tween = nullptr;
+        int highlight_index = 0;
         std::vector<UIRomItem *> rom_items;
         c2d::Rectangle *rom_items_layer = nullptr;
         c2d::TweenPosition *rom_items_layer_tween = nullptr;
