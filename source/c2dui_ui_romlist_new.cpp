@@ -240,6 +240,13 @@ bool UIRomListNew::onInput(c2d::Input::Player *players) {
             rom_items_layer_tween->play(TweenDirection::Forward, true);
         }
         title->setString(getSelection()->name);
+    } else if (keys & Input::Key::Fire1) {
+        RomList::Rom *rom = getSelection();
+        if (rom && rom->state != RomList::RomState::MISSING) {
+            ui->getConfig()->load(rom);
+            ui->getUiEmu()->load(rom);
+            return true;
+        }
     }
 
     if (keys & EV_QUIT) {
