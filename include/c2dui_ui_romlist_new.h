@@ -10,8 +10,6 @@
 
 class UIRomItem;
 
-class UIRomHighlight;
-
 namespace c2dui {
 
     class UIRomListNew : public c2dui::UIRomList {
@@ -32,11 +30,10 @@ namespace c2dui {
 
     private:
 
-        c2d::Vector2f getHighlightPosition(int index);
+        c2d::FloatRect getHighlightPosition(int index);
 
         int rom_index = 0;
         c2d::Text *title = nullptr;
-        UIRomHighlight *highlight = nullptr;
         int highlight_index = 0;
         std::vector<UIRomItem *> rom_items;
         c2d::Rectangle *rom_items_layer = nullptr;

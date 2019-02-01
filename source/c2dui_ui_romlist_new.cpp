@@ -82,32 +82,6 @@ private:
     bool previewLoaded = false;
 };
 
-class UIRomHighlight : public RoundedRectangleShape {
-
-public:
-
-    explicit UIRomHighlight(const Vector2f &size) : RoundedRectangleShape(size) {
-        setOrigin(Origin::Left);
-        setFillColor(Color::Cyan);
-        setAlpha(100);
-        setOutlineThickness(ROM_ITEM_OUTLINE);
-        setOutlineColor(Color::Cyan);
-        tween = new TweenPosition({0, 0}, {0, 0}, 0.25f);
-        add(tween);
-    }
-
-    void tweenPosition(Vector2f pos, int ms) {
-        Vector2i newPos = {(int) pos.x, (int) pos.y};
-        if (currentPosition.x != newPos.x || currentPosition.y != newPos.y) {
-            currentPosition = newPos;
-            tween->setFromTo(getPosition(), {(float) newPos.x, (float) newPos.y}, (float) ms * 0.001f);
-            tween->play(TweenDirection::Forward, true);
-        }
-    }
-
-    Vector2i currentPosition;
-    TweenPosition *tween;
-};
 
 UIRomListNew::UIRomListNew(UIMain *u, RomList *romList, const c2d::Vector2f &size)
         : UIRomList(u, romList, size) {
@@ -117,25 +91,23 @@ UIRomListNew::UIRomListNew(UIMain *u, RomList *romList, const c2d::Vector2f &siz
     ui = u;
     rom_list = romList;
 
-    add(new C2DTexture("skin/romlist_bg.png"));
+    // load bg skin
+    ui->getSkin()->loadRectangleShape(this, "ROM_LIST");
 
     rom_item_size = {getSize().x / 6, getSize().y / 3};
-    highlight = new UIRomHighlight({rom_item_size.x + ROM_ITEM_OUTLINE * 2,
-                                    rom_item_size.y + ROM_ITEM_OUTLINE * 2});
-    add(highlight);
+
 
     RoundedRectangleShape *titleRect = new RoundedRectangleShape({512, 64});
-    titleRect->setFillColor(Color::GrayDark);
+    ui->getSkin()->loadRectangleShape(titleRect, "TITLE");
     titleRect->setOrigin(Origin::Center);
     titleRect->setPosition(getSize().x / 2, 160);
+
     title = new Text("NO ROM INFORMATION", (unsigned int) ui->getFontSize(), ui->getFont());
     title->setOutlineThickness(1);
     title->setOrigin(Origin::Center);
     title->setPosition(titleRect->getSize().x / 2, titleRect->getSize().y / 2);
     titleRect->add(title);
     add(titleRect);
-
-    updateRomList();
 }
 
 void UIRomListNew::updateRomList() {
@@ -162,17 +134,25 @@ void UIRomListNew::updateRomList() {
     }
 
     rom_index = 0;
-    highlight->tweenPosition(getHighlightPosition(0), 1);
-    highlight->setVisibility(roms.empty() ? Visibility::Hidden : Visibility::Visible);
+    ui->getUiHighlight()->tweenPosition(getHighlightPosition(0), 1);
+    ui->getUiHighlight()->setVisibility(roms.empty() ? Visibility::Hidden : Visibility::Visible);
+    if (!roms.empty()) {
+        title->setString(getSelection()->name);
+    }
 }
 
 RomList::Rom *UIRomListNew::getSelection() {
     return roms.at((size_t) rom_index);
 }
 
-c2d::Vector2f UIRomListNew::getHighlightPosition(int index) {
-    return {ROM_ITEM_MARGIN + (index * rom_item_size.x)
-            + (index * ROM_ITEM_MARGIN) - ROM_ITEM_OUTLINE, getSize().y / 2};
+FloatRect UIRomListNew::getHighlightPosition(int index) {
+    float x = ROM_ITEM_MARGIN + (index * rom_item_size.x)
+              + (index * ROM_ITEM_MARGIN) - ((float) ROM_ITEM_OUTLINE) + getOutlineThickness();
+    float y = (getSize().y / 2) + getOutlineThickness();
+    FloatRect r = {x, y,
+                   rom_item_size.x + ROM_ITEM_OUTLINE * 2, rom_item_size.y + ROM_ITEM_OUTLINE * 2
+    };
+    return r;
 }
 
 bool UIRomListNew::onInput(c2d::Input::Player *players) {
@@ -194,7 +174,7 @@ bool UIRomListNew::onInput(c2d::Input::Player *players) {
             highlight_index = index;
             if (roms.size() > 4) {
                 rom_items_layer->setPosition(
-                        -getHighlightPosition(rom_index - index).x + ROM_ITEM_MARGIN - ROM_ITEM_OUTLINE,
+                        -getHighlightPosition(rom_index - index).left + ROM_ITEM_MARGIN - ROM_ITEM_OUTLINE,
                         getSize().y / 2);
                 rom_items_layer_tween->reset();
                 rom_items_layer_tween->setState(TweenState::Stopped);
@@ -202,11 +182,11 @@ bool UIRomListNew::onInput(c2d::Input::Player *players) {
                 rom_items_layer_tween->setFromTo(pos, pos, ((float) ui->getInput()->getRepeatDelay() * 0.001f) / 3);
             }
             int ms = ui->getInput()->getRepeatDelay() / 3;
-            highlight->tweenPosition(getHighlightPosition(highlight_index), ms);
+            ui->getUiHighlight()->tweenPosition(getHighlightPosition(highlight_index), ms);
         } else if (highlight_index != 0) {
             highlight_index--;
             int ms = ui->getInput()->getRepeatDelay() / 3;
-            highlight->tweenPosition(getHighlightPosition(highlight_index), ms);
+            ui->getUiHighlight()->tweenPosition(getHighlightPosition(highlight_index), ms);
         } else {
             Vector2f pos = rom_items_layer->getPosition();
             Vector2f to = {rom_items_layer_tween->getTo().x + (ROM_ITEM_MARGIN + rom_item_size.x), pos.y};
@@ -228,11 +208,11 @@ bool UIRomListNew::onInput(c2d::Input::Player *players) {
             Vector2f pos = rom_items_layer->getPosition();
             rom_items_layer_tween->setFromTo(pos, pos, ((float) ui->getInput()->getRepeatDelay() * 0.001f) / 3);
             int ms = ui->getInput()->getRepeatDelay() / 3;
-            highlight->tweenPosition(getHighlightPosition(highlight_index), ms);
+            ui->getUiHighlight()->tweenPosition(getHighlightPosition(highlight_index), ms);
         } else if (highlight_index != 4) {
             highlight_index++;
             int ms = ui->getInput()->getRepeatDelay() / 3;
-            highlight->tweenPosition(getHighlightPosition(highlight_index), ms);
+            ui->getUiHighlight()->tweenPosition(getHighlightPosition(highlight_index), ms);
         } else {
             Vector2f pos = rom_items_layer->getPosition();
             Vector2f to = {rom_items_layer_tween->getTo().x - (ROM_ITEM_MARGIN + rom_item_size.x), pos.y};

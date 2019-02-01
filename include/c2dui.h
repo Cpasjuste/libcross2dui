@@ -13,6 +13,7 @@
 #include "c2dui_video.h"
 #include "c2dui_config.h"
 
+#include "c2dui_ui_highlight.h"
 #include "c2dui_ui_menu.h"
 #include "c2dui_ui_emu.h"
 #include "c2dui_ui_romlist.h"

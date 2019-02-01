@@ -28,9 +28,9 @@ namespace c2dui {
 
     public:
 
-        UIMain(const c2d::Vector2f &size);
+        explicit UIMain(const c2d::Vector2f &size);
 
-        virtual ~UIMain();
+        ~UIMain() override;
 
         void init(UIRomList *uiRomList, UIMenu *uiMenu,
                   UIEmu *uiEmu, UIStateMenu *uiState);
@@ -48,6 +48,8 @@ namespace c2dui {
         c2dui::Skin *getSkin();
 
         Config *getConfig();
+
+        UIHighlight *getUiHighlight();
 
         UIRomList *getUiRomList();
 
@@ -73,6 +75,7 @@ namespace c2dui {
 
         c2dui::Config *config = nullptr;
         c2dui::Skin *skin = nullptr;
+        UIHighlight *uiHighlight = nullptr;
         UIMenu *uiMenu = nullptr;
         UIRomList *uiRomList = nullptr;
         UIEmu *uiEmu = nullptr;
