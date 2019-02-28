@@ -27,13 +27,14 @@ UIMain::~UIMain() {
 void UIMain::init(UIRomList *uiRomList, UIMenu *uiMenu,
                   UIEmu *uiEmu, UIStateMenu *uiState) {
 
-    uiHighlight = new UIHighlight({128, 128});
-    skin->loadRectangleShape(uiHighlight, "HIGHLIGHT");
+    uiHighlight = new UIHighlight();
+    skin->loadRectangleShape(uiHighlight, {"SKIN_CONFIG", "HIGHLIGHT"});
     float alpha = uiHighlight->getAlpha();
     if (alpha > 0) {
         uiHighlight->add(new TweenAlpha((float) uiHighlight->getAlpha() * 0.5f,
                                         uiHighlight->getAlpha(), 0.5f, TweenLoop::PingPong));
     }
+    uiHighlight->setOrigin(Origin::Center);
     uiHighlight->setLayer(1);
     add(uiHighlight);
 

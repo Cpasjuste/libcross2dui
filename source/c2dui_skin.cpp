@@ -23,37 +23,72 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     // config file
     config = new config::Config("SKIN_CONFIG", path + "config.cfg");
 
-    // font
-    config->addOption({"font", path + "default.ttf"});
+    ///
+    /// FONT
+    ///
+    config::Group font_group("FONT");
+    font_group.addOption({"path", path + "default.ttf"});
+    font_group.addOption({"offset", Vector2f{0, -3}});
+    font_group.addOption({"filtering", 0});
+    config->addGroup(font_group);
 
-    // highlight
+    ///
+    /// HIGHLIGHT
+    ///
     config::Group highlight = createRectangleShapeGroup(
-            "HIGHLIGHT", path + "highlight_bg.png", {0, 255, 255, 80}, Color::Cyan, 5);
+            "HIGHLIGHT", {0, 0, 16, 16},
+            Origin::Left, path + "highlight_bg.png", {100, 255, 255, 80}, {0, 255, 255, 80}, 10);
     config->addGroup(highlight);
 
-    // rom list
-    config::Group rom_list("ROM_LIST");
-    config::Group bg = createRectangleShapeGroup(
-            "BACKGROUND", path + "romlist_bg.png", Color::GrayDark, Color::Yellow, 2);
-    rom_list.addGroup(bg);
+    ///
+    /// ROM LIST (START)
+    ///
+    // rom list bg
+    config::Group main = createRectangleShapeGroup(
+            "MAIN", ui->getLocalBounds(), Origin::TopLeft,
+            path + "romlist_bg.png", Color::GrayDark, Color::Yellow, 2);
+    // rom list title + text
+    FloatRect titleRect = {ui->getSize().x / 2, 160, ui->getSize().x / 2, 64};
     config::Group title = createRectangleShapeGroup(
-            "TITLE", path + "romlist_title.png", Color::GrayDark, Color::GrayLight, 2);
-    rom_list.addGroup(title);
-    config->addGroup(rom_list);
+            "TITLE", titleRect, Origin::Center,
+            path + "romlist_title.png", Color::GrayDark, Color::GrayLight, 2);
+
+    FloatRect titleTextRect = {titleRect.width / 2, titleRect.height / 2, titleRect.width - 64, 0};
+    config::Group titleText = createTextGroup(
+            "TEXT", ui->getFontSize(), titleTextRect, Origin::Center, Color::White, Color::Black, 2);
+    title.addGroup(titleText);
+    main.addGroup(title);
+
+    config::Group romList("ROM_LIST");
+    romList.addOption({"position_y", ui->getSize().y / 2});
+    config::Group romItem = createRectangleShapeGroup(
+            "ROM_ITEM", {0, 0, 212, 240}, Origin::Left,
+            path + "romlist_item.png", {255, 255, 255, 150}, Color::GrayLight, 5);
+    romList.addGroup(romItem);
+    main.addGroup(romList);
+
+    config->addGroup(main);
+    ///
+    /// ROM LIST (END)
+    ///
 
     if (!config->load()) {
         // file doesn't exist or is malformed, (re)create it
         config->save();
     }
 
+    ///
+    /// load font from configuration
+    ///
     font = new C2DFont();
-    if (!font->loadFromFile(config->getOption("font")->getString())) {
+    c2d::config::Group *fnt = config->getGroup("FONT");
+    if (!font->loadFromFile(fnt->getOption("path")->getString())) {
         font_available = false;
         font = c2d_renderer->getFont();
+    } else {
+        font->setFilter((Texture::Filter) fnt->getOption("filtering")->getInteger());
+        font->setOffset(fnt->getOption("offset")->getVector2f());
     }
-    font->setFilter(Texture::Filter::Point);
-    font->setOffset({0, -3});
-
 }
 
 config::Config *Skin::getConfig() {
@@ -61,6 +96,8 @@ config::Config *Skin::getConfig() {
 }
 
 config::Group Skin::createRectangleShapeGroup(const std::string &name,
+                                              const c2d::FloatRect &rect,
+                                              const c2d::Origin &origin,
                                               const std::string &texture,
                                               const c2d::Color &color,
                                               const c2d::Color &outlineColor, int outlineSize) {
@@ -69,33 +106,88 @@ config::Group Skin::createRectangleShapeGroup(const std::string &name,
     group.addOption({"color", color});
     group.addOption({"outline_color", outlineColor});
     group.addOption({"outline_size", outlineSize});
+    group.addOption({"rectangle", rect});
+    group.addOption({"origin", (int) origin});
     return group;
 }
 
-void Skin::loadRectangleShape(c2d::RectangleShape *shape, const std::string &groupName) {
+void Skin::loadRectangleShape(c2d::RectangleShape *shape, const std::vector<std::string> &tree) {
 
-    c2d::config::Group *bg = nullptr;
-    c2d::config::Group *group = config->getGroup(groupName);
+    c2d::config::Group *group = config->getGroup(tree[0]);
     if (!group) {
-        printf("Skin::loadRectangleShape: config group \"%s\" doesn't exist\n", groupName.c_str());
+        printf("Skin::loadRectangleShape: config group not found: \"%s\"\n", tree[0].c_str());
         return;
     }
 
-    bg = group->getGroup("BACKGROUND");
-    if (!bg) {
-        bg = group;
+    if (tree.size() > 1) {
+        for (unsigned int i = 1; i < tree.size(); i++) {
+            group = group->getGroup(tree[i]);
+            if (!group) {
+                printf("Skin::loadRectangleShape: config group not found: \"%s\"\n", tree[i].c_str());
+                return;
+            }
+        }
     }
 
-    std::string bg_path = bg->getOption("texture")->getString();
+    FloatRect rect = group->getOption("rectangle")->getFloatRect();
+    if (rect.width > 0 && rect.height > 0) {
+        shape->setPosition(rect.left, rect.top);
+        shape->setSize(rect.width, rect.height);
+    }
+
+    shape->setOrigin((Origin) group->getOption("origin")->getInteger());
+
+    std::string bg_path = group->getOption("texture")->getString();
     if (ui->getIo()->exist(bg_path)) {
         shape->add(new C2DTexture(bg_path));
     } else {
-        shape->setFillColor(bg->getOption("color")->getColor());
-        shape->setOutlineColor(bg->getOption("outline_color")->getColor());
-        int thickness = bg->getOption("outline_size")->getInteger();
+        shape->setFillColor(group->getOption("color")->getColor());
+        shape->setOutlineColor(group->getOption("outline_color")->getColor());
+        int thickness = group->getOption("outline_size")->getInteger();
         shape->setOutlineThickness(thickness);
-        shape->setPosition(thickness, thickness);
-        shape->setSize(shape->getSize().x - thickness * 2, shape->getSize().y - thickness * 2);
+    }
+}
+
+config::Group Skin::createTextGroup(const std::string &name, int size, const c2d::FloatRect &rect,
+                                    const c2d::Origin &origin, const c2d::Color &color,
+                                    const c2d::Color &outlineColor, int outlineSize) {
+    config::Group group(name);
+    group.addOption({"size", size});
+    group.addOption({"color", color});
+    group.addOption({"outline_color", outlineColor});
+    group.addOption({"outline_size", outlineSize});
+    group.addOption({"rectangle", rect});
+    group.addOption({"origin", (int) origin});
+    return group;
+}
+
+void Skin::loadText(c2d::Text *text, const std::vector<std::string> &tree) {
+
+    c2d::config::Group *group = config->getGroup(tree[0]);
+    if (!group) {
+        printf("Skin::loadRectangleShape: config group not found: \"%s\"\n", tree[0].c_str());
+        return;
+    }
+
+    if (tree.size() > 1) {
+        for (unsigned int i = 1; i < tree.size(); i++) {
+            group = group->getGroup(tree[i]);
+            if (!group) {
+                printf("Skin::loadRectangleShape: config group not found: \"%s\"\n", tree[i].c_str());
+                return;
+            }
+        }
+    }
+
+    text->setCharacterSize((unsigned int) group->getOption("size")->getInteger());
+    text->setFillColor(group->getOption("color")->getColor());
+    text->setOutlineColor(group->getOption("outline_color")->getColor());
+    text->setOutlineThickness(group->getOption("outline_size")->getInteger());
+    text->setOrigin((Origin) group->getOption("origin")->getInteger());
+    FloatRect rect = group->getOption("rectangle")->getFloatRect();
+    text->setPosition(rect.left, rect.top);
+    if (rect.width > 0) {
+        text->setWidth(rect.width);
     }
 }
 

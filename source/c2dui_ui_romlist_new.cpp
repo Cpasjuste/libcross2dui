@@ -4,7 +4,6 @@
 
 #include "c2dui.h"
 
-#define ROM_ITEM_OUTLINE 5
 #define ROM_ITEM_MARGIN 32
 
 /// pFBA
@@ -18,14 +17,9 @@ class UIRomItem : public RoundedRectangleShape {
 
 public:
 
-    UIRomItem(UIMain *u, RomList::Rom *r, const FloatRect &rect)
-            : RoundedRectangleShape({rect.width, rect.height}) {
+    UIRomItem(UIMain *u, RomList::Rom *r) : RoundedRectangleShape() {
         ui = u;
         rom = r;
-        setPosition(rect.left, rect.top);
-        setFillColor({255, 255, 255, 150});
-        setOutlineThickness(ROM_ITEM_OUTLINE);
-        setOutlineColor(Color::GrayLight);
     }
 
     void setPreview(Texture *tex) {
@@ -56,7 +50,7 @@ public:
 
 private:
 
-    void onDraw(Transform &transform, bool draw = true) override {
+    void onDraw(Transform &transform, bool draw) override {
 
         // draw from -1 item to screen size + 1 item
         FloatRect bounds = getGlobalBounds();
@@ -92,20 +86,12 @@ UIRomListNew::UIRomListNew(UIMain *u, RomList *romList, const c2d::Vector2f &siz
     rom_list = romList;
 
     // load bg skin
-    ui->getSkin()->loadRectangleShape(this, "ROM_LIST");
+    ui->getSkin()->loadRectangleShape(this, {"MAIN"});
 
-    rom_item_size = {getSize().x / 6, getSize().y / 3};
-
-
-    RoundedRectangleShape *titleRect = new RoundedRectangleShape({512, 64});
-    ui->getSkin()->loadRectangleShape(titleRect, "TITLE");
-    titleRect->setOrigin(Origin::Center);
-    titleRect->setPosition(getSize().x / 2, 160);
-
+    RoundedRectangleShape *titleRect = new RoundedRectangleShape();
+    ui->getSkin()->loadRectangleShape(titleRect, {"MAIN", "TITLE"});
     title = new Text("NO ROM INFORMATION", (unsigned int) ui->getFontSize(), ui->getFont());
-    title->setOutlineThickness(1);
-    title->setOrigin(Origin::Center);
-    title->setPosition(titleRect->getSize().x / 2, titleRect->getSize().y / 2);
+    ui->getSkin()->loadText(title, {"MAIN", "TITLE", "TEXT"});
     titleRect->add(title);
     add(titleRect);
 }
@@ -116,28 +102,34 @@ void UIRomListNew::updateRomList() {
 
     rom_items.clear();
     delete (rom_items_layer);
-    rom_items_layer = new Rectangle({0, getSize().y / 2, 16, 16});
+    rom_items_layer_y = ui->getSkin()->getConfig()->getGroup("MAIN")->getOption("ROM_LIST", "position_y")->getFloat();
+    rom_items_layer = new Rectangle({0, rom_items_layer_y, 16, 16});
     rom_items_layer->setOrigin(Origin::Left);
-    rom_items_layer_tween = new TweenPosition({0, 0}, {0, 0}, 0.25f);
+    rom_items_layer_tween = new TweenPosition(rom_items_layer->getPosition(), rom_items_layer->getPosition(), 0.25f);
     rom_items_layer_tween->setState(TweenState::Stopped);
     rom_items_layer->add(rom_items_layer_tween);
     add(rom_items_layer);
 
     float start_x = ROM_ITEM_MARGIN;
-
     for (unsigned int i = 0; i < roms.size(); i++) {
-        UIRomItem *item = new UIRomItem(ui, roms[i], {0, 0, rom_item_size.x, rom_item_size.y});
+        auto *item = new UIRomItem(ui, roms[i]);
+        ui->getSkin()->loadRectangleShape(item, {"MAIN", "ROM_LIST", "ROM_ITEM"});
+        rom_item_size = item->getSize();
+        rom_item_outline = item->getOutlineThickness();
         item->setOrigin(Origin::Left);
-        item->setPosition(((rom_item_size.x + ROM_ITEM_MARGIN) * i) + start_x, rom_items_layer->getSize().y / 2);
-        rom_items_layer->add(item);
+        item->setPosition(start_x + ((rom_item_size.x + ROM_ITEM_MARGIN) * i), rom_items_layer->getSize().y / 2);
         rom_items.push_back(item);
+        rom_items_layer->add(item);
     }
 
     rom_index = 0;
-    ui->getUiHighlight()->tweenPosition(getHighlightPosition(0), 1);
-    ui->getUiHighlight()->setVisibility(roms.empty() ? Visibility::Hidden : Visibility::Visible);
     if (!roms.empty()) {
+        ui->getUiHighlight()->tweenPosition(getHighlightPosition(0), 1);
+        ui->getUiHighlight()->setVisibility(Visibility::Visible);
         title->setString(getSelection()->name);
+    } else {
+        ui->getUiHighlight()->setVisibility(Visibility::Hidden);
+        title->setString("NO ROM FOUND");
     }
 }
 
@@ -146,13 +138,13 @@ RomList::Rom *UIRomListNew::getSelection() {
 }
 
 FloatRect UIRomListNew::getHighlightPosition(int index) {
-    float x = ROM_ITEM_MARGIN + (index * rom_item_size.x)
-              + (index * ROM_ITEM_MARGIN) - ((float) ROM_ITEM_OUTLINE) + getOutlineThickness();
-    float y = (getSize().y / 2) + getOutlineThickness();
-    FloatRect r = {x, y,
-                   rom_item_size.x + ROM_ITEM_OUTLINE * 2, rom_item_size.y + ROM_ITEM_OUTLINE * 2
+
+    float x = (ROM_ITEM_MARGIN + (index * (rom_item_size.x + ROM_ITEM_MARGIN)))
+              + (ui->getUiHighlight()->getSize().x / 2) + (ui->getUiHighlight()->getOutlineThickness() / 2);
+    float y = rom_items_layer_y + rom_item_outline + getPosition().y;
+    return {x, y,
+            rom_item_size.x + rom_item_outline * 2, rom_item_size.y + rom_item_outline * 2
     };
-    return r;
 }
 
 bool UIRomListNew::onInput(c2d::Input::Player *players) {
@@ -174,8 +166,8 @@ bool UIRomListNew::onInput(c2d::Input::Player *players) {
             highlight_index = index;
             if (roms.size() > 4) {
                 rom_items_layer->setPosition(
-                        -getHighlightPosition(rom_index - index).left + ROM_ITEM_MARGIN - ROM_ITEM_OUTLINE,
-                        getSize().y / 2);
+                        -getHighlightPosition(rom_index - index).left /*+ ROM_ITEM_MARGIN - rom_item_outline + getPosition().x*/,
+                        rom_items_layer_y);
                 rom_items_layer_tween->reset();
                 rom_items_layer_tween->setState(TweenState::Stopped);
                 Vector2f pos = rom_items_layer->getPosition();
@@ -202,7 +194,7 @@ bool UIRomListNew::onInput(c2d::Input::Player *players) {
         if (rom_index >= (int) roms.size()) {
             rom_index = 0;
             highlight_index = 0;
-            rom_items_layer->setPosition(0, getSize().y / 2);
+            rom_items_layer->setPosition(0, rom_items_layer_y);
             rom_items_layer_tween->reset();
             rom_items_layer_tween->setState(TweenState::Stopped);
             Vector2f pos = rom_items_layer->getPosition();

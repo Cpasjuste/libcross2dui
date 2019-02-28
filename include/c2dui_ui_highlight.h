@@ -13,7 +13,7 @@ namespace c2dui {
 
     public:
 
-        explicit UIHighlight(const c2d::Vector2f &size);
+        explicit UIHighlight();
 
         void tweenPosition(const c2d::FloatRect &rect, int ms);
 

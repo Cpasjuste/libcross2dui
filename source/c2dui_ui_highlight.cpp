@@ -7,13 +7,11 @@
 using namespace c2d;
 using namespace c2dui;
 
-UIHighlight::UIHighlight(const Vector2f &size) : RoundedRectangleShape(size) {
-
-    setOrigin(Origin::Left);
+UIHighlight::UIHighlight() : RoundedRectangleShape() {
 
     tweenPos = new TweenPosition({0, 0}, {0, 0}, 0.25f);
     add(tweenPos);
-    tweenSize = new TweenSize(size, size, 0.25f);
+    tweenSize = new TweenSize({0, 0}, {0, 0}, 0.25f);
     add(tweenSize);
 }
 

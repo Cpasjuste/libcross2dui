@@ -37,8 +37,10 @@ namespace c2dui {
         int highlight_index = 0;
         std::vector<UIRomItem *> rom_items;
         c2d::Rectangle *rom_items_layer = nullptr;
+        float rom_items_layer_y;
         c2d::TweenPosition *rom_items_layer_tween = nullptr;
         c2d::Vector2f rom_item_size;
+        float rom_item_outline;
     };
 }
 
