@@ -139,12 +139,12 @@ RomList::Rom *UIRomListNew::getSelection() {
 
 FloatRect UIRomListNew::getHighlightPosition(int index) {
 
+    float width = rom_item_size.x + rom_item_outline * 2;
+    float height = rom_item_size.y + rom_item_outline * 2;
     float x = (ROM_ITEM_MARGIN + (index * (rom_item_size.x + ROM_ITEM_MARGIN)))
-              + (ui->getUiHighlight()->getSize().x / 2) + (ui->getUiHighlight()->getOutlineThickness() / 2);
+              + (width / 2) + (ui->getUiHighlight()->getOutlineThickness() / 2);
     float y = rom_items_layer_y + rom_item_outline + getPosition().y;
-    return {x, y,
-            rom_item_size.x + rom_item_outline * 2, rom_item_size.y + rom_item_outline * 2
-    };
+    return {x, y, width, height};
 }
 
 bool UIRomListNew::onInput(c2d::Input::Player *players) {
@@ -165,8 +165,9 @@ bool UIRomListNew::onInput(c2d::Input::Player *players) {
             int index = roms.size() < 5 ? (int) roms.size() - 1 : 4;
             highlight_index = index;
             if (roms.size() > 4) {
+                FloatRect rect = getHighlightPosition(rom_index - index);
                 rom_items_layer->setPosition(
-                        -getHighlightPosition(rom_index - index).left /*+ ROM_ITEM_MARGIN - rom_item_outline + getPosition().x*/,
+                        -rect.left + rom_item_size.x / 2 + ROM_ITEM_MARGIN + rom_item_outline * 2,
                         rom_items_layer_y);
                 rom_items_layer_tween->reset();
                 rom_items_layer_tween->setState(TweenState::Stopped);
@@ -217,6 +218,7 @@ bool UIRomListNew::onInput(c2d::Input::Player *players) {
         if (rom && rom->state != RomList::RomState::MISSING) {
             ui->getConfig()->load(rom);
             ui->getUiEmu()->load(rom);
+            ui->getUiHighlight()->setVisibility(Visibility::Hidden);
             return true;
         }
     }
