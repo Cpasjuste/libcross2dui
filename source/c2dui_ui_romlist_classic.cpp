@@ -12,19 +12,18 @@
 using namespace c2d;
 using namespace c2dui;
 
-class UIRomInfo : public RectangleShape {
+class UIRomInfo : public Rectangle {
 
 public:
 
     UIRomInfo(UIMain *u, UIRomList *uiRList, Font *font, int fontSize,
-              const FloatRect &rect, float scale) : RectangleShape(rect) {
+              const FloatRect &rect, float scale) : Rectangle(rect) {
 
         printf("UIRomInfo\n");
 
         ui = u;
         uiRomList = uiRList;
 
-        setFillColor(Color::Transparent);
         scaling = scale;
         margin = UI_MARGIN * scaling;
 
@@ -205,7 +204,6 @@ void UIRomListClassic::updateRomList() {
         list_box->getHighlight()->setOutlineThickness(1);
         list_box->getHighlight()->setAlpha(75);
         list_box->setSelection(0);
-        //list_box->getHighlight()->add(new TweenAlpha(50, 150, 1.0f, TweenLoop::PingPong));
         add(list_box);
     } else {
         list_box->setFiles((std::vector<Io::File *> &) roms);

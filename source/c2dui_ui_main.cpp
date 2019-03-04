@@ -36,6 +36,7 @@ void UIMain::init(UIRomList *uiRomList, UIMenu *uiMenu,
     }
     uiHighlight->setOrigin(Origin::Center);
     uiHighlight->setLayer(1);
+    uiHighlight->setVisibility(Visibility::Hidden);
     add(uiHighlight);
 
     this->uiRomList = uiRomList;
