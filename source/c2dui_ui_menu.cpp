@@ -85,7 +85,7 @@ public:
                 }
             } else {
                 char btn[16];
-                snprintf(btn, 16, "%i", option->getIndex());
+                snprintf(btn, 16, "%i", option->getValueInt());
                 value->setVisibility(Visibility::Visible);
                 value->setString(btn);
             }
