@@ -56,7 +56,7 @@ private:
         FloatRect bounds = getGlobalBounds();
         if (bounds.left > -(getSize().x + ROM_ITEM_MARGIN) &&
             bounds.left < ui->getSize().x + getSize().x + ROM_ITEM_MARGIN) {
-            if (!previewLoaded) {
+            if (!previewLoaded && ui->getInput()->getRepeatDelay() >= INPUT_DELAY / 2) {
                 setPreview(ui->getUiRomList()->getPreviewTexture(rom, false));
                 previewLoaded = true;
             }
