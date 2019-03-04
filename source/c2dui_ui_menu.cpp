@@ -59,7 +59,7 @@ public:
         }
 
         if (option->getFlags() == Option::Flags::INPUT) {
-            Skin::Button *button = ui->getSkin()->getButton(option->getIndex());
+            Skin::Button *button = ui->getSkin()->getButton(option->getValueInt());
             // don't use button textures on keyboard for now
             if (button && option->getId() < Option::Index::JOY_DEADZONE) {
                 if (ui->getIo()->exist(button->path)) {
