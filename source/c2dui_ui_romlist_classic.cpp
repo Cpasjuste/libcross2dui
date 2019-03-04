@@ -38,7 +38,7 @@ public:
         infoText = new Text("", (unsigned int) fontSize, font);
         infoText->setPosition(margin, margin);
         infoText->setOutlineThickness(2);
-        infoText->setWidth(infoBox->getSize().x);
+        infoText->setWidth(infoBox->getSize().x - fontSize);
         infoText->setLineSpacingModifier((int) (6 * scaling));
         infoBox->add(infoText);
 
@@ -99,7 +99,6 @@ public:
 
         if (!rom) {
             infoText->setVisibility(Visibility::Hidden);
-            previewText->setVisibility(Visibility::Visible);
         } else {
             // load title/preview texture
             if (!loadTexture(rom, isPreview)) {
