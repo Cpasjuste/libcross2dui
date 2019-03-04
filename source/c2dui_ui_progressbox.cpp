@@ -16,10 +16,8 @@ UIProgressBox::UIProgressBox(UIMain *gui)
 
     setSize(w, h);
     setPosition(w, h);
+    gui->getSkin()->loadRectangleShape(this, {"SKIN_CONFIG", "MESSAGEBOX"});
     setOrigin(Origin::Center);
-    setFillColor(Color::Gray);
-    setOutlineColor(COL_ORANGE);
-    setOutlineThickness(2);
 
     float margin = UI_MARGIN * gui->getScaling();
 
@@ -33,17 +31,19 @@ UIProgressBox::UIProgressBox(UIMain *gui)
     progress_bg = new RectangleShape(
             FloatRect(margin, h - margin - (h / 6),
                       w - (margin * 2), h / 6));
-    progress_bg->setFillColor(Color::Gray);
-    progress_bg->setOutlineColor(COL_GREEN);
+    Color col = getFillColor();
+    col.r = (uint8_t) std::max(0, col.r - 40);
+    col.g = (uint8_t) std::max(0, col.g - 40);
+    col.b = (uint8_t) std::max(0, col.b - 40);
+    progress_bg->setFillColor(col);
+    progress_bg->setOutlineColor(getOutlineColor());
     progress_bg->setOutlineThickness(2);
     add(progress_bg);
 
     progress_fg = new RectangleShape(
-            FloatRect(progress_bg->getPosition().x + 1,
-                      progress_bg->getPosition().y + 1,
-                      2,
-                      progress_bg->getSize().y - 2));
-    progress_fg->setFillColor(COL_YELLOW);
+            FloatRect(progress_bg->getPosition().x + 1, progress_bg->getPosition().y + 1,
+                      2, progress_bg->getSize().y - 2));
+    progress_fg->setFillColor(getOutlineColor());
     add(progress_fg);
 
     message = new Text("MESSAGE", (unsigned int) gui->getFontSize(), gui->getFont());

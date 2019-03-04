@@ -41,6 +41,15 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     config->addGroup(highlight);
 
     ///
+    /// MESSAGEBOX
+    ///
+    config::Group mbox = createRectangleShapeGroup(
+            "MESSAGEBOX", {ui->getSize().x / 2, ui->getSize().y / 2,
+                           ui->getSize().x / 2, ui->getSize().y / 2},
+            Origin::Center, path + "messagebox_bg.png", Color::GrayLight, Color::Red, 2);
+    config->addGroup(mbox);
+
+    ///
     /// ROM LIST (START)
     ///
     // rom list bg

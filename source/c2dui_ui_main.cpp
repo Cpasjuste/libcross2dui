@@ -64,10 +64,8 @@ void UIMain::init(UIRomList *uiRomList, UIMenu *uiMenu,
                     getSize().x / 2,
                     getSize().y / 2),
             getInput(), skin->font, getFontSize());
+    skin->loadRectangleShape(uiMessageBox, {"SKIN_CONFIG", "MESSAGEBOX"});
     uiMessageBox->setOrigin(Origin::Center);
-    uiMessageBox->setFillColor(Color::Gray);
-    uiMessageBox->setOutlineColor(Color::Orange);
-    uiMessageBox->setOutlineThickness(2);
     add(uiMessageBox);
 
     uiProgressBox = new UIProgressBox(this);
