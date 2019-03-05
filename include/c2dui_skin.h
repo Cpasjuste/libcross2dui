@@ -14,6 +14,16 @@ namespace c2dui {
 
     public:
 
+        struct RectangleShapeGroup {
+            c2d::FloatRect rect;
+            c2d::Origin origin;
+            std::string texture;
+            c2d::Color color;
+            c2d::Color outlineColor;
+            int outlineSize;
+            bool available = false;
+        };
+
         struct Button {
             Button(int i, const std::string &n) {
                 id = i;
@@ -32,6 +42,8 @@ namespace c2dui {
         c2d::config::Config *getConfig();
 
         void loadRectangleShape(c2d::RectangleShape *shape, const std::vector<std::string> &tree);
+
+        RectangleShapeGroup getRectangleShape(const std::vector<std::string> &tree);
 
         void loadText(c2d::Text *text, const std::vector<std::string> &tree);
 

@@ -16,44 +16,27 @@ class UIRomInfo : public Rectangle {
 
 public:
 
-    UIRomInfo(UIMain *u, UIRomList *uiRList, Font *font, int fontSize,
-              const FloatRect &rect, float scale) : Rectangle(rect) {
+    UIRomInfo(UIMain *u, UIRomList *uiRList, Font *font, int fontSize)
+            : Rectangle(u->getSize()) {
 
         printf("UIRomInfo\n");
 
         ui = u;
         uiRomList = uiRList;
 
-        scaling = scale;
-        margin = UI_MARGIN * scaling;
-
         // info box
-        infoBox = new RectangleShape(FloatRect(0, getSize().y / 2 + margin,
-                                               getSize().x, getSize().y / 2 - margin));
-        infoBox->setFillColor(Color::Gray);
-        infoBox->setOutlineColor(COL_GREEN);
-        infoBox->setOutlineThickness(2);
-
+        infoBox = new RectangleShape({16, 16});
+        ui->getSkin()->loadRectangleShape(infoBox, {"MAIN", "ROM_INFO"});
         infoText = new Text("", (unsigned int) fontSize, font);
-        infoText->setPosition(margin, margin);
-        infoText->setOutlineThickness(2);
-        infoText->setWidth(infoBox->getSize().x - fontSize);
-        infoText->setLineSpacingModifier((int) (6 * scaling));
+        ui->getSkin()->loadText(infoText, {"MAIN", "ROM_INFO", "TEXT"});
         infoBox->add(infoText);
-
         add(infoBox);
 
         // preview box
         previewBox = new RectangleShape(FloatRect(0, 0, getSize().x, getSize().y / 2));
-        previewBox->setFillColor(Color::Gray);
-        previewBox->setOutlineColor(COL_YELLOW);
-        previewBox->setOutlineThickness(2);
-
-        previewText = new Text("No Preview Image Available", (unsigned int) fontSize, font);
-        previewText->setPosition(previewBox->getSize().x / 2, previewBox->getSize().y / 2);
-        previewText->setOutlineThickness(2);
-        previewText->setWidth(infoBox->getSize().x);
-        previewText->setOrigin(Origin::Center);
+        ui->getSkin()->loadRectangleShape(previewBox, {"MAIN", "ROM_IMAGE"});
+        previewText = new Text("", (unsigned int) fontSize, font);
+        ui->getSkin()->loadText(previewText, {"MAIN", "ROM_IMAGE", "TEXT"});
         previewBox->add(previewText);
 
         add(previewBox);
@@ -76,7 +59,7 @@ public:
                     previewBox->getSize().x / texture->getTextureRect().width,
                     previewBox->getSize().y / texture->getTextureRect().height);
             texture->setScale(tex_scaling, tex_scaling);
-            add(texture);
+            previewBox->add(texture);
         } else {
             previewText->setVisibility(Visibility::Visible);
             if (texture) {
@@ -136,8 +119,6 @@ public:
     Text *previewText = nullptr;
     char info[1024]{};
     char rotation[64]{};
-    float margin = 0;
-    float scaling = 1;
 };
 
 UIRomListClassic::UIRomListClassic(UIMain *u, RomList *romList, const c2d::Vector2f &size)
@@ -145,15 +126,12 @@ UIRomListClassic::UIRomListClassic(UIMain *u, RomList *romList, const c2d::Vecto
 
     printf("UIRomListClassic\n");
 
+    Skin *skin = ui->getSkin();
+
     // set gui main "window"
-    setFillColor(Color::GrayDark);
-    setOutlineColor(COL_ORANGE);
-    setOutlineThickness(ui->getScaling() < 1 ? 1 : 2);
-    setPosition(getOutlineThickness(), getOutlineThickness());
-    setSize(Vector2f(getSize().x - getOutlineThickness() * 2, getSize().y - getOutlineThickness() * 2));
+    skin->loadRectangleShape(this, {"MAIN"});
 
     // add title image if available
-    Skin *skin = ui->getSkin();
     if (skin->tex_title->available) {
         skin->tex_title->setPosition(UI_MARGIN * ui->getScaling(), UI_MARGIN * ui->getScaling());
         float scale = (getLocalBounds().width / 3) / skin->tex_title->getTextureRect().width;
@@ -162,14 +140,7 @@ UIRomListClassic::UIRomListClassic(UIMain *u, RomList *romList, const c2d::Vecto
     }
 
     // add rom info ui
-    rom_info = new UIRomInfo(ui, this, skin->font, ui->getFontSize(),
-                             FloatRect(
-                                     (getLocalBounds().width / 2) + UI_MARGIN * ui->getScaling(),
-                                     UI_MARGIN * ui->getScaling(),
-                                     (getLocalBounds().width / 2) - UI_MARGIN * ui->getScaling() * 2,
-                                     getLocalBounds().height - UI_MARGIN * ui->getScaling() * 2),
-                             ui->getScaling());
-    rom_info->infoBox->setOutlineThickness(getOutlineThickness());
+    rom_info = new UIRomInfo(ui, this, skin->font, ui->getFontSize());
     add(rom_info);
 
     // filter roms
@@ -185,28 +156,35 @@ void UIRomListClassic::updateRomList() {
     rom_index = 0;
     filterRomList();
 
+    Skin::RectangleShapeGroup itemGroup = ui->getSkin()->getRectangleShape({"MAIN", "ROM_LIST", "ROM_ITEM"});
+
     if (!list_box) {
         // add rom list ui
-        float top = ui->getSkin()->tex_title->getGlobalBounds().top
-                    + ui->getSkin()->tex_title->getGlobalBounds().height
-                    + UI_MARGIN * ui->getScaling();
-        FloatRect rect = {
-                UI_MARGIN * ui->getScaling(), top,
-                (getLocalBounds().width / 2) - UI_MARGIN * ui->getScaling(),
-                getLocalBounds().height - top - UI_MARGIN * ui->getScaling()};
-        list_box = new ListBox(ui->getSkin()->font, ui->getFontSize(), rect, (std::vector<Io::File *> &) roms,
+        Skin::RectangleShapeGroup romListGroup = ui->getSkin()->getRectangleShape({"MAIN", "ROM_LIST"});
+        list_box = new ListBox(ui->getSkin()->font, (int) itemGroup.rect.height,
+                               romListGroup.rect, (std::vector<Io::File *> &) roms,
                                ui->getConfig()->get(Option::Index::GUI_SHOW_ICONS)->getValueBool());
-        list_box->setHighlightUseFileColor(true);
-        list_box->setOutlineThickness(getOutlineThickness());
-        list_box->setFillColor(Color::Gray);
-        list_box->setOutlineColor(COL_ORANGE);
-        list_box->setTextOutlineThickness(1);
-        list_box->getHighlight()->setOutlineThickness(1);
-        list_box->getHighlight()->setAlpha(75);
+        list_box->setFillColor(romListGroup.color);
+        list_box->setOutlineColor(romListGroup.outlineColor);
+        list_box->setOutlineThickness(romListGroup.outlineSize);
         list_box->setSelection(0);
+        // rom item
+        list_box->setTextOutlineColor(itemGroup.outlineColor);
+        list_box->setTextOutlineThickness(itemGroup.outlineSize);
+        // hihglight
+        ui->getSkin()->loadRectangleShape(list_box->getHighlight(), {"SKIN_CONFIG", "HIGHLIGHT"});
         add(list_box);
     } else {
         list_box->setFiles((std::vector<Io::File *> &) roms);
+    }
+
+    // set item/rom text color
+    if (!roms.empty()) {
+        for (auto &rom : roms) {
+            if (rom->state == RomList::RomState::WORKING) {
+                rom->color = itemGroup.color;
+            }
+        }
     }
 
     if (rom_info) {

@@ -43,8 +43,9 @@ Config::Config(const std::string &home, int ver) {
     /////////////////////////////////////////////////
     /// skin config, hidden in gui for now
     /////////////////////////////////////////////////
-    append("SKIN", {"SKIN"}, 0, Option::Index::MENU_SKIN, Option::Flags::MENU);
-    append("SKIN_FONT_SIZE", {"16", "18", "20", "22", "24", "26", "28", "30"}, 2, Option::Index::SKIN_FONT_SIZE);
+    append("SKIN", {"SKIN"}, 0, Option::Index::MENU_SKIN, Option::Flags::MENU | Option::Flags::HIDDEN);
+    append("SKIN_FONT_SIZE", {"16", "18", "20", "22", "24", "26", "28", "30"}, 2,
+           Option::Index::SKIN_FONT_SIZE, Option::Flags::HIDDEN);
 
     /////////////////////////////////////////////////
     /// default rom config
