@@ -183,12 +183,14 @@ void Skin::loadRectangleShape(c2d::RectangleShape *shape, const std::vector<std:
 
     std::string bg_path = rectangleShapeGroup.texture;
     if (ui->getIo()->exist(bg_path)) {
-        shape->add(new C2DTexture(bg_path));
-    } else {
-        shape->setFillColor(rectangleShapeGroup.color);
-        shape->setOutlineColor(rectangleShapeGroup.outlineColor);
-        shape->setOutlineThickness(rectangleShapeGroup.outlineSize);
+        auto *tex = new C2DTexture(bg_path);
+        tex->setScale(rectangleShapeGroup.rect.width / tex->getSize().x,
+                      rectangleShapeGroup.rect.height / tex->getSize().y);
+        shape->add(tex);
     }
+    shape->setFillColor(rectangleShapeGroup.color);
+    shape->setOutlineColor(rectangleShapeGroup.outlineColor);
+    shape->setOutlineThickness(rectangleShapeGroup.outlineSize);
 }
 
 config::Group Skin::createTextGroup(const std::string &name, int size, const c2d::FloatRect &rect,

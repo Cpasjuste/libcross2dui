@@ -132,12 +132,9 @@ UIRomListClassic::UIRomListClassic(UIMain *u, RomList *romList, const c2d::Vecto
     skin->loadRectangleShape(this, {"MAIN"});
 
     // add title image if available
-    if (skin->tex_title->available) {
-        skin->tex_title->setPosition(UI_MARGIN * ui->getScaling(), UI_MARGIN * ui->getScaling());
-        float scale = (getLocalBounds().width / 3) / skin->tex_title->getTextureRect().width;
-        skin->tex_title->setScale(scale, scale);
-        add(skin->tex_title);
-    }
+    RectangleShape *title = new RectangleShape({16, 16});
+    skin->loadRectangleShape(title, {"MAIN", "TITLE"});
+    add(title);
 
     // add rom info ui
     rom_info = new UIRomInfo(ui, this, skin->font, ui->getFontSize());
