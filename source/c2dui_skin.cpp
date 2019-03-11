@@ -98,10 +98,27 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     /// ROM LIST (END)
     ///
 
+    ///
+    /// OPTIONS_MENU
+    ///
+    config::Group options_menu = createRectangleShapeGroup(
+            "OPTIONS_MENU", ui->getLocalBounds(), Origin::TopLeft,
+            path + "options_menu_bg.png", Color::GrayDark, Color::Yellow, 2);
+    config::Group options_menu_title = createTextGroup(
+            "TITLE_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+    options_menu.addGroup(options_menu_title);
+    config::Group options_menu_text = createTextGroup(
+            "ITEMS_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+    options_menu.addGroup(options_menu_text);
+    config->addGroup(options_menu);
+
     if (!config->load()) {
         // file doesn't exist or is malformed, (re)create it
         config->save();
     }
+    ///
+    /// OPTIONS_MENU (END)
+    ///
 
     ///
     /// load font from configuration
@@ -143,7 +160,7 @@ Skin::RectangleShapeGroup Skin::getRectangleShape(const std::vector<std::string>
 
     c2d::config::Group *group = config->getGroup(tree[0]);
     if (!group) {
-        printf("Skin::loadRectangleShape: config group not found: \"%s\"\n", tree[0].c_str());
+        printf("Skin::getRectangleShape: config group not found: \"%s\"\n", tree[0].c_str());
         return rectangleShapeGroup;
     }
 
@@ -151,7 +168,7 @@ Skin::RectangleShapeGroup Skin::getRectangleShape(const std::vector<std::string>
         for (unsigned int i = 1; i < tree.size(); i++) {
             group = group->getGroup(tree[i]);
             if (!group) {
-                printf("Skin::loadRectangleShape: config group not found: \"%s\"\n", tree[i].c_str());
+                printf("Skin::getRectangleShape: config group not found: \"%s\"\n", tree[i].c_str());
                 return rectangleShapeGroup;
             }
         }
@@ -207,37 +224,59 @@ config::Group Skin::createTextGroup(const std::string &name, int size, const c2d
     return group;
 }
 
-void Skin::loadText(c2d::Text *text, const std::vector<std::string> &tree) {
+Skin::TextGroup Skin::getText(const std::vector<std::string> &tree) {
+
+    TextGroup textGroup{};
 
     c2d::config::Group *group = config->getGroup(tree[0]);
     if (!group) {
-        printf("Skin::loadRectangleShape: config group not found: \"%s\"\n", tree[0].c_str());
-        return;
+        printf("Skin::getText: config group not found: \"%s\"\n", tree[0].c_str());
+        return textGroup;
     }
 
     if (tree.size() > 1) {
         for (unsigned int i = 1; i < tree.size(); i++) {
             group = group->getGroup(tree[i]);
             if (!group) {
-                printf("Skin::loadRectangleShape: config group not found: \"%s\"\n", tree[i].c_str());
-                return;
+                printf("Skin::getText: config group not found: \"%s\"\n", tree[i].c_str());
+                return textGroup;
             }
         }
     }
 
     std::string str = group->getOption("string")->getString();
     if (!str.empty()) {
-        text->setString(str);
+        textGroup.text = str;
     }
-    text->setCharacterSize((unsigned int) group->getOption("size")->getInteger());
-    text->setFillColor(group->getOption("color")->getColor());
-    text->setOutlineColor(group->getOption("outline_color")->getColor());
-    text->setOutlineThickness(group->getOption("outline_size")->getInteger());
-    text->setOrigin((Origin) group->getOption("origin")->getInteger());
-    FloatRect rect = group->getOption("rectangle")->getFloatRect();
-    text->setPosition(rect.left, rect.top);
-    if (rect.width > 0) {
-        text->setWidth(rect.width);
+    textGroup.size = (unsigned int) group->getOption("size")->getInteger();
+    textGroup.color = group->getOption("color")->getColor();
+    textGroup.outlineColor = group->getOption("outline_color")->getColor();
+    textGroup.outlineSize = group->getOption("outline_size")->getInteger();
+    textGroup.origin = (Origin) group->getOption("origin")->getInteger();
+    textGroup.rect = group->getOption("rectangle")->getFloatRect();
+    textGroup.available = true;
+
+    return textGroup;
+}
+
+void Skin::loadText(c2d::Text *text, const std::vector<std::string> &tree) {
+
+    TextGroup textGroup = getText(tree);
+    if (!textGroup.available) {
+        return;
+    }
+
+    if (!textGroup.text.empty()) {
+        text->setString(textGroup.text);
+    }
+    text->setCharacterSize(textGroup.size);
+    text->setFillColor(textGroup.color);
+    text->setOutlineColor(textGroup.outlineColor);
+    text->setOutlineThickness(textGroup.outlineSize);
+    text->setOrigin(textGroup.origin);
+    text->setPosition(textGroup.rect.left, textGroup.rect.top);
+    if (textGroup.rect.width > 0) {
+        text->setWidth(textGroup.rect.width);
     }
 }
 

@@ -37,9 +37,7 @@ namespace c2dui {
         c2d::Text *title = nullptr;
         c2d::RectangleShape *highlight = nullptr;
         std::vector<MenuLine *> lines;
-        c2d::Color fillColor[2] = {
-                {55, 55, 55, 230},
-                {55, 55, 55, 180}};
+        float alpha = 230;
 
         OptionMenu *optionMenuGui = nullptr;
         OptionMenu *optionMenuRom = nullptr;

@@ -17,25 +17,26 @@ class MenuLine : public c2d::RectangleShape {
 
 public:
 
-    MenuLine(UIMain *ui, FloatRect &rect) : RectangleShape(rect) {
+    MenuLine(UIMain *ui, FloatRect &rect, Skin::TextGroup &textGroup) : RectangleShape(rect) {
 
         setFillColor(Color::Transparent);
 
         this->ui = ui;
         Font *font = ui->getSkin()->font;
-        int fontSize = ui->getFontSize();
 
-        name = new Text("OPTION NAME,)'", (unsigned int) fontSize, font);
-        name->setOutlineThickness(1);
-        name->setOutlineColor(Color::Black);
+        name = new Text("OPTION NAME,)'", textGroup.size, font);
+        name->setFillColor(textGroup.color);
+        name->setOutlineThickness(textGroup.outlineSize);
+        name->setOutlineColor(textGroup.outlineColor);
         name->setOrigin(Origin::Left);
         name->setPosition(16, getSize().y / 2);
         name->setWidth((getSize().x * 0.66f) - 32);
         add(name);
 
-        value = new Text("OPTION VALUE,)'", (unsigned int) fontSize, font);
-        value->setOutlineThickness(1);
-        value->setOutlineColor(Color::Black);
+        value = new Text("OPTION VALUE,)'", textGroup.size, font);
+        value->setFillColor(textGroup.color);
+        value->setOutlineThickness(textGroup.outlineSize);
+        value->setOutlineColor(textGroup.outlineColor);
         value->setOrigin(Origin::Left);
         value->setPosition((getSize().x * 0.66f) + 16, getSize().y / 2);
         value->setWidth((getSize().x * 0.33f) - 32);
@@ -107,53 +108,38 @@ UIMenu::UIMenu(UIMain *ui) : RectangleShape(Vector2f(0, 0)) {
     printf("GuiMenu (%p)\n", this);
     this->ui = ui;
 
-    setFillColor(fillColor[0]);
-    setOutlineColor(COL_RED);
-    setOutlineThickness(2);
-    if (ui->getSize().y < 544) {
-        setPosition(UI_MARGIN * ui->getScaling(), UI_MARGIN * ui->getScaling());
-        setSize(ui->getSize().x - (UI_MARGIN * ui->getScaling() * 2),
-                ui->getSize().y - (UI_MARGIN * ui->getScaling() * 2));
-    } else {
-        setPosition(UI_MARGIN * ui->getScaling() * 4, UI_MARGIN * ui->getScaling() * 4);
-        setSize(ui->getSize().x - (UI_MARGIN * ui->getScaling() * 8),
-                ui->getSize().y - (UI_MARGIN * ui->getScaling() * 8));
-    }
+    Skin *skin = ui->getSkin();
+
+    skin->loadRectangleShape(this, {"OPTIONS_MENU"});
+    alpha = getAlpha();
 
     // menu title
     title = new Text("TITLE", C2D_DEFAULT_CHAR_SIZE, ui->getSkin()->font);
-    title->setWidth(getSize().x - 16);
-    title->setFillColor(Color::White);
-    title->setOutlineThickness(2);
-    title->setOutlineColor(COL_RED);
-    title->setStyle(c2d::Text::Underlined);
-    title->setPosition(20 * ui->getScaling(), 20 * ui->getScaling());
-    int start_y = (int) (title->getGlobalBounds().top + title->getGlobalBounds().height + 16 * ui->getScaling());
+    title->setStyle(Text::Underlined);
+    skin->loadText(title, {"OPTIONS_MENU", "TITLE_TEXT"});
+
+    int start_y = (int) (title->getGlobalBounds().top + title->getGlobalBounds().height + 32);
     add(title);
 
     // calculate lines per menu
-    float font_size = ui->getFontSize();
-    float line_height = ui->getFont()->getLineSpacing((unsigned int) font_size) + 4;
+    Skin::TextGroup textGroup = ui->getSkin()->getText({"OPTIONS_MENU", "ITEMS_TEXT"});
+    float line_height = ui->getFont()->getLineSpacing((unsigned int) textGroup.size) + 4;
     int max_lines = (int) ((getSize().y - start_y) / line_height) * 2;
 
     // add selection rectangle (highlight)
-    highlight = new RectangleShape(Vector2f(((getSize().x / 2) * 0.3f) - 4, line_height));
-    highlight->setOutlineThickness(1);
-    highlight->setOutlineColor(COL_ORANGE);
-    highlight->setFillColor(Color(153, 255, 51, 100));
-    //highlight->add(new TweenAlpha(50, 150, 1.0f, TweenLoop::PingPong));
+    highlight = new RectangleShape({16, 16});
+    ui->getSkin()->loadRectangleShape(highlight, {"SKIN_CONFIG", "HIGHLIGHT"});
+    highlight->setSize(((getSize().x / 2) * 0.3f) - 4, line_height);
     add(highlight);
 
     // add lines of text
     for (int i = 0; i < max_lines; i++) {
-
         FloatRect rect = {0, start_y + (i * line_height), getSize().x / 2, line_height};
         if (i >= max_lines / 2) {
             rect.left = getSize().x / 2;
             rect.top = start_y + ((i - ((float) max_lines / 2)) * line_height);
         }
-
-        lines.push_back(new MenuLine(ui, rect));
+        lines.push_back(new MenuLine(ui, rect, textGroup));
         add(lines[i]);
     }
 
@@ -165,7 +151,7 @@ UIMenu::UIMenu(UIMain *ui) : RectangleShape(Vector2f(0, 0)) {
     optionMenuRom->addChild("RETURN");
     optionMenuRom->addChild("EXIT");
 
-    tweenPosition = new TweenPosition({getPosition().x, -getSize().y}, getPosition(), 0.3f);
+    tweenPosition = new TweenPosition({getPosition().x, -getSize().y}, getPosition(), 0.2f);
     tweenPosition->setState(TweenState::Stopped);
     add(tweenPosition);
 
@@ -185,7 +171,7 @@ void UIMenu::load(bool isRom, OptionMenu *om) {
     }
 
     isEmuRunning = ui->getUiEmu()->isVisible();
-    setFillColor(fillColor[isEmuRunning]);
+    setAlpha(isEmuRunning ? (uint8_t) (alpha - 50) : (uint8_t) alpha);
 
     optionIndex = 0;
     optionCount = (int) (optionMenu->childs.size() + optionMenu->option_ids.size());
@@ -258,7 +244,7 @@ void UIMenu::load(bool isRom, OptionMenu *om) {
     updateHighlight();
 
     if (!isVisible()) {
-        setVisibility(Visibility::Visible);
+        setVisibility(Visibility::Visible, true);
         setLayer(1);
     }
 }
@@ -369,7 +355,7 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
             // extra options in menu (manually added)
             OptionMenu *menu = optionMenu->childs[optionIndex - optionMenu->option_ids.size()];
             if (menu->title == "EXIT") {
-                setVisibility(Visibility::Hidden);
+                setVisibility(Visibility::Hidden, true);
                 if (isRomMenu) {
                     ui->getUiEmu()->stop();
                     ui->getUiRomList()->setVisibility(Visibility::Visible);
@@ -378,10 +364,10 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
                     ui->done = true;
                 }
             } else if (menu->title == "STATES") {
-                setVisibility(Visibility::Hidden);
+                setVisibility(Visibility::Hidden, true);
                 ui->getUiStateMenu()->setVisibility(Visibility::Visible);
             } else if (menu->title == "RETURN") {
-                setVisibility(Visibility::Hidden);
+                setVisibility(Visibility::Hidden, true);
                 ui->getUiEmu()->resume();
             } else {
                 load(isRomMenu, menu);
@@ -395,10 +381,10 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
         || (!isEmuRunning && (keys & Input::Key::Select && isRomMenu))) {
         if (optionMenu->parent == nullptr) {
             if (isEmuRunning) {
-                setVisibility(Visibility::Hidden);
+                setVisibility(Visibility::Hidden, true);
                 ui->getUiEmu()->resume();
             } else {
-                setVisibility(Visibility::Hidden);
+                setVisibility(Visibility::Hidden, true);
                 ui->getUiRomList()->setVisibility(Visibility::Visible);
             }
         } else {
