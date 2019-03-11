@@ -155,6 +155,15 @@ void UIRomListClassic::updateRomList() {
 
     Skin::RectangleShapeGroup itemGroup = ui->getSkin()->getRectangleShape({"MAIN", "ROM_LIST", "ROM_ITEM"});
 
+    // set item/rom text color
+    if (!roms.empty()) {
+        for (auto &rom : roms) {
+            if (rom->state == RomList::RomState::WORKING) {
+                rom->color = itemGroup.color;
+            }
+        }
+    }
+
     if (!list_box) {
         // add rom list ui
         Skin::RectangleShapeGroup romListGroup = ui->getSkin()->getRectangleShape({"MAIN", "ROM_LIST"});
@@ -173,15 +182,6 @@ void UIRomListClassic::updateRomList() {
         add(list_box);
     } else {
         list_box->setFiles((std::vector<Io::File *> &) roms);
-    }
-
-    // set item/rom text color
-    if (!roms.empty()) {
-        for (auto &rom : roms) {
-            if (rom->state == RomList::RomState::WORKING) {
-                rom->color = itemGroup.color;
-            }
-        }
     }
 
     if (rom_info) {
