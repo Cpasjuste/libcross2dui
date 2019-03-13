@@ -136,9 +136,16 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     /// STATES_MENU (END
     ///
 
+    // LOAD/SAVE
+    if (!config->load()) {
+        // file doesn't exist or is malformed, (re)create it
+        config->save();
+    }
+
     ///
     /// load font from configuration
     ///
+    // TODO: load font before config load/save
     font = new C2DFont();
     c2d::config::Group *fnt = config->getGroup("FONT");
     if (!font->loadFromFile(fnt->getOption("path")->getString())) {
@@ -147,12 +154,6 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     } else {
         font->setFilter((Texture::Filter) fnt->getOption("filtering")->getInteger());
         font->setOffset(fnt->getOption("offset")->getVector2f());
-    }
-
-    // LOAD/SAVE
-    if (!config->load()) {
-        // file doesn't exist or is malformed, (re)create it
-        config->save();
     }
 }
 
