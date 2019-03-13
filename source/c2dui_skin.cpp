@@ -111,13 +111,29 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
             "ITEMS_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
     options_menu.addGroup(options_menu_text);
     config->addGroup(options_menu);
-
-    if (!config->load()) {
-        // file doesn't exist or is malformed, (re)create it
-        config->save();
-    }
     ///
     /// OPTIONS_MENU (END)
+    ///
+
+    ///
+    /// STATES_MENU
+    ///
+    config::Group states_menu = createRectangleShapeGroup(
+            "STATES_MENU", ui->getLocalBounds(), Origin::TopLeft,
+            path + "states_menu_bg.png", Color::GrayDark, Color::Yellow, 2);
+    config::Group states_menu_title = createTextGroup(
+            "TITLE_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+    states_menu.addGroup(states_menu_title);
+    config::Group states_item = createRectangleShapeGroup(
+            "STATES_ITEM", ui->getLocalBounds(), Origin::TopLeft,
+            path + "states_item_bg.png", Color::GrayDark, Color::Yellow, 2);
+    config::Group states_item_text = createTextGroup(
+            "STATES_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+    states_item.addGroup(states_item_text);
+    states_menu.addGroup(states_item);
+    config->addGroup(states_menu);
+    ///
+    /// STATES_MENU (END
     ///
 
     ///
@@ -131,6 +147,12 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     } else {
         font->setFilter((Texture::Filter) fnt->getOption("filtering")->getInteger());
         font->setOffset(fnt->getOption("offset")->getVector2f());
+    }
+
+    // LOAD/SAVE
+    if (!config->load()) {
+        // file doesn't exist or is malformed, (re)create it
+        config->save();
     }
 }
 

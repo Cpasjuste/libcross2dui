@@ -18,25 +18,30 @@ public:
         this->ui = ui;
         this->id = id;
 
-        setFillColor(Color::Gray);
-        setOutlineColor(COL_GREEN);
-        setOutlineThickness(2);
+        ui->getSkin()->loadRectangleShape(this, {"STATES_MENU", "STATES_ITEM"});
+        setSize(rect.width, rect.height);
+        setPosition(rect.left, rect.top);
+        outlineColor = getOutlineColor();
+        outlineTickness = getOutlineThickness();
+        outlineColorSelected = ui->getSkin()->getRectangleShape({"STATES_MENU"}).outlineColor;
 
         // text if no save/screenshot
-        middle_text = new C2DText("NO SAVE", (unsigned int) ui->getFontSize(), ui->getFont());
-        middle_text->setOutlineThickness(2);
+        middle_text = new C2DText("NO SAVE", 26, ui->getFont());
+        ui->getSkin()->loadText(middle_text, {"STATES_MENU", "STATES_ITEM", "STATES_TEXT"});
         middle_text->setOrigin(Origin::Center);
         middle_text->setPosition(getLocalBounds().left + getSize().x / 2,
                                  getLocalBounds().top + getSize().y / 2);
         add(middle_text);
 
         // text for slot id
+        char bottom_text_char[32];
         snprintf(bottom_text_char, 32, "SLOT %i", id);
-        bottom_text = new C2DText(bottom_text_char, (unsigned int) ui->getFontSize(), ui->getFont());
-        bottom_text->setOutlineThickness(2);
-        bottom_text->setOrigin(Origin::Left);
+        bottom_text = new C2DText(bottom_text_char, 26, ui->getFont());
+        ui->getSkin()->loadText(bottom_text, {"STATES_MENU", "STATES_ITEM", "STATES_TEXT"});
+        bottom_text->setString(bottom_text_char);
+        bottom_text->setOrigin(Origin::Center);
         bottom_text->setPosition(getLocalBounds().left + getSize().x / 2,
-                                 getLocalBounds().top + getLocalBounds().width + 8);
+                                 getLocalBounds().top + getLocalBounds().height + 16);
         add(bottom_text);
     }
 
@@ -103,9 +108,12 @@ public:
     Texture *texture = nullptr;
     Text *middle_text = nullptr;
     Text *bottom_text = nullptr;
+    float outlineTickness;
+    Color outlineColor;
+    Color outlineColorSelected;
+
     char path[1024];
     char shot[1024];
-    char bottom_text_char[32];
     bool exist = false;
     int id = 0;
 };
@@ -148,8 +156,8 @@ public:
 
         index = idx;
         for (int i = 0; i < STATES_COUNT; i++) {
-            states[i]->setOutlineColor(i == index ? COL_YELLOW : COL_GREEN);
-            states[i]->setOutlineThickness(i == index ? 4 : 1);
+            states[i]->setOutlineColor(i == index ? states[i]->outlineColorSelected : states[i]->outlineColor);
+            states[i]->setOutlineThickness(i == index ? states[i]->outlineTickness * 2 : states[i]->outlineTickness);
             states[i]->setLayer(i == index ? 1 : 0);
             float scale = i == index ? 1.0f : 0.95f;
             states[i]->setScale(scale, scale);
@@ -176,36 +184,23 @@ public:
     int index = 0;
 };
 
-UIStateMenu::UIStateMenu(UIMain *u) : RectangleShape(Vector2f(0, 0)) {
+UIStateMenu::UIStateMenu(UIMain *u) : RectangleShape(Vector2f(16, 16)) {
 
     printf("UIStateMenu()\n");
 
     this->ui = u;
+    Skin *skin = ui->getSkin();
 
-    setFillColor({55, 55, 55, 180});
-    setOutlineColor(COL_ORANGE);
-    setOutlineThickness(2);
-    if (ui->getSize().y < 544) {
-        setPosition(UI_MARGIN * ui->getScaling(), UI_MARGIN * ui->getScaling());
-        setSize(ui->getSize().x - (UI_MARGIN * ui->getScaling() * 2),
-                ui->getSize().y - (UI_MARGIN * ui->getScaling() * 2));
-    } else {
-        setPosition(UI_MARGIN * ui->getScaling() * 4, UI_MARGIN * ui->getScaling() * 4);
-        setSize(ui->getSize().x - (UI_MARGIN * ui->getScaling() * 8),
-                ui->getSize().y - (UI_MARGIN * ui->getScaling() * 8));
-    }
+    // main rect/bg
+    skin->loadRectangleShape(this, {"STATES_MENU"});
 
     // menu title
     title = new Text("TITLE", C2D_DEFAULT_CHAR_SIZE, ui->getSkin()->font);
-    title->setWidth(getSize().x - 16);
-    title->setFillColor(Color::White);
-    title->setOutlineThickness(2);
-    title->setOutlineColor(COL_RED);
-    title->setStyle((Uint32) c2d::Text::Underlined);
-    title->setPosition(20 * ui->getScaling(), 20 * ui->getScaling());
-    int start_y = (int) (title->getGlobalBounds().top + title->getGlobalBounds().height + 16 * ui->getScaling());
+    title->setStyle(Text::Underlined);
+    skin->loadText(title, {"STATES_MENU", "TITLE_TEXT"});
     add(title);
 
+    int start_y = (int) (title->getGlobalBounds().top + title->getGlobalBounds().height + 16 * ui->getScaling());
 
     uiStateList = new UIStateList(ui, {
             getLocalBounds().left + getSize().x / 2, (float) start_y + 32,
