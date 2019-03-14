@@ -180,6 +180,10 @@ void UIRomListClassic::updateRomList() {
         list_box->setTextOutlineThickness(itemGroup.outlineSize);
         // hihglight
         ui->getSkin()->loadRectangleShape(list_box->getHighlight(), {"SKIN_CONFIG", "HIGHLIGHT"});
+#ifdef __PFBA__
+        // TODO: add to skin config
+        list_box->setHighlightUseFileColor(true);
+#endif
         add(list_box);
     } else {
         list_box->setFiles((std::vector<Io::File *> &) roms);
