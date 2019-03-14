@@ -14,10 +14,7 @@ UIProgressBox::UIProgressBox(UIMain *gui)
     float w = getSize().x;
     float h = getSize().y;
 
-    setSize(w, h);
-    setPosition(w, h);
     gui->getSkin()->loadRectangleShape(this, {"SKIN_CONFIG", "MESSAGEBOX"});
-    setOrigin(Origin::Center);
 
     float margin = UI_MARGIN * gui->getScaling();
 
