@@ -62,8 +62,7 @@ void UIRomList::filterRomList() {
 
     static RomList *list = rom_list;
     int showClone = ui->getConfig()->get(Option::Index::GUI_SHOW_CLONES)->getValueBool();
-    int showHardwareCfg = ui->getConfig()->get(Option::Index::GUI_SHOW_HARDWARE) ?
-                          ui->getConfig()->get(Option::Index::GUI_SHOW_HARDWARE)->getValueBool() : 0;
+    int showHardwareCfg = ui->getConfig()->get(Option::Index::GUI_SHOW_HARDWARE)->getIndex();
     int showHardware = ui->getConfig()->getHardwareList()->at((unsigned int) showHardwareCfg).prefix;
 
     // psnes and pnes have only 2 (0/1) values, so work with value string
