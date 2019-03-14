@@ -48,8 +48,13 @@ public:
 
     bool loadTexture(RomList::Rom *rom, bool isPreview) {
 
-        texture = uiRomList->getPreviewTexture(rom, isPreview);
-
+        texture = (C2DTexture *) uiRomList->getPreviewTexture(rom, !isPreview);
+#ifndef __SWITCH__
+        // TODO: fix slow stat fs on switch
+        if (texture == nullptr) {
+            texture = (C2DTexture *) uiRomList->getPreviewTexture(rom, isPreview);
+        }
+#endif
         // set image
         if (texture && texture->available) {
             previewText->setVisibility(Visibility::Hidden);
@@ -62,10 +67,6 @@ public:
             previewBox->add(texture);
         } else {
             previewText->setVisibility(Visibility::Visible);
-            if (texture) {
-                delete (texture);
-                texture = nullptr;
-            }
             return false;
         }
 
@@ -74,18 +75,18 @@ public:
 
     void load(RomList::Rom *rom, bool isPreview = false) {
 
-        if (texture) {
-            delete (texture);
-            texture = nullptr;
-        }
-
         if (!rom) {
+            printf("load(%s, %i)\n", "nullptr", isPreview);
             infoText->setVisibility(Visibility::Hidden);
         } else {
-            // load title/preview texture
-            if (!loadTexture(rom, isPreview)) {
-                loadTexture(rom, !isPreview);
+            printf("load(%s, %i)\n", rom->name.c_str(), isPreview);
+            if (texture) {
+                delete (texture);
+                texture = nullptr;
             }
+
+            // load title/preview texture
+            loadTexture(rom, !isPreview);
 
             // update info text
             Option *rotation_opt = ui->getConfig()->get(Option::Index::ROM_ROTATION);
@@ -112,7 +113,7 @@ public:
 
     UIMain *ui = nullptr;
     UIRomList *uiRomList = nullptr;
-    Texture *texture = nullptr;
+    C2DTexture *texture = nullptr;
     RectangleShape *infoBox = nullptr;
     Text *infoText = nullptr;
     RectangleShape *previewBox = nullptr;
@@ -291,11 +292,11 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
 
 void UIRomListClassic::onDraw(c2d::Transform &transform, bool draw) {
 
-    unsigned int key = ui->getInput()->getKeys();
+    unsigned int keys = ui->getInput()->getKeys();
 
-    if (key > 0 && key != Input::Key::Delay) {
+    if (keys > 0 && keys != Input::Delay) {
         timer_load.restart();
-    } else {
+    } else if (keys == 0) {
         if (!title_loaded && timer_load.getElapsedTime().asMilliseconds() > load_delay) {
             rom_info->load(roms.size() > (unsigned int) rom_index ?
                            roms[rom_index] : nullptr, show_preview);

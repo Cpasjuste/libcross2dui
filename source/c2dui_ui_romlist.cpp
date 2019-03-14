@@ -32,23 +32,29 @@ Texture *UIRomList::getPreviewTexture(RomList::Rom *rom, bool isPreview) {
 
     // load image
     // TODO: verify loading with psnes and no db.xml)
-    Texture *texture = nullptr;
+    C2DTexture *texture = nullptr;
     std::string name = Utility::removeExt(rom->drv_name);
     std::string type = isPreview ? "previews" : "titles";
+    std::string home_path = *ui->getConfig()->getHomePath();
     std::string path;
 
-    path = *ui->getConfig()->getHomePath() + type + "/" + name + ".png";
+    path = home_path + type + "/" + name + ".png";
+    printf("getPreviewTexture(%s, %i)\n", path.c_str(), isPreview);
+#ifndef __SWITCH__
     if (!ui->getIo()->exist(path)) {
-        path = *ui->getConfig()->getHomePath() + type + "/" + name + ".jpg";
+        path = home_path + type + "/" + name + ".jpg";
+        printf("getPreviewTexture(%s, %i)\n", path.c_str(), isPreview);
         if (!ui->getIo()->exist(path) && rom->parent) {
             name = Utility::removeExt(rom->parent);
-            path = *ui->getConfig()->getHomePath() + type + "/" + name + ".png";
+            path = home_path + type + "/" + name + ".png";
+            printf("getPreviewTexture(%s, %i)\n", path.c_str(), isPreview);
             if (!ui->getIo()->exist(path)) {
-                path = *ui->getConfig()->getHomePath() + type + "/" + name + ".jpg";
+                path = home_path + type + "/" + name + ".jpg";
+                printf("getPreviewTexture(%s, %i)\n", path.c_str(), isPreview);
             }
         }
     }
-
+#endif
     if (ui->getIo()->exist(path)) {
         texture = new C2DTexture(path);
     }
