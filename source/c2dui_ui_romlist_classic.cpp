@@ -99,11 +99,11 @@ public:
                     }
                 }
                 snprintf(info, 1024, "FILE: %s\nSTATUS: %s\nSYSTEM: %s\nMANUFACTURER: %s\nYEAR: %s\n%s",
-                         rom->name.c_str(), rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
+                         rom->path.c_str(), rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
                          rom->system, rom->manufacturer, rom->year, rotation);
             } else {
                 snprintf(info, 1023, "FILE: %s\nSTATUS: %s\nMANUFACTURER: %s\nYEAR: %s",
-                         rom->name.c_str(), rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
+                         rom->path.c_str(), rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
                          rom->manufacturer, rom->year);
             }
             infoText->setString(info);
@@ -136,6 +136,11 @@ UIRomListClassic::UIRomListClassic(UIMain *u, RomList *romList, const c2d::Vecto
     RectangleShape *title = new RectangleShape({16, 16});
     skin->loadRectangleShape(title, {"MAIN", "TITLE"});
     add(title);
+
+    // add help image if available
+    RectangleShape *help = new RectangleShape({16, 16});
+    skin->loadRectangleShape(help, {"MAIN", "HELP"});
+    add(help);
 
     // add rom info ui
     rom_info = new UIRomInfo(ui, this, skin->font, ui->getFontSize());

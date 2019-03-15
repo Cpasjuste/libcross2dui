@@ -61,13 +61,15 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     config::Group title = createRectangleShapeGroup(
             "TITLE", titleRect, Origin::Center,
             path + "romlist_title.png", Color::GrayDark, Color::GrayLight, 2);
-
     FloatRect titleTextRect = {titleRect.width / 2, titleRect.height / 2, titleRect.width - 64, 0};
     config::Group titleText = createTextGroup(
             "TEXT", ui->getFontSize(), titleTextRect, Origin::Center, Color::White, Color::Black, 2);
     title.addGroup(titleText);
     main.addGroup(title);
-
+    config::Group help = createRectangleShapeGroup(
+            "HELP", titleRect, Origin::Center,
+            path + "romlist_help.png", Color::GrayDark, Color::GrayLight, 2);
+    main.addGroup(help);
     config::Group romList = createRectangleShapeGroup(
             "ROM_LIST", {0, 0, 212, 240}, Origin::Left,
             path + "romlist.png", {255, 255, 255, 150}, Color::GrayLight, 2);
@@ -226,11 +228,18 @@ void Skin::loadRectangleShape(c2d::RectangleShape *shape, const std::vector<std:
         auto *tex = new C2DTexture(bg_path);
         tex->setScale(rectangleShapeGroup.rect.width / tex->getSize().x,
                       rectangleShapeGroup.rect.height / tex->getSize().y);
+        tex->setFillColor(rectangleShapeGroup.color);
+        tex->setOutlineColor(rectangleShapeGroup.outlineColor);
+        tex->setOutlineThickness(rectangleShapeGroup.outlineSize);
+        shape->setFillColor(Color::Transparent);
+        shape->setOutlineColor(Color::Transparent);
+        shape->setOutlineThickness(0);
         shape->add(tex);
+    } else {
+        shape->setFillColor(rectangleShapeGroup.color);
+        shape->setOutlineColor(rectangleShapeGroup.outlineColor);
+        shape->setOutlineThickness(rectangleShapeGroup.outlineSize);
     }
-    shape->setFillColor(rectangleShapeGroup.color);
-    shape->setOutlineColor(rectangleShapeGroup.outlineColor);
-    shape->setOutlineThickness(rectangleShapeGroup.outlineSize);
 }
 
 config::Group Skin::createTextGroup(const std::string &name, int size, const c2d::FloatRect &rect,
