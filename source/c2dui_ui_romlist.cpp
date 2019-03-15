@@ -41,6 +41,7 @@ Texture *UIRomList::getPreviewTexture(RomList::Rom *rom, bool isPreview) {
     path = home_path + type + "/" + name + ".png";
     printf("getPreviewTexture(%s, %i)\n", path.c_str(), isPreview);
 #ifndef __SWITCH__
+    // TODO: fix switch stat/fopen slow on non existing files
     if (!ui->getIo()->exist(path)) {
         path = home_path + type + "/" + name + ".jpg";
         printf("getPreviewTexture(%s, %i)\n", path.c_str(), isPreview);
@@ -68,7 +69,8 @@ void UIRomList::filterRomList() {
 
     static RomList *list = rom_list;
     int showClone = ui->getConfig()->get(Option::Index::GUI_SHOW_CLONES)->getValueBool();
-    int showHardwareCfg = ui->getConfig()->get(Option::Index::GUI_SHOW_HARDWARE)->getIndex();
+    Option *hwOpt = ui->getConfig()->get(Option::Index::GUI_SHOW_HARDWARE);
+    int showHardwareCfg = hwOpt ? hwOpt->getIndex() : 0;
     int showHardware = ui->getConfig()->getHardwareList()->at((unsigned int) showHardwareCfg).prefix;
 
     // psnes and pnes have only 2 (0/1) values, so work with value string
