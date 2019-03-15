@@ -251,7 +251,7 @@ void UIMenu::load(bool isRom, OptionMenu *om) {
 
 void UIMenu::updateHighlight() {
 
-    Vector2f pos = {lines[optionIndex]->value->getPosition().x - 2,
+    Vector2f pos = {lines[optionIndex]->value->getPosition().x - 6,
                     lines[optionIndex]->getPosition().y};
     highlight->setPosition(pos);
 }
