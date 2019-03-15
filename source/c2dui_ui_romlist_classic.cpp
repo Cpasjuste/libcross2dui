@@ -89,22 +89,33 @@ public:
             loadTexture(rom, !isPreview);
 
             // update info text
-            Option *rotation_opt = ui->getConfig()->get(Option::Index::ROM_ROTATION);
-            if (rotation_opt && !(rotation_opt->getFlags() & Option::Flags::HIDDEN)) {
-                strcpy(rotation, "ROTATION: HORIZONTAL");
+            info = "FILE: ";
+            info += rom->drv_name;
+            info += "\nSTATUS: ";
+            info += rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE";
+            if (rom->year) {
+                info += "\nYEAR: ";
+                info += rom->year;
+            }
+            if (rom->system) {
+                info += "\nSYSTEM: ";
+                info += rom->system;
+            }
+            if (rom->manufacturer) {
+                info += "\nMANUFACTURER: ";
+                info += rom->manufacturer;
+            }
+            Option *opt = ui->getConfig()->get(Option::Index::ROM_ROTATION);
+            if (opt && !(opt->getFlags() & Option::Flags::HIDDEN)) {
+                info += "\nROTATION: ";
                 if (rom->flags & BDF_ORIENTATION_VERTICAL) {
-                    sprintf(rotation, "ROTATION: VERTICAL");
-                    if (rom->flags & BDF_ORIENTATION_FLIPPED) {
-                        strncat(rotation, " / FLIPPED", MAX_PATH);
-                    }
+                    info += "VERTICAL";
+                } else {
+                    info += "HORIZONTAL";
                 }
-                snprintf(info, 1024, "FILE: %s\nSTATUS: %s\nSYSTEM: %s\nMANUFACTURER: %s\nYEAR: %s\n%s",
-                         rom->drv_name, rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
-                         rom->system, rom->manufacturer, rom->year, rotation);
-            } else {
-                snprintf(info, 1023, "FILE: %s\nSTATUS: %s\nMANUFACTURER: %s\nYEAR: %s",
-                         rom->drv_name, rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
-                         rom->manufacturer, rom->year);
+                if (rom->flags & BDF_ORIENTATION_FLIPPED) {
+                    info += " / FLIPPED";
+                }
             }
             infoText->setString(info);
             infoText->setVisibility(Visibility::Visible);
@@ -118,8 +129,7 @@ public:
     Text *infoText = nullptr;
     RectangleShape *previewBox = nullptr;
     Text *previewText = nullptr;
-    char info[1024]{};
-    char rotation[64]{};
+    std::string info;
 };
 
 UIRomListClassic::UIRomListClassic(UIMain *u, RomList *romList, const c2d::Vector2f &size)
