@@ -41,6 +41,7 @@ namespace c2dui {
             ROM_FILTER,
             ROM_SHADER,
             ROM_FORCE_60HZ,
+            ROM_FORCE_50HZ,
             ROM_AUDIO_SYNC,
             ROM_AUDIO_FREQ,
             ROM_AUDIO_INTERPOLATION,
