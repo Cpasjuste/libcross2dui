@@ -249,7 +249,7 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
             ui->getUiEmu()->load(rom);
             return true;
         }
-    } else if (keys & Input::Key::Fire3) {
+    } else if (keys & Input::Key::Fire4) {
         if (getSelection() != nullptr) {
             // remove from favorites
             if (getSelection()->hardware & HARDWARE_PREFIX_FAV) {
@@ -265,7 +265,7 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
                 }
             }
         }
-    } else if (keys & Input::Key::Fire4) {
+    } else if (keys & Input::Key::Fire3) {
         if (getSelection() != nullptr) {
             // add to favorites
             if (!(getSelection()->hardware & HARDWARE_PREFIX_FAV)) {

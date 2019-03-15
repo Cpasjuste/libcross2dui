@@ -78,7 +78,6 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
             path + "romlist_item.png", {255, 255, 255, 150}, Color::GrayLight, 2);
     romList.addGroup(romItem);
     main.addGroup(romList);
-
     config::Group romInfo = createRectangleShapeGroup(
             "ROM_INFO", {654, 378, 608, 322}, Origin::Left,
             path + "romlist_info.png", {150, 150, 150, 255}, {220, 0, 0, 255}, 2);
@@ -181,6 +180,7 @@ config::Group Skin::createRectangleShapeGroup(const std::string &name,
 
 Skin::RectangleShapeGroup Skin::getRectangleShape(const std::vector<std::string> &tree) {
 
+    config::Option *option;
     RectangleShapeGroup rectangleShapeGroup{};
 
     c2d::config::Group *group = config->getGroup(tree[0]);
@@ -199,12 +199,31 @@ Skin::RectangleShapeGroup Skin::getRectangleShape(const std::vector<std::string>
         }
     }
 
-    rectangleShapeGroup.rect = group->getOption("rectangle")->getFloatRect();
-    rectangleShapeGroup.origin = (Origin) group->getOption("origin")->getInteger();
-    rectangleShapeGroup.texture = group->getOption("texture")->getString();
-    rectangleShapeGroup.color = group->getOption("color")->getColor();
-    rectangleShapeGroup.outlineColor = group->getOption("outline_color")->getColor();
-    rectangleShapeGroup.outlineSize = group->getOption("outline_size")->getInteger();
+    option = group->getOption("texture");
+    if (option) {
+        rectangleShapeGroup.texture = option->getString();
+    }
+    option = group->getOption("color");
+    if (option) {
+        rectangleShapeGroup.color = option->getColor();
+    }
+    option = group->getOption("outline_color");
+    if (option) {
+        rectangleShapeGroup.outlineColor = option->getColor();
+    }
+    option = group->getOption("outline_size");
+    if (option) {
+        rectangleShapeGroup.outlineSize = option->getInteger();
+    }
+    option = group->getOption("rectangle");
+    if (option) {
+        rectangleShapeGroup.rect = option->getFloatRect();
+    }
+    option = group->getOption("origin");
+    if (option) {
+        rectangleShapeGroup.origin = (Origin) option->getInteger();
+    }
+
     rectangleShapeGroup.available = true;
 
     return rectangleShapeGroup;
@@ -225,6 +244,7 @@ void Skin::loadRectangleShape(c2d::RectangleShape *shape, const std::vector<std:
 
     std::string bg_path = rectangleShapeGroup.texture;
     if (ui->getIo()->exist(bg_path)) {
+        printf("loadRectangleShape: loading %s\n", bg_path.c_str());
         auto *tex = new C2DTexture(bg_path);
         tex->setScale(rectangleShapeGroup.rect.width / tex->getSize().x,
                       rectangleShapeGroup.rect.height / tex->getSize().y);
@@ -258,6 +278,7 @@ config::Group Skin::createTextGroup(const std::string &name, int size, const c2d
 
 Skin::TextGroup Skin::getText(const std::vector<std::string> &tree) {
 
+    config::Option *option;
     TextGroup textGroup{};
 
     c2d::config::Group *group = config->getGroup(tree[0]);
@@ -276,16 +297,35 @@ Skin::TextGroup Skin::getText(const std::vector<std::string> &tree) {
         }
     }
 
-    std::string str = group->getOption("string")->getString();
-    if (!str.empty()) {
-        textGroup.text = str;
+    option = group->getOption("string");
+    if (option) {
+        textGroup.text = option->getString();
     }
-    textGroup.size = (unsigned int) group->getOption("size")->getInteger();
-    textGroup.color = group->getOption("color")->getColor();
-    textGroup.outlineColor = group->getOption("outline_color")->getColor();
-    textGroup.outlineSize = group->getOption("outline_size")->getInteger();
-    textGroup.origin = (Origin) group->getOption("origin")->getInteger();
-    textGroup.rect = group->getOption("rectangle")->getFloatRect();
+    option = group->getOption("size");
+    if (option) {
+        textGroup.size = (unsigned int) option->getInteger();
+    }
+    option = group->getOption("color");
+    if (option) {
+        textGroup.color = option->getColor();
+    }
+    option = group->getOption("outline_color");
+    if (option) {
+        textGroup.outlineColor = option->getColor();
+    }
+    option = group->getOption("outline_size");
+    if (option) {
+        textGroup.outlineSize = option->getInteger();
+    }
+    option = group->getOption("origin");
+    if (option) {
+        textGroup.origin = (Origin) option->getInteger();
+    }
+    option = group->getOption("rectangle");
+    if (option) {
+        textGroup.rect = option->getFloatRect();
+    }
+
     textGroup.available = true;
 
     return textGroup;
