@@ -17,6 +17,8 @@ static int p2(int size) {
 C2DUIVideo::C2DUIVideo(UIMain *gui, void **_pixels, int *_pitch,
                        const c2d::Vector2f &size, Texture::Format format) : Sprite() {
 
+    ui = gui;
+
     texture = new C2DTexture({p2((int) size.x), p2((int) size.y)}, format);
     setTexture(texture);
     setTextureRect({0, 0, (int) size.x, (int) size.y});
@@ -24,8 +26,6 @@ C2DUIVideo::C2DUIVideo(UIMain *gui, void **_pixels, int *_pitch,
     printf("game: %ix%i, texture: %ix%i\n",
            (int) size.x, (int) size.y,
            (int) texture->getSize().x, (int) texture->getSize().y);
-
-    this->ui = gui;
 
     if (_pixels) {
         texture->lock(nullptr, _pixels, _pitch);

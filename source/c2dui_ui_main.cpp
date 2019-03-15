@@ -155,7 +155,7 @@ Font *UIMain::getFont() {
 }
 
 int UIMain::getFontSize() {
-    return config->get(Option::Index::SKIN_FONT_SIZE)->getValueInt();
+    return C2D_DEFAULT_CHAR_SIZE;
 }
 
 void UIMain::updateInputMapping(bool isRomConfig) {
