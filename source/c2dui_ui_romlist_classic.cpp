@@ -99,11 +99,11 @@ public:
                     }
                 }
                 snprintf(info, 1024, "FILE: %s\nSTATUS: %s\nSYSTEM: %s\nMANUFACTURER: %s\nYEAR: %s\n%s",
-                         rom->path.c_str(), rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
+                         rom->drv_name, rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
                          rom->system, rom->manufacturer, rom->year, rotation);
             } else {
                 snprintf(info, 1023, "FILE: %s\nSTATUS: %s\nMANUFACTURER: %s\nYEAR: %s",
-                         rom->path.c_str(), rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
+                         rom->drv_name, rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE",
                          rom->manufacturer, rom->year);
             }
             infoText->setString(info);
