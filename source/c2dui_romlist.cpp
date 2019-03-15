@@ -24,10 +24,7 @@ RomList::RomList(UIMain *_ui, const std::string &emuVersion) {
     // UI
     rect = new C2DRectangle(
             Vector2f(ui->getSize().x - 8, ui->getSize().y - 8));
-    rect->setPosition(4, 4);
-    rect->setFillColor(Color::Gray);
-    rect->setOutlineColor(Color::Orange);
-    rect->setOutlineThickness(4);
+    ui->getSkin()->loadRectangleShape(rect, {"MAIN"});
 
     texture = ui->getSkin()->tex_title;
     texture->setOrigin(Origin::Center);
