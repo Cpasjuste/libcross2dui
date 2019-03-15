@@ -94,12 +94,12 @@ void UIMain::onDraw(c2d::Transform &transform, bool draw) {
     if (uiEmu && !uiEmu->isVisible()) {
         unsigned int keys = getInput()->getKeys(0);
         if (keys != Input::Key::Delay) {
-            if (keys && timer.getElapsedTime().asSeconds() > 6) {
+            if (keys && timer.getElapsedTime().asSeconds() > 5) {
+                getInput()->setRepeatDelay(INPUT_DELAY / 12);
+            } else if (keys && timer.getElapsedTime().asSeconds() > 3) {
                 getInput()->setRepeatDelay(INPUT_DELAY / 8);
-            } else if (keys && timer.getElapsedTime().asSeconds() > 4) {
+            } else if (keys && timer.getElapsedTime().asSeconds() > 1) {
                 getInput()->setRepeatDelay(INPUT_DELAY / 4);
-            } else if (keys && timer.getElapsedTime().asSeconds() > 2) {
-                getInput()->setRepeatDelay(INPUT_DELAY / 2);
             } else if (!keys) {
                 getInput()->setRepeatDelay(INPUT_DELAY);
                 timer.restart();
