@@ -41,7 +41,6 @@ const char *Option::getValueString() {
     return options[idx].c_str();
 }
 
-
 void Option::setValueString(const std::string &value) {
     if ((size_t) idx < options.size()) {
         options[idx] = value;

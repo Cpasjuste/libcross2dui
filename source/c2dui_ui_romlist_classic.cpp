@@ -105,7 +105,7 @@ public:
                 info += "\nMANUFACTURER: ";
                 info += rom->manufacturer;
             }
-            Option *opt = ui->getConfig()->get(Option::Index::ROM_ROTATION);
+            Option *opt = ui->getConfig()->get(Option::Id::ROM_ROTATION);
             if (opt && !(opt->getFlags() & Option::Flags::HIDDEN)) {
                 info += "\nROTATION: ";
                 if (rom->flags & BDF_ORIENTATION_VERTICAL) {
@@ -185,7 +185,7 @@ void UIRomListClassic::updateRomList() {
         Skin::RectangleShapeGroup romListGroup = ui->getSkin()->getRectangleShape({"MAIN", "ROM_LIST"});
         list_box = new ListBox(ui->getSkin()->font, (int) textGroup.size,
                                romListGroup.rect, (std::vector<Io::File *> &) roms,
-                               ui->getConfig()->get(Option::Index::GUI_SHOW_ICONS)->getValueBool());
+                               ui->getConfig()->get(Option::Id::GUI_SHOW_ICONS)->getValueBool());
         list_box->setFillColor(romListGroup.color);
         list_box->setOutlineColor(romListGroup.outlineColor);
         list_box->setOutlineThickness(romListGroup.outlineSize);
@@ -267,7 +267,7 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
                                                       "remove selection from favorites ?", "OK", "CANCEL");
                 if (res == MessageBox::LEFT) {
                     rom_list->removeFav(getSelection());
-                    Option *opt = ui->getConfig()->get(Option::Index::GUI_SHOW_ALL);
+                    Option *opt = ui->getConfig()->get(Option::Id::GUI_SHOW_ALL);
                     if (strcmp(opt->getValueString(), "FAVORITES") == 0) {
                         // update list if we are in favorites
                         updateRomList();

@@ -32,8 +32,8 @@ C2DUIVideo::C2DUIVideo(UIMain *gui, void **_pixels, int *_pitch,
         texture->unlock();
     }
 
-    texture->setShader(ui->getConfig()->get(Option::Index::ROM_SHADER, true)->getIndex());
-    texture->setFilter((Texture::Filter) ui->getConfig()->get(Option::Index::ROM_FILTER, true)->getIndex());
+    texture->setShader(ui->getConfig()->get(Option::Id::ROM_SHADER, true)->getIndex());
+    texture->setFilter((Texture::Filter) ui->getConfig()->get(Option::Id::ROM_FILTER, true)->getIndex());
     updateScaling();
 }
 
@@ -45,10 +45,10 @@ void C2DUIVideo::updateScaling(bool vertical, bool flip) {
 
     int rotated = 0;
     float rotation = 0;
-    int scale_mode = ui->getConfig()->get(Option::Index::ROM_SCALING, true)->getIndex();
+    int scale_mode = ui->getConfig()->get(Option::Id::ROM_SCALING, true)->getIndex();
     int rotation_cfg = 0;
-    if (ui->getConfig()->get(Option::Index::ROM_ROTATION, true)) {
-        rotation_cfg = ui->getConfig()->get(Option::Index::ROM_ROTATION, true)->getIndex();
+    if (ui->getConfig()->get(Option::Id::ROM_ROTATION, true)) {
+        rotation_cfg = ui->getConfig()->get(Option::Id::ROM_ROTATION, true)->getIndex();
     }
 
     Vector2f screen = ui->getSize();

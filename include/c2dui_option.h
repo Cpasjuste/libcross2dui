@@ -23,7 +23,7 @@ namespace c2dui {
             HIDDEN = BIT(3)
         };
 
-        enum Index {
+        enum Id {
             MENU_MAIN = 0,
             GUI_SHOW_ALL,
             GUI_SHOW_CLONES,
@@ -31,11 +31,10 @@ namespace c2dui {
             GUI_SHOW_ICONS,
             GUI_USE_DATABASE,
             GUI_FULLSCREEN,
+            GUI_SKIN,
 #ifdef __SWITCH__
             JOY_SINGLEJOYCON,
 #endif
-            MENU_SKIN,
-            SKIN_FONT_SIZE,
             MENU_ROM_OPTIONS,
             ROM_SCALING,
             ROM_FILTER,

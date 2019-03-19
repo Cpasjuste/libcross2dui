@@ -17,9 +17,17 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     // extract config file from zipped skin but create a default one
     config = new config::Config("SKIN_CONFIG", path + "config.cfg");
 
-    char *configData = getZippedData(path + "default.zip", "config.cfg");
+    std::string skinName = ui->getConfig()->get(Option::GUI_SKIN)->getValueString() + std::string(".zip");
+    int configLen = 0;
+    char *configData = getZippedData(path + skinName, "config.cfg", &configLen);
+    if (!configData) {
+        ui->getConfig()->get(Option::GUI_SKIN)->setIndex(0);
+        skinName = "default.zip";
+        configData = getZippedData(path + skinName, "config.cfg", &configLen);
+    }
     if (configData) {
-        path += "default.zip";
+        configData[configLen - 1] = '\0';
+        path += skinName;
         useZippedSkin = true;
         printf("Skin: zipped skin found: %s\n", path.c_str());
     }

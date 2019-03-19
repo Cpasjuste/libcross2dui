@@ -62,7 +62,7 @@ public:
         if (option->getFlags() == Option::Flags::INPUT) {
             Skin::Button *button = ui->getSkin()->getButton(option->getValueInt());
             // don't use button textures on keyboard for now
-            if (button && option->getId() < Option::Index::JOY_DEADZONE) {
+            if (button && option->getId() < Option::Id::JOY_DEADZONE) {
                 if (ui->getIo()->exist(button->path)) {
                     texture = new C2DTexture(button->path);
                     if (texture->available) {
@@ -299,40 +299,40 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
             }
 
             switch (option->getId()) {
-                case Option::Index::GUI_SHOW_CLONES:
-                case Option::Index::GUI_SHOW_ALL:
-                case Option::Index::GUI_SHOW_HARDWARE:
+                case Option::Id::GUI_SHOW_CLONES:
+                case Option::Id::GUI_SHOW_ALL:
+                case Option::Id::GUI_SHOW_HARDWARE:
                     ui->getUiRomList()->updateRomList();
                     break;
 
                 case Option::ROM_ROTATION:
-                case Option::Index::ROM_SCALING:
+                case Option::Id::ROM_SCALING:
                     if (isEmuRunning) {
                         ui->getUiEmu()->getVideo()->updateScaling();
                     }
                     break;
-                case Option::Index::ROM_FILTER:
+                case Option::Id::ROM_FILTER:
                     if (isEmuRunning) {
                         ui->getUiEmu()->getVideo()->getTexture()->setFilter((Texture::Filter) option->getIndex());
                     }
                     break;
-                case Option::Index::ROM_SHADER:
+                case Option::Id::ROM_SHADER:
                     if (isEmuRunning) {
                         ui->getUiEmu()->getVideo()->getTexture()->setShader(option->getIndex());
                     }
                     break;
-                case Option::Index::ROM_FORCE_60HZ:
+                case Option::Id::ROM_FORCE_60HZ:
                     if (option->getValueBool()) {
-                        ui->getConfig()->get(Option::Index::ROM_FORCE_50HZ, isRomMenu)->setValueBool(false);
+                        ui->getConfig()->get(Option::Id::ROM_FORCE_50HZ, isRomMenu)->setValueBool(false);
                         int idx = optionIndex;
                         load(isRomMenu, optionMenu);
                         optionIndex = idx;
                         updateHighlight();
                     }
                     break;
-                case Option::Index::ROM_FORCE_50HZ:
+                case Option::Id::ROM_FORCE_50HZ:
                     if (option->getValueBool()) {
-                        ui->getConfig()->get(Option::Index::ROM_FORCE_60HZ, isRomMenu)->setValueBool(false);
+                        ui->getConfig()->get(Option::Id::ROM_FORCE_60HZ, isRomMenu)->setValueBool(false);
                         int idx = optionIndex;
                         load(isRomMenu, optionMenu);
                         optionIndex = idx;
