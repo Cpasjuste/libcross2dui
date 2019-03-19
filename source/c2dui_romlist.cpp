@@ -26,14 +26,15 @@ RomList::RomList(UIMain *_ui, const std::string &emuVersion) {
             Vector2f(ui->getSize().x - 8, ui->getSize().y - 8));
     ui->getSkin()->loadRectangleShape(rect, {"MAIN"});
 
-    texture = ui->getSkin()->tex_title;
-    texture->setOrigin(Origin::Center);
-    texture->setPosition(Vector2f(rect->getSize().x / 2, rect->getSize().y / 2));
+    RectangleShape *title = new RectangleShape({16, 16});
+    ui->getSkin()->loadRectangleShape(title, {"MAIN", "TITLE"});
+    title->setOrigin(Origin::Center);
+    title->setPosition(Vector2f(rect->getSize().x / 2, rect->getSize().y / 2));
     float scaling = std::min(
-            (rect->getSize().x - 64) / texture->getTextureRect().width,
-            (rect->getSize().y - 64) / texture->getTextureRect().height);
-    texture->setScale(scaling, scaling);
-    rect->add(texture);
+            (rect->getSize().x - 64) / title->getSize().x,
+            (rect->getSize().y - 64) / title->getSize().y);
+    title->setScale(scaling, scaling);
+    rect->add(title);
 
     strcpy(text_str, "Roms found: 0/0");
     text = new Text(text_str, C2D_DEFAULT_CHAR_SIZE, ui->getSkin()->font);
@@ -92,11 +93,6 @@ void RomList::build() {
     printf("RomList::build(): list built in %f\n", time_spent);
 
     // UI
-    // reset title texture for later use
-    texture->setOrigin(Origin::TopLeft);
-    texture->setPosition(0, 0);
-    texture->setScale(1, 1);
-    rect->remove(texture);
     // remove ui widgets
     delete (rect);
 }

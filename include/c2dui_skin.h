@@ -67,7 +67,6 @@ namespace c2dui {
         char *getZippedData(const std::string &path, const std::string &name, int *size = nullptr);
 
         std::string path;
-        c2d::Texture *tex_title = nullptr;
         c2d::Font *font = nullptr;
         bool font_available = true;
         char *font_data = nullptr;

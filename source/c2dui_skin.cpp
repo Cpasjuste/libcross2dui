@@ -12,7 +12,7 @@ using namespace c2dui;
 Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
 
     ui = u;
-    path = ui->getIo()->getDataWritePath() + "skin/";
+    path = ui->getIo()->getDataWritePath() + "skins/";
 
     // extract config file from zipped skin but create a default one
     config = new config::Config("SKIN_CONFIG", path + "config.cfg");
@@ -28,9 +28,8 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     // load buttons textures
     buttons = btns;
     for (auto &button : buttons) {
-        button.path = ui->getIo()->getDataWritePath() + "skin/buttons/" + std::to_string(button.id) + ".png";
+        button.path = ui->getIo()->getDataWritePath() + "skins/buttons/" + std::to_string(button.id) + ".png";
     }
-    tex_title = new C2DTexture(ui->getIo()->getDataWritePath() + "skin/title.png");
 
     ///
     /// FONT

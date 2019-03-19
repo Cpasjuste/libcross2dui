@@ -68,7 +68,6 @@ namespace c2dui {
 
         UIMain *ui;
         c2d::RectangleShape *rect;
-        c2d::Texture *texture;
         c2d::Text *text;
         std::vector<Rom *> list;
         std::vector<Hardware> *hardwareList;
