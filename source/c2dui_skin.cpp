@@ -20,7 +20,6 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     char *configData = getZippedData(path + "default.zip", "config.cfg");
     if (configData) {
         path += "default.zip";
-        // TODO: re-enable this
         useZippedSkin = true;
         printf("Skin: zipped skin found: %s\n", path.c_str());
     }
@@ -158,10 +157,8 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     }
 
     ///
-    /// load font from configuration
+    /// load skin font from loaded configuration
     ///
-    // TODO: load font before config load/save
-    // TODO: load font from zipped skin
     font_available = false;
     font = new C2DFont();
     c2d::config::Group *fntGroup = config->getGroup("FONT");
