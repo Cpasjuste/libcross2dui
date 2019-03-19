@@ -209,6 +209,10 @@ UIStateMenu::UIStateMenu(UIMain *u) : RectangleShape(Vector2f(16, 16)) {
     uiStateList->setOrigin(Origin::Top);
     add(uiStateList);
 
+    auto tweenPosition = new TweenPosition({getPosition().x, getSize().y * 2}, getPosition(), 0.2f);
+    tweenPosition->setState(TweenState::Stopped);
+    add(tweenPosition);
+
     setVisibility(Visibility::Hidden);
 }
 
