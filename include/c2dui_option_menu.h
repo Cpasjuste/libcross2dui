@@ -17,7 +17,7 @@ namespace c2dui {
 
         ~OptionMenu();
 
-        void addChild(const std::string &title);
+        void addChild(const std::string &title, bool firstIndex = false);
 
         std::string title;
         std::vector<int> option_ids;

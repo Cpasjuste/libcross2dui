@@ -41,11 +41,15 @@ OptionMenu::OptionMenu(OptionMenu *parent, std::vector<Option> *options, bool is
     }
 }
 
-void OptionMenu::addChild(const std::string &title) {
+void OptionMenu::addChild(const std::string &title, bool firstIndex) {
 
     auto *m = new OptionMenu(nullptr, nullptr);
     m->title = title;
-    childs.push_back(m);
+    if (firstIndex) {
+        childs.insert(childs.begin(), m);
+    } else {
+        childs.push_back(m);
+    }
 }
 
 OptionMenu::~OptionMenu() {

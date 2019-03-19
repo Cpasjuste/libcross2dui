@@ -147,7 +147,7 @@ UIMenu::UIMenu(UIMain *ui) : RectangleShape(Vector2f(0, 0)) {
     optionMenuGui = new OptionMenu(nullptr, ui->getConfig()->get());
     optionMenuGui->addChild("EXIT");
     optionMenuRom = new OptionMenu(nullptr, ui->getConfig()->get(true), true);
-    optionMenuRom->addChild("STATES");
+    optionMenuRom->addChild("STATES", true);
     optionMenuRom->addChild("RETURN");
     optionMenuRom->addChild("EXIT");
 
