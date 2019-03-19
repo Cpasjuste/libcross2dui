@@ -59,9 +59,8 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     config->addGroup(mbox);
 
     ///
-    /// ROM LIST (START)
+    /// MAIN (ROM LIST)
     ///
-    // rom list bg
     config::Group main = createRectangleShapeGroup(
             "MAIN", ui->getLocalBounds(), Origin::TopLeft,
             "romlist_bg.png", Color::GrayDark, Color::Yellow, 2);
@@ -82,9 +81,8 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     config::Group romList = createRectangleShapeGroup(
             "ROM_LIST", {0, 0, 212, 240}, Origin::Left,
             "romlist.png", {255, 255, 255, 150}, Color::GrayLight, 2);
-    config::Group romItem = createRectangleShapeGroup(
-            "ROM_ITEM", {0, 0, 212, 240}, Origin::Left,
-            "romlist_item.png", {255, 255, 255, 150}, Color::GrayLight, 2);
+    config::Group romItem = createTextGroup(
+            "TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
     romList.addGroup(romItem);
     main.addGroup(romList);
     config::Group romInfo = createRectangleShapeGroup(
@@ -94,7 +92,6 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
             "TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
     romInfo.addGroup(romInfoText);
     main.addGroup(romInfo);
-
     config::Group previewBox = createRectangleShapeGroup(
             "ROM_IMAGE", {654, 378, 608, 322}, Origin::Left,
             "romlist_image.png", {150, 150, 150, 255}, {220, 0, 0, 255}, 2);
@@ -104,7 +101,7 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     main.addGroup(previewBox);
     config->addGroup(main);
     ///
-    /// ROM LIST (END)
+    /// MAIN (ROM LIST) (END)
     ///
 
     ///

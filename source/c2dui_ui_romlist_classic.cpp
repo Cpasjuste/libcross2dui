@@ -169,13 +169,13 @@ void UIRomListClassic::updateRomList() {
     rom_index = 0;
     filterRomList();
 
-    Skin::RectangleShapeGroup itemGroup = ui->getSkin()->getRectangleShape({"MAIN", "ROM_LIST", "ROM_ITEM"});
+    Skin::TextGroup textGroup = ui->getSkin()->getText({"MAIN", "ROM_LIST", "TEXT"});
 
     // set item/rom text color
     if (!roms.empty()) {
         for (auto &rom : roms) {
             if (rom->state == RomList::RomState::WORKING) {
-                rom->color = itemGroup.color;
+                rom->color = textGroup.color;
             }
         }
     }
@@ -183,7 +183,7 @@ void UIRomListClassic::updateRomList() {
     if (!list_box) {
         // add rom list ui
         Skin::RectangleShapeGroup romListGroup = ui->getSkin()->getRectangleShape({"MAIN", "ROM_LIST"});
-        list_box = new ListBox(ui->getSkin()->font, (int) itemGroup.rect.height,
+        list_box = new ListBox(ui->getSkin()->font, (int) textGroup.size,
                                romListGroup.rect, (std::vector<Io::File *> &) roms,
                                ui->getConfig()->get(Option::Index::GUI_SHOW_ICONS)->getValueBool());
         list_box->setFillColor(romListGroup.color);
@@ -191,8 +191,8 @@ void UIRomListClassic::updateRomList() {
         list_box->setOutlineThickness(romListGroup.outlineSize);
         list_box->setSelection(0);
         // rom item
-        list_box->setTextOutlineColor(itemGroup.outlineColor);
-        list_box->setTextOutlineThickness(itemGroup.outlineSize);
+        list_box->setTextOutlineColor(textGroup.outlineColor);
+        list_box->setTextOutlineThickness(textGroup.outlineSize);
         // hihglight
         ui->getSkin()->loadRectangleShape(list_box->getHighlight(), {"SKIN_CONFIG", "HIGHLIGHT"});
 #ifdef __PFBA__

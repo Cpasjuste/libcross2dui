@@ -113,7 +113,8 @@ void UIRomListNew::updateRomList() {
     float start_x = ROM_ITEM_MARGIN;
     for (unsigned int i = 0; i < roms.size(); i++) {
         auto *item = new UIRomItem(ui, roms[i]);
-        ui->getSkin()->loadRectangleShape(item, {"MAIN", "ROM_LIST", "ROM_ITEM"});
+        // TODO: not in config anymore
+        ui->getSkin()->loadRectangleShape(item, {"MAIN", "ROM_LIST", "TEXT"});
         rom_item_size = item->getSize();
         rom_item_outline = item->getOutlineThickness();
         item->setOrigin(Origin::Left);
