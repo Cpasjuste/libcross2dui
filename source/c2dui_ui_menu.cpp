@@ -383,7 +383,7 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
                 }
             } else if (menu->title == "STATES") {
                 setVisibility(Visibility::Hidden, true);
-                ui->getUiStateMenu()->setVisibility(Visibility::Visible);
+                ui->getUiStateMenu()->setVisibility(Visibility::Visible, true);
             } else if (menu->title == "RETURN") {
                 setVisibility(Visibility::Hidden, true);
                 ui->getUiEmu()->resume();

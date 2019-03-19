@@ -271,8 +271,8 @@ bool UIStateMenu::onInput(c2d::Input::Player *players) {
 
     // FIRE2
     if (key & Input::Key::Fire2) {
-        setVisibility(Visibility::Hidden);
-        ui->getUiMenu()->setVisibility(Visibility::Visible);
+        setVisibility(Visibility::Hidden, true);
+        ui->getUiMenu()->setVisibility(Visibility::Visible, true);
     }
 
     // QUIT
