@@ -26,7 +26,7 @@ public:
         outlineColorSelected = ui->getSkin()->getRectangleShape({"STATES_MENU"}).outlineColor;
 
         // text if no save/screenshot
-        middle_text = new C2DText("NO SAVE", 26, ui->getFont());
+        middle_text = new C2DText("NO SAVE", 26, ui->getSkin()->getFont());
         ui->getSkin()->loadText(middle_text, {"STATES_MENU", "STATES_ITEM", "STATES_TEXT"});
         middle_text->setOrigin(Origin::Center);
         middle_text->setPosition(getLocalBounds().left + getSize().x / 2,
@@ -36,7 +36,7 @@ public:
         // text for slot id
         char bottom_text_char[32];
         snprintf(bottom_text_char, 32, "SLOT %i", id);
-        bottom_text = new C2DText(bottom_text_char, 26, ui->getFont());
+        bottom_text = new C2DText(bottom_text_char, 26, ui->getSkin()->getFont());
         ui->getSkin()->loadText(bottom_text, {"STATES_MENU", "STATES_ITEM", "STATES_TEXT"});
         bottom_text->setString(bottom_text_char);
         bottom_text->setOrigin(Origin::Center);

@@ -63,8 +63,6 @@ namespace c2dui {
 
         c2d::MessageBox *getUiMessageBox();
 
-        c2d::Font *getFont() override;
-
         int getFontSize();
 
         float getScaling();

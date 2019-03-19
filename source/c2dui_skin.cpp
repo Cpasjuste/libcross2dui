@@ -2,6 +2,8 @@
 // Created by cpasjuste on 23/11/16.
 //
 
+#include <minizip/unzip.h>
+
 #include "c2dui.h"
 
 using namespace c2d;
@@ -12,22 +14,30 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     ui = u;
     path = ui->getIo()->getDataWritePath() + "skin/";
 
-    tex_title = new C2DTexture(path + "title.png");
+    // extract config file from zipped skin but create a default one
+    config = new config::Config("SKIN_CONFIG", path + "config.cfg");
 
+    char *configData = getZippedData(path + "default.zip", "config.cfg");
+    if (configData) {
+        path += "default.zip";
+        // TODO: re-enable this
+        useZippedSkin = true;
+        printf("Skin: zipped skin found: %s\n", path.c_str());
+    }
+
+    // TODO: cleanup this
     // load buttons textures
     buttons = btns;
     for (auto &button : buttons) {
-        button.path = path + "buttons/" + std::to_string(button.id) + ".png";
+        button.path = ui->getIo()->getDataWritePath() + "skin/buttons/" + std::to_string(button.id) + ".png";
     }
-
-    // config file
-    config = new config::Config("SKIN_CONFIG", path + "config.cfg");
+    tex_title = new C2DTexture(ui->getIo()->getDataWritePath() + "skin/title.png");
 
     ///
     /// FONT
     ///
     config::Group font_group("FONT");
-    font_group.addOption({"path", path + "default.ttf"});
+    font_group.addOption({"path", "default.ttf"});
     font_group.addOption({"offset", Vector2f{0, -3}});
     font_group.addOption({"filtering", 0});
     config->addGroup(font_group);
@@ -37,7 +47,7 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     ///
     config::Group highlight = createRectangleShapeGroup(
             "HIGHLIGHT", {0, 0, 16, 16},
-            Origin::Left, path + "highlight_bg.png", {100, 255, 255, 80}, {0, 255, 255, 80}, 10);
+            Origin::Left, "highlight_bg.png", {100, 255, 255, 80}, {0, 255, 255, 80}, 10);
     config->addGroup(highlight);
 
     ///
@@ -46,7 +56,7 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     config::Group mbox = createRectangleShapeGroup(
             "MESSAGEBOX", {ui->getSize().x / 2, ui->getSize().y / 2,
                            ui->getSize().x / 2, ui->getSize().y / 2},
-            Origin::Center, path + "messagebox_bg.png", Color::GrayLight, Color::Red, 2);
+            Origin::Center, "messagebox_bg.png", Color::GrayLight, Color::Red, 2);
     config->addGroup(mbox);
 
     ///
@@ -55,12 +65,12 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     // rom list bg
     config::Group main = createRectangleShapeGroup(
             "MAIN", ui->getLocalBounds(), Origin::TopLeft,
-            path + "romlist_bg.png", Color::GrayDark, Color::Yellow, 2);
+            "romlist_bg.png", Color::GrayDark, Color::Yellow, 2);
     // rom list title + text
     FloatRect titleRect = {ui->getSize().x / 2, 160, ui->getSize().x / 2, 64};
     config::Group title = createRectangleShapeGroup(
             "TITLE", titleRect, Origin::Center,
-            path + "romlist_title.png", Color::GrayDark, Color::GrayLight, 2);
+            "romlist_title.png", Color::GrayDark, Color::GrayLight, 2);
     FloatRect titleTextRect = {titleRect.width / 2, titleRect.height / 2, titleRect.width - 64, 0};
     config::Group titleText = createTextGroup(
             "TEXT", ui->getFontSize(), titleTextRect, Origin::Center, Color::White, Color::Black, 2);
@@ -68,19 +78,19 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     main.addGroup(title);
     config::Group help = createRectangleShapeGroup(
             "HELP", titleRect, Origin::Center,
-            path + "romlist_help.png", Color::GrayDark, Color::GrayLight, 2);
+            "romlist_help.png", Color::GrayDark, Color::GrayLight, 2);
     main.addGroup(help);
     config::Group romList = createRectangleShapeGroup(
             "ROM_LIST", {0, 0, 212, 240}, Origin::Left,
-            path + "romlist.png", {255, 255, 255, 150}, Color::GrayLight, 2);
+            "romlist.png", {255, 255, 255, 150}, Color::GrayLight, 2);
     config::Group romItem = createRectangleShapeGroup(
             "ROM_ITEM", {0, 0, 212, 240}, Origin::Left,
-            path + "romlist_item.png", {255, 255, 255, 150}, Color::GrayLight, 2);
+            "romlist_item.png", {255, 255, 255, 150}, Color::GrayLight, 2);
     romList.addGroup(romItem);
     main.addGroup(romList);
     config::Group romInfo = createRectangleShapeGroup(
             "ROM_INFO", {654, 378, 608, 322}, Origin::Left,
-            path + "romlist_info.png", {150, 150, 150, 255}, {220, 0, 0, 255}, 2);
+            "romlist_info.png", {150, 150, 150, 255}, {220, 0, 0, 255}, 2);
     config::Group romInfoText = createTextGroup(
             "TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
     romInfo.addGroup(romInfoText);
@@ -88,12 +98,11 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
 
     config::Group previewBox = createRectangleShapeGroup(
             "ROM_IMAGE", {654, 378, 608, 322}, Origin::Left,
-            path + "romlist_image.png", {150, 150, 150, 255}, {220, 0, 0, 255}, 2);
+            "romlist_image.png", {150, 150, 150, 255}, {220, 0, 0, 255}, 2);
     config::Group previewBoxText = createTextGroup(
             "TEXT", ui->getFontSize(), titleTextRect, Origin::Center, Color::White, Color::Black, 1);
     previewBox.addGroup(previewBoxText);
     main.addGroup(previewBox);
-
     config->addGroup(main);
     ///
     /// ROM LIST (END)
@@ -104,7 +113,7 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     ///
     config::Group options_menu = createRectangleShapeGroup(
             "OPTIONS_MENU", ui->getLocalBounds(), Origin::TopLeft,
-            path + "options_menu_bg.png", Color::GrayDark, Color::Yellow, 2);
+            "options_menu_bg.png", Color::GrayDark, Color::Yellow, 2);
     config::Group options_menu_title = createTextGroup(
             "TITLE_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
     options_menu.addGroup(options_menu_title);
@@ -121,13 +130,13 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     ///
     config::Group states_menu = createRectangleShapeGroup(
             "STATES_MENU", ui->getLocalBounds(), Origin::TopLeft,
-            path + "states_menu_bg.png", Color::GrayDark, Color::Yellow, 2);
+            "states_menu_bg.png", Color::GrayDark, Color::Yellow, 2);
     config::Group states_menu_title = createTextGroup(
             "TITLE_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
     states_menu.addGroup(states_menu_title);
     config::Group states_item = createRectangleShapeGroup(
             "STATES_ITEM", ui->getLocalBounds(), Origin::TopLeft,
-            path + "states_item_bg.png", Color::GrayDark, Color::Yellow, 2);
+            "states_item_bg.png", Color::GrayDark, Color::Yellow, 2);
     config::Group states_item_text = createTextGroup(
             "STATES_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
     states_item.addGroup(states_item_text);
@@ -138,24 +147,45 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     ///
 
     // LOAD/SAVE
-    if (!config->load()) {
-        // file doesn't exist or is malformed, (re)create it
-        config->save();
+    if (useZippedSkin) {
+        config->loadFromString(configData);
+        free(configData);
+    } else {
+        if (!config->load()) {
+            // file doesn't exist or is malformed, (re)create it
+            config->save();
+        }
     }
 
     ///
     /// load font from configuration
     ///
     // TODO: load font before config load/save
+    // TODO: load font from zipped skin
+    font_available = false;
     font = new C2DFont();
-    c2d::config::Group *fnt = config->getGroup("FONT");
-    if (!font->loadFromFile(fnt->getOption("path")->getString())) {
-        font_available = false;
-        font = c2d_renderer->getFont();
+    c2d::config::Group *fntGroup = config->getGroup("FONT");
+    if (useZippedSkin) {
+        int size = 0;
+        font_data = getZippedData(path, fntGroup->getOption("path")->getString(), &size);
+        if (font_data) {
+            if (font->loadFromMemory(font_data, (size_t) size)) {
+                font_available = true;
+            }
+        }
     } else {
-        font->setFilter((Texture::Filter) fnt->getOption("filtering")->getInteger());
-        font->setOffset(fnt->getOption("offset")->getVector2f());
+        std::string fontPath = path + fntGroup->getOption("path")->getString();
+        printf("font path: %s\n", fontPath.c_str());
+        if (font->loadFromFile(fontPath)) {
+            font_available = true;
+        }
     }
+    if (!font_available) {
+        delete (font);
+        font = ui->getFont();
+    }
+    font->setFilter((Texture::Filter) fntGroup->getOption("filtering")->getInteger());
+    font->setOffset(fntGroup->getOption("offset")->getVector2f());
 }
 
 config::Config *Skin::getConfig() {
@@ -242,10 +272,21 @@ void Skin::loadRectangleShape(c2d::RectangleShape *shape, const std::vector<std:
         shape->setSize(rectangleShapeGroup.rect.width, rectangleShapeGroup.rect.height);
     }
 
-    std::string bg_path = rectangleShapeGroup.texture;
-    if (ui->getIo()->exist(bg_path)) {
-        printf("loadRectangleShape: loading %s\n", bg_path.c_str());
-        auto *tex = new C2DTexture(bg_path);
+    C2DTexture *tex = nullptr;
+    if (useZippedSkin) {
+        int size = 0;
+        char *data = getZippedData(path, rectangleShapeGroup.texture, &size);
+        if (data) {
+            tex = new C2DTexture((const unsigned char *) data, size);
+        }
+    } else {
+        std::string bg_path = path + rectangleShapeGroup.texture;
+        if (ui->getIo()->exist(bg_path)) {
+            tex = new C2DTexture(bg_path);
+        }
+    }
+
+    if (tex && tex->available) {
         tex->setScale(rectangleShapeGroup.rect.width / tex->getSize().x,
                       rectangleShapeGroup.rect.height / tex->getSize().y);
         tex->setFillColor(rectangleShapeGroup.color);
@@ -256,6 +297,9 @@ void Skin::loadRectangleShape(c2d::RectangleShape *shape, const std::vector<std:
         shape->setOutlineThickness(0);
         shape->add(tex);
     } else {
+        if (tex) {
+            delete (tex);
+        }
         shape->setFillColor(rectangleShapeGroup.color);
         shape->setOutlineColor(rectangleShapeGroup.outlineColor);
         shape->setOutlineThickness(rectangleShapeGroup.outlineSize);
@@ -362,17 +406,66 @@ Skin::Button *Skin::getButton(int id) {
     return nullptr;
 }
 
+c2d::Font *Skin::getFont() {
+    return font;
+}
+
+char *Skin::getZippedData(const std::string &path, const std::string &name, int *size) {
+
+    char *data = nullptr;
+
+    unzFile zip = unzOpen(path.c_str());
+    if (!zip) {
+        return data;
+    }
+
+    if (unzGoToFirstFile(zip) == UNZ_OK) {
+        do {
+            if (unzOpenCurrentFile(zip) == UNZ_OK) {
+                unz_file_info fileInfo;
+                memset(&fileInfo, 0, sizeof(unz_file_info));
+                if (unzGetCurrentFileInfo(zip, &fileInfo, nullptr, 0, nullptr, 0, nullptr, 0) == UNZ_OK) {
+                    char *zipFileName = (char *) malloc(fileInfo.size_filename + 1);
+                    unzGetCurrentFileInfo(zip, &fileInfo, zipFileName, fileInfo.size_filename + 1,
+                                          nullptr, 0, nullptr, 0);
+                    zipFileName[fileInfo.size_filename] = '\0';
+                    if (name == zipFileName) {
+                        data = (char *) malloc(fileInfo.uncompressed_size);
+                        if (size) {
+                            *size = (int) fileInfo.uncompressed_size;
+                        }
+                        printf("getZippedData: %s, %s, %i\n", path.c_str(), name.c_str(), size ? *size : 0);
+                        unzReadCurrentFile(zip, data, (unsigned int) fileInfo.uncompressed_size);
+                        free(zipFileName);
+                        unzClose(zip);
+                        return data;
+                    }
+                    free(zipFileName);
+                }
+                unzCloseCurrentFile(zip);
+            }
+        } while (unzGoToNextFile(zip) == UNZ_OK);
+    }
+
+    unzClose(zip);
+
+    return data;
+}
+
 Skin::~Skin() {
 
     buttons.clear();
 
-    if (font && font_available) {
+    if (font) {
         delete (font);
+    }
+
+    // delete font data if loaded from zipped skin
+    if (font_data) {
+        free(font_data);
     }
 
     if (config) {
         delete (config);
     }
 }
-
-

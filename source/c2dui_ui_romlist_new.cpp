@@ -90,7 +90,7 @@ UIRomListNew::UIRomListNew(UIMain *u, RomList *romList, const c2d::Vector2f &siz
 
     RoundedRectangleShape *titleRect = new RoundedRectangleShape();
     ui->getSkin()->loadRectangleShape(titleRect, {"MAIN", "TITLE"});
-    title = new Text("NO ROM INFORMATION", (unsigned int) ui->getFontSize(), ui->getFont());
+    title = new Text("NO ROM INFORMATION", (unsigned int) ui->getFontSize(), ui->getSkin()->getFont());
     ui->getSkin()->loadText(title, {"MAIN", "TITLE", "TEXT"});
     titleRect->add(title);
     add(titleRect);

@@ -62,10 +62,15 @@ namespace c2dui {
 
         Button *getButton(int id);
 
+        c2d::Font *getFont();
+
+        char *getZippedData(const std::string &path, const std::string &name, int *size = nullptr);
+
         std::string path;
         c2d::Texture *tex_title = nullptr;
         c2d::Font *font = nullptr;
         bool font_available = true;
+        char *font_data = nullptr;
         std::vector<Button> buttons;
 
     private:
@@ -86,6 +91,7 @@ namespace c2dui {
 
         UIMain *ui = nullptr;
         c2d::config::Config *config = nullptr;
+        bool useZippedSkin = false;
     };
 }
 

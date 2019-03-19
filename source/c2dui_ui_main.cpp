@@ -150,10 +150,6 @@ MessageBox *UIMain::getUiMessageBox() {
     return uiMessageBox;
 }
 
-Font *UIMain::getFont() {
-    return skin->font;
-}
-
 int UIMain::getFontSize() {
     return C2D_DEFAULT_CHAR_SIZE;
 }
