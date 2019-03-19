@@ -54,6 +54,8 @@ namespace c2dui {
 
         bool isPaused();
 
+        bool onInput(c2d::Input::Player *players) override;
+
     private:
 
         UIMain *ui = nullptr;

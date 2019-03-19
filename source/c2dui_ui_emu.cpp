@@ -23,6 +23,50 @@ UIEmu::UIEmu(UIMain *u) : RectangleShape(u->getSize()) {
     setVisibility(Visibility::Hidden);
 }
 
+bool UIEmu::onInput(c2d::Input::Player *players) {
+
+    if (getUi()->getUiMenu()->isVisible()
+        || getUi()->getUiStateMenu()->isVisible()) {
+        return C2DObject::onInput(players);
+    }
+
+    // look for player 1 menu combo
+    if (((players[0].keys & Input::Key::Start) && (players[0].keys & Input::Key::Select))) {
+        pause();
+        getUi()->getConfig()->load(getUi()->getUiRomList()->getSelection());
+        getUi()->getUiMenu()->load(true);
+        return true;
+    } else if (((players[0].keys & Input::Key::Start) && (players[0].keys & Input::Key::Fire5))
+               || ((players[0].keys & Input::Key::Select) && (players[0].keys & Input::Key::Fire5))
+               || ((players[0].keys & Input::Key::Start) && (players[0].keys & Input::Key::Fire6))
+               || ((players[0].keys & Input::Key::Select) && (players[0].keys & Input::Key::Fire6))) {
+        pause();
+        getUi()->getConfig()->load(getUi()->getUiRomList()->getSelection());
+        getUi()->getUiMenu()->load(true);
+        return true;
+    }
+
+    // look each players for combos keys
+    for (int i = 0; i < PLAYER_MAX; i++) {
+        // allow devices with single select/start button to send start/coins (nsw in single joycon mode)
+        if (((players[i].keys & Input::Key::Start) && (players[i].keys & Input::Key::Fire1))
+            || ((players[i].keys & Input::Key::Select) && (players[i].keys & Input::Key::Fire1))) {
+            players[i].keys = Input::Key::Start;
+        } else if (((players[i].keys & Input::Key::Start) && (players[i].keys & Input::Key::Fire2))
+                   || ((players[i].keys & Input::Key::Select) && (players[i].keys & Input::Key::Fire2))) {
+            players[i].keys = Input::Key::Select;
+        }
+    }
+
+    // look for window resize event
+    if (players[0].keys & EV_RESIZE) {
+        // useful for sdl resize event
+        getVideo()->updateScaling();
+    }
+
+    return C2DObject::onInput(players);
+}
+
 void UIEmu::addAudio(c2d::Audio *_audio) {
 
     if (audio) {
@@ -167,4 +211,3 @@ char *UIEmu::getFpsString() {
 bool UIEmu::isPaused() {
     return paused;
 }
-
