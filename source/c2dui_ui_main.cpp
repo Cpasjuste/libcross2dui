@@ -179,13 +179,7 @@ void UIMain::updateInputMapping(bool isRomConfig) {
     }
 
 #ifdef __SWITCH__
-    int single_joy = config->get(Option::Index::JOY_SINGLEJOYCON)->getValueBool();
-    for (int i = 0; i < PLAYER_MAX; i++) {
-        if (single_joy > 0) {
-            hidSetNpadJoyAssignmentModeSingleByDefault((HidControllerID) i);
-        } else {
-            hidSetNpadJoyAssignmentModeDual((HidControllerID) i);
-        }
-    }
+    bool single_joy_mode = config->get(Option::Id::JOY_SINGLEJOYCON)->getValueBool();
+    ((SWITCHInput *) getInput())->setSingleJoyconMode(single_joy_mode);
 #endif
 }

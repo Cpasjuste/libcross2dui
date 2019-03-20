@@ -340,14 +340,8 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
                     }
                     break;
 #ifdef __SWITCH__
-                case Option::Index::JOY_SINGLEJOYCON:
-                    for (int i = 0; i < PLAYER_MAX; i++) {
-                        if (option->getValueInt() > 0) {
-                            hidSetNpadJoyAssignmentModeSingleByDefault((HidControllerID) i);
-                        } else {
-                            hidSetNpadJoyAssignmentModeDual((HidControllerID) i);
-                        }
-                    }
+                case Option::Id::JOY_SINGLEJOYCON:
+                    ((SWITCHInput *) ui->getInput())->setSingleJoyconMode(option->getValueBool());
                     break;
 #endif
                 default:

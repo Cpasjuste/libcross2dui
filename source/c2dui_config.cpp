@@ -48,7 +48,7 @@ Config::Config(const std::string &home, int ver) {
     append("SKIN", paths, 0, Option::Id::GUI_SKIN);
     get()->at(get()->size() - 1).setInfo("Changing skin needs a restart...");
 #ifdef __SWITCH__
-    append("SINGLE_JOYCONS", {"OFF", "ON"}, 0, Option::Index::JOY_SINGLEJOYCON);
+    append("SINGLE_JOYCONS", {"OFF", "ON"}, 0, Option::Id::JOY_SINGLEJOYCON);
 #endif
 
     /////////////////////////////////////////////////
