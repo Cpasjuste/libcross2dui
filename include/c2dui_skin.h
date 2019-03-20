@@ -42,7 +42,7 @@ namespace c2dui {
             }
 
             std::string name;
-            std::string path;
+            c2d::Texture *texture = nullptr;
             int id = -1;
         };
 

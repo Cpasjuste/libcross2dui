@@ -36,7 +36,22 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     // load buttons textures
     buttons = btns;
     for (auto &button : buttons) {
-        button.path = ui->getIo()->getDataWritePath() + "skins/buttons/" + std::to_string(button.id) + ".png";
+        if (useZippedSkin) {
+            std::string buttonPath = "buttons/" + std::to_string(button.id) + ".png";
+            int size = 0;
+            char *data = getZippedData(path, buttonPath, &size);
+            if (data) {
+                button.texture = new C2DTexture((const unsigned char *) data, size);
+                free(data);
+            }
+        } else {
+            std::string buttonPath =
+                    ui->getIo()->getDataWritePath() + "skins/buttons/" + std::to_string(button.id) + ".png";
+            button.texture = new C2DTexture(buttonPath);
+        }
+        if (button.texture && !button.texture->available) {
+            delete (button.texture);
+        }
     }
 
     ///
@@ -279,6 +294,7 @@ void Skin::loadRectangleShape(c2d::RectangleShape *shape, const std::vector<std:
         char *data = getZippedData(path, rectangleShapeGroup.texture, &size);
         if (data) {
             tex = new C2DTexture((const unsigned char *) data, size);
+            free(data);
         }
     } else {
         std::string bg_path = path + rectangleShapeGroup.texture;
@@ -435,7 +451,6 @@ char *Skin::getZippedData(const std::string &path, const std::string &name, int 
                         if (size) {
                             *size = (int) fileInfo.uncompressed_size;
                         }
-                        printf("getZippedData: %s, %s, %i\n", path.c_str(), name.c_str(), size ? *size : 0);
                         unzReadCurrentFile(zip, data, (unsigned int) fileInfo.uncompressed_size);
                         free(zipFileName);
                         unzClose(zip);
@@ -455,6 +470,11 @@ char *Skin::getZippedData(const std::string &path, const std::string &name, int 
 
 Skin::~Skin() {
 
+    for (auto &button : buttons) {
+        if (button.texture) {
+            delete (button.texture);
+        }
+    }
     buttons.clear();
 
     if (font) {

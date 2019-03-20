@@ -41,14 +41,15 @@ public:
         value->setPosition((getSize().x * 0.66f) + 16, getSize().y / 2);
         value->setWidth((getSize().x * 0.33f) - 32);
         add(value);
+
+        sprite = new Sprite();
+        add(sprite);
     }
 
     void update(Option *opt) {
 
-        if (texture != nullptr) {
-            delete (texture);
-            texture = nullptr;
-        }
+        // always hide sprite (icon) first
+        sprite->setVisibility(Visibility::Hidden);
 
         option = opt;
         if (option) {
@@ -63,23 +64,16 @@ public:
             Skin::Button *button = ui->getSkin()->getButton(option->getValueInt());
             // don't use button textures on keyboard for now
             if (button && option->getId() < Option::Id::JOY_DEADZONE) {
-                if (ui->getIo()->exist(button->path)) {
-                    texture = new C2DTexture(button->path);
-                    if (texture->available) {
-                        value->setVisibility(Visibility::Hidden);
-                        float tex_scaling = std::min(
-                                ((getSize().x * 0.33f) - 32) / texture->getTextureRect().width,
-                                (getSize().y / 2 + 4) / texture->getTextureRect().height);
-                        texture->setScale(tex_scaling, tex_scaling);
-                        texture->setPosition((getSize().x * 0.66f) + 16, getSize().y / 2 - 3);
-                        texture->setOrigin(Origin::Left);
-                        add(texture);
-                    } else {
-                        delete (texture);
-                        texture = nullptr;
-                        value->setVisibility(Visibility::Visible);
-                        value->setString(button->name);
-                    }
+                if (button->texture) {
+                    sprite->setTexture(button->texture);
+                    sprite->setVisibility(Visibility::Visible);
+                    value->setVisibility(Visibility::Hidden);
+                    float tex_scaling = std::min(
+                            ((getSize().x * 0.33f) - 32) / sprite->getTextureRect().width,
+                            (getSize().y / 2 + 4) / sprite->getTextureRect().height);
+                    sprite->setScale(tex_scaling, tex_scaling);
+                    sprite->setPosition((getSize().x * 0.66f) + 16, getSize().y / 2 - 3);
+                    sprite->setOrigin(Origin::Left);
                 } else {
                     value->setVisibility(Visibility::Visible);
                     value->setString(button->name);
@@ -99,7 +93,7 @@ public:
     UIMain *ui = nullptr;
     Text *name = nullptr;
     Text *value = nullptr;
-    Texture *texture = nullptr;
+    Sprite *sprite = nullptr;
     Option *option;
 };
 
