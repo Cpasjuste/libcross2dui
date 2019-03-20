@@ -229,7 +229,7 @@ void UIMenu::load(bool isRom, OptionMenu *om) {
         // don't show custom in-game options when a game is not running
         if (isRomMenu && !isEmuRunning) {
             std::string title = optionMenu->childs[i]->title;
-            if (title == "EXIT" || title == "RETURN" || title == "STATES") {
+            if (title == "EXIT" || title == "RETURN") {
                 optionCount--;
                 continue;
             }
@@ -257,6 +257,10 @@ void UIMenu::updateHighlight() {
 }
 
 bool UIMenu::onInput(c2d::Input::Player *players) {
+
+    if (getUi()->getUiStateMenu()->isVisible()) {
+        return C2DObject::onInput(players);
+    }
 
     bool option_changed = false;
     unsigned int keys = players[0].keys;

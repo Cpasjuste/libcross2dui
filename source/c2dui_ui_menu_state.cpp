@@ -270,6 +270,18 @@ bool UIStateMenu::onInput(c2d::Input::Player *players) {
                 setVisibility(Visibility::Hidden);
                 ui->getUiEmu()->resume();
             }
+        } else {
+            RomList::Rom *rom = ui->getUiRomList()->getSelection();
+            if (rom && rom->state != RomList::RomState::MISSING) {
+                UIState *state = uiStateList->getSelection();
+                if (state->exist) {
+                    ui->getConfig()->load(rom);
+                    ui->getUiEmu()->load(rom);
+                    state->load();
+                    setVisibility(Visibility::Hidden);
+                    return true;
+                }
+            }
         }
     }
 

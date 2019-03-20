@@ -214,6 +214,7 @@ void UIRomListClassic::updateRomList() {
 bool UIRomListClassic::onInput(c2d::Input::Player *players) {
 
     if (ui->getUiMenu()->isVisible()
+        || ui->getUiStateMenu()->isVisible()
         || ui->getUiProgressBox()->isVisible()) {
         return false;
     }
