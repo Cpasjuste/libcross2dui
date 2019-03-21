@@ -415,9 +415,9 @@ void Skin::loadText(c2d::Text *text, const std::vector<std::string> &tree) {
 
 Skin::Button *Skin::getButton(int id) {
 
-    for (unsigned int i = 0; i < buttons.size(); i++) {
-        if (buttons[i].id == id) {
-            return &buttons[i];
+    for (auto &button : buttons) {
+        if (button.id == id) {
+            return &button;
         }
     }
     return nullptr;
