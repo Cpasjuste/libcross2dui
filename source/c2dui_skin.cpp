@@ -105,6 +105,9 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
             "romlist.png", {255, 255, 255, 150}, Color::GrayLight, 2);
     config::Group romItem = createTextGroup(
             "TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+    romItem.addOption({"color_missing", Color::White});
+    romItem.addOption({"color_not_working", Color::White});
+    romItem.addOption({"highlight_use_text_color", 0});
     romList.addGroup(romItem);
     main.addGroup(romList);
     config::Group romInfo = createRectangleShapeGroup(

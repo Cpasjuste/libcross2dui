@@ -170,12 +170,21 @@ void UIRomListClassic::updateRomList() {
     filterRomList();
 
     Skin::TextGroup textGroup = ui->getSkin()->getText({"MAIN", "ROM_LIST", "TEXT"});
+    config::Group *grp = ui->getSkin()->getConfig()->getGroup("ROM_LIST")->getGroup("TEXT");
+    Color colorMissing = grp->getOption("color_missing")->getColor();
+    Color colorNotWorking = grp->getOption("color_not_working")->getColor();
+    bool highlightUseFileColors = grp->getOption("highlight_use_text_color")->getInteger() == 1;
 
     // set item/rom text color
     if (!roms.empty()) {
         for (auto &rom : roms) {
             if (rom->state == RomList::RomState::WORKING) {
                 rom->color = textGroup.color;
+            } else if (rom->state == RomList::RomState::MISSING) {
+                rom->color = colorMissing;
+            }
+            if (rom->state == RomList::RomState::NOT_WORKING) {
+                rom->color = colorNotWorking;
             }
         }
     }
@@ -195,10 +204,7 @@ void UIRomListClassic::updateRomList() {
         list_box->setTextOutlineThickness(textGroup.outlineSize);
         // hihglight
         ui->getSkin()->loadRectangleShape(list_box->getHighlight(), {"SKIN_CONFIG", "HIGHLIGHT"});
-#ifdef __PFBA__
-        // TODO: add to skin config
-        list_box->setHighlightUseFileColor(true);
-#endif
+        list_box->setHighlightUseFileColor(highlightUseFileColors);
         add(list_box);
     } else {
         list_box->setFiles((std::vector<Io::File *> &) roms);
