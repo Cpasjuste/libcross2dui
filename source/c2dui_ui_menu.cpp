@@ -17,11 +17,12 @@ class MenuLine : public c2d::RectangleShape {
 
 public:
 
-    MenuLine(UIMain *ui, FloatRect &rect, Skin::TextGroup &textGroup) : RectangleShape(rect) {
+    MenuLine(UIMain *u, FloatRect &rect, Skin::TextGroup &tg) : RectangleShape(rect) {
 
         setFillColor(Color::Transparent);
 
-        this->ui = ui;
+        ui = u;
+        textGroup = tg;
         Font *font = ui->getSkin()->font;
 
         name = new Text("OPTION NAME,)'", textGroup.size, font);
@@ -51,11 +52,15 @@ public:
         // always hide sprite (icon) first
         sprite->setVisibility(Visibility::Hidden);
 
+        // reset
+        name->setOutlineColor(textGroup.outlineColor);
+        name->setStyle(Text::Regular);
+        value->setVisibility(Visibility::Visible);
+
         option = opt;
         if (option) {
             name->setString(option->getName());
         } else {
-            value->setVisibility(Visibility::Visible);
             value->setString("GO");
             return;
         }
@@ -84,6 +89,10 @@ public:
                 value->setVisibility(Visibility::Visible);
                 value->setString(btn);
             }
+        } else if (option->getFlags() & Option::Flags::DELIMITER) {
+            value->setVisibility(Visibility::Hidden);
+            name->setStyle(Text::Underlined);
+            name->setOutlineColor(ui->getUiMenu()->getOutlineColor());
         } else {
             value->setVisibility(Visibility::Visible);
             value->setString(option->getValueString());
@@ -94,6 +103,7 @@ public:
     Text *name = nullptr;
     Text *value = nullptr;
     Sprite *sprite = nullptr;
+    Skin::TextGroup textGroup;
     Option *option;
 };
 
@@ -167,7 +177,7 @@ void UIMenu::load(bool isRom, OptionMenu *om) {
     isEmuRunning = ui->getUiEmu()->isVisible();
     setAlpha(isEmuRunning ? (uint8_t) (alpha - 50) : (uint8_t) alpha);
 
-    optionIndex = 0;
+    optionIndex = optionMenu->parent || isRomMenu ? 0 : 1;
     optionCount = (int) (optionMenu->childs.size() + optionMenu->option_ids.size());
 
     if (isEmuRunning) {
@@ -186,6 +196,7 @@ void UIMenu::load(bool isRom, OptionMenu *om) {
         line->setVisibility(Visibility::Hidden);
     }
 
+    // add main options
     int line_index = 0;
     for (unsigned int i = 0; i < optionMenu->option_ids.size(); i++) {
 
@@ -213,6 +224,7 @@ void UIMenu::load(bool isRom, OptionMenu *om) {
         line_index++;
     }
 
+    // add child's menus options
     for (unsigned i = 0; i < optionMenu->childs.size(); i++) {
 
         if (i >= lines.size()) {
@@ -262,16 +274,35 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
     // UP
     if (keys & Input::Key::Up) {
         optionIndex--;
-        if (optionIndex < 0)
+        if (optionIndex < 0) {
             optionIndex = optionCount - 1;
+        }
+        Option *option = lines[optionIndex]->option;
+        while (option && (option->getFlags() & Option::Flags::DELIMITER)) {
+            optionIndex--;
+            if (optionIndex < 0) {
+                optionIndex = optionCount - 1;
+            }
+            option = lines[optionIndex]->option;
+        }
         updateHighlight();
     }
 
     // DOWN
     if (keys & Input::Key::Down) {
         optionIndex++;
-        if (optionIndex >= optionCount)
+        if (optionIndex >= optionCount) {
             optionIndex = 0;
+        }
+        Option *option = lines[optionIndex]->option;
+        while (option && (option->getFlags() & Option::Flags::DELIMITER)) {
+            optionIndex++;
+            if (optionIndex >= optionCount) {
+                optionIndex = 0;
+            }
+            option = lines[optionIndex]->option;
+        }
+
         updateHighlight();
     }
 

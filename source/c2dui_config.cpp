@@ -26,6 +26,7 @@ Config::Config(const std::string &home, int ver) {
     /////////////////////////////////////////////////
     /// main/gui config
     /////////////////////////////////////////////////
+    append("MAIN_OPTIONS", {}, 0, 1000, Option::Flags::DELIMITER);
     append("MAIN", {"MAIN"}, 0, Option::Id::MENU_MAIN, Option::Flags::MENU);
     append("SHOW", {"ALL", "FAVORITES"}, 0, Option::Id::GUI_SHOW_ALL);
     append("SHOW_CLONES", {"OFF", "ON"}, 0, Option::Id::GUI_SHOW_CLONES);
@@ -54,6 +55,7 @@ Config::Config(const std::string &home, int ver) {
     /////////////////////////////////////////////////
     /// default rom config
     /////////////////////////////////////////////////
+    append("DEFAULT_ROMS_OPTIONS", {}, 0, 1001, Option::Flags::DELIMITER);
     append("EMULATION", {"EMULATION"}, 0, Option::Id::MENU_ROM_OPTIONS, Option::Flags::MENU);
     append("SCALING", {"NONE", "2X", "3X", "FIT", "FIT 4:3", "FULL"}, 2, Option::Id::ROM_SCALING);
     append("FILTER", {"POINT", "LINEAR"}, 0, Option::Id::ROM_FILTER);
@@ -158,6 +160,9 @@ void Config::load(RomList::Rom *rom) {
             }
 
             for (auto &option : *options) {
+                if (option.getFlags() & Option::Flags::DELIMITER) {
+                    continue;
+                }
                 if (option.getFlags() & Option::Flags::MENU) {
                     settings = config_setting_lookup(settings_root, option.getName().c_str());
                 }
@@ -231,6 +236,9 @@ void Config::save(RomList::Rom *rom) {
     }
 
     for (auto &option : *options) {
+        if (option.getFlags() & Option::Flags::DELIMITER) {
+            continue;
+        }
         if (option.getFlags() & Option::Flags::MENU) {
             sub_setting = config_setting_add(setting_fba, option.getName().c_str(), CONFIG_TYPE_GROUP);
             continue;

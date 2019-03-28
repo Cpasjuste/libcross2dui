@@ -20,7 +20,8 @@ namespace c2dui {
             MENU = BIT(0),
             INTEGER = BIT(1),
             INPUT = BIT(2),
-            HIDDEN = BIT(3)
+            HIDDEN = BIT(3),
+            DELIMITER = BIT(4)
         };
 
         enum Id {
@@ -89,7 +90,7 @@ namespace c2dui {
         Option(const std::string &text, const std::vector<std::string> &options,
                int defaultValue, int id, unsigned int flags = INTEGER);
 
-        std::string getName()const;
+        std::string getName() const;
 
         std::string getInfo() const;
 

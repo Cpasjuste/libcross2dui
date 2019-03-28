@@ -26,8 +26,8 @@ OptionMenu::OptionMenu(OptionMenu *parent, std::vector<Option> *options, bool is
         }
 
         if (option.getFlags() & Option::Flags::MENU) {
-            //printf("NEW MENU: %s (%i)\n", option.getName(), option.index);
-            if (i == 0 && !isRomCfg) {
+            // 0 == MAIN_OPTIONS DELIMITER
+            if (i == 1 && !isRomCfg) {
                 menu->title = option.getName();
             } else {
                 menu = new OptionMenu(this, nullptr);
