@@ -44,6 +44,7 @@ namespace c2dui {
         OptionMenu *optionMenu = nullptr;
         std::vector<Option> *options;
         c2d::TweenPosition *tweenPosition;
+        Skin::TextGroup textGroup;
         int optionIndex = 0;
         int optionCount = 0;
         bool isRomMenu = false;

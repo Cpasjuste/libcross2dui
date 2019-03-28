@@ -40,7 +40,7 @@ public:
         value->setOutlineColor(textGroup.outlineColor);
         value->setOrigin(Origin::Left);
         value->setPosition((getSize().x * 0.66f) + 16, getSize().y / 2);
-        value->setWidth((getSize().x * 0.33f) - 32);
+        value->setWidth((getSize().x * 0.5f) - 32);
         add(value);
 
         sprite = new Sprite();
@@ -126,14 +126,14 @@ UIMenu::UIMenu(UIMain *ui) : RectangleShape(Vector2f(0, 0)) {
     add(title);
 
     // calculate lines per menu
-    Skin::TextGroup textGroup = ui->getSkin()->getText({"OPTIONS_MENU", "ITEMS_TEXT"});
+    textGroup = ui->getSkin()->getText({"OPTIONS_MENU", "ITEMS_TEXT"});
     float line_height = ui->getSkin()->getFont()->getLineSpacing(textGroup.size) + 4;
     int max_lines = (int) ((getSize().y - start_y) / line_height) * 2;
 
     // add selection rectangle (highlight)
     highlight = new RectangleShape({16, 16});
     ui->getSkin()->loadRectangleShape(highlight, {"SKIN_CONFIG", "HIGHLIGHT"});
-    highlight->setSize(((getSize().x / 2) * 0.3f) - 4, line_height);
+    highlight->setSize(((getSize().x / 2) * 0.5f) - 4, line_height);
     add(highlight);
 
     // add lines of text
@@ -257,9 +257,14 @@ void UIMenu::load(bool isRom, OptionMenu *om) {
 
 void UIMenu::updateHighlight() {
 
-    Vector2f pos = {lines[optionIndex]->value->getPosition().x - 6,
-                    lines[optionIndex]->getPosition().y};
+    MenuLine *line = lines[optionIndex];
+    Vector2f pos = {line->value->getPosition().x - 6, line->getPosition().y};
     highlight->setPosition(pos);
+    highlight->setSize(line->value->getLocalBounds().width + 12, highlight->getSize().y);
+    for (size_t i = 0; i < lines.size(); i++) {
+        Color color = (int) i == optionIndex ? getOutlineColor() : textGroup.outlineColor;
+        lines.at(i)->value->setOutlineColor(color);
+    }
 }
 
 bool UIMenu::onInput(c2d::Input::Player *players) {
@@ -438,6 +443,7 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
     }
 
     if (option_changed) {
+        updateHighlight();
         if (isRomMenu) {
             ui->getConfig()->save(ui->getUiRomList()->getSelection());
         } else {
