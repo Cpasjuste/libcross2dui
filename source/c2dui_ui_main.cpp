@@ -156,26 +156,16 @@ int UIMain::getFontSize() {
 
 void UIMain::updateInputMapping(bool isRomConfig) {
 
-    if (isRomConfig) {
-        getInput()->setKeyboardMapping(config->getRomPlayerInputKeys(0));
-        int dz = config->get(Option::Id::JOY_DEADZONE, true)->getValueInt();
-        for (int i = 0; i < PLAYER_MAX; i++) {
-            getInput()->setJoystickMapping(i, config->getRomPlayerInputButtons(i), dz);
-            getInput()->players[i].lx.id = config->get(Option::Id::JOY_AXIS_LX, true)->getValueInt();
-            getInput()->players[i].ly.id = config->get(Option::Id::JOY_AXIS_LY, true)->getValueInt();
-            getInput()->players[i].rx.id = config->get(Option::Id::JOY_AXIS_RX, true)->getValueInt();
-            getInput()->players[i].ry.id = config->get(Option::Id::JOY_AXIS_RY, true)->getValueInt();
-        }
-    } else {
-        getInput()->setKeyboardMapping(config->getGuiPlayerInputKeys(0));
-        int dz = config->get(Option::Id::JOY_DEADZONE)->getValueInt();
-        for (int i = 0; i < PLAYER_MAX; i++) {
-            getInput()->setJoystickMapping(i, config->getGuiPlayerInputButtons(i), dz);
-            getInput()->players[i].lx.id = config->get(Option::Id::JOY_AXIS_LX)->getValueInt();
-            getInput()->players[i].ly.id = config->get(Option::Id::JOY_AXIS_LY)->getValueInt();
-            getInput()->players[i].rx.id = config->get(Option::Id::JOY_AXIS_RX)->getValueInt();
-            getInput()->players[i].ry.id = config->get(Option::Id::JOY_AXIS_RY)->getValueInt();
-        }
+    printf("updateInputMapping: isRomConfig == %i\n", isRomConfig);
+
+    getInput()->setKeyboardMapping(config->getPlayerInputKeys(0, isRomConfig));
+    int dz = config->get(Option::Id::JOY_DEADZONE, isRomConfig)->getValueInt();
+    for (int i = 0; i < PLAYER_MAX; i++) {
+        getInput()->setJoystickMapping(i, config->getPlayerInputButtons(i, isRomConfig), dz);
+        getInput()->players[i].lx.id = config->get(Option::Id::JOY_AXIS_LX, isRomConfig)->getValueInt();
+        getInput()->players[i].ly.id = config->get(Option::Id::JOY_AXIS_LY, isRomConfig)->getValueInt();
+        getInput()->players[i].rx.id = config->get(Option::Id::JOY_AXIS_RX, isRomConfig)->getValueInt();
+        getInput()->players[i].ry.id = config->get(Option::Id::JOY_AXIS_RY, isRomConfig)->getValueInt();
     }
 
 #ifdef __SWITCH__

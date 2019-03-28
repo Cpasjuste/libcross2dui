@@ -45,15 +45,11 @@ namespace c2dui {
 
         bool hide(int id, bool isRom = false);
 
+        virtual int *getPlayerInputKeys(int player, bool isRom = false);
+
+        virtual int *getPlayerInputButtons(int player, bool isRom = false);
+
         virtual std::vector<RomList::Hardware> *getHardwareList();
-
-        virtual int *getGuiPlayerInputKeys(int player);
-
-        virtual int *getGuiPlayerInputButtons(int player);
-
-        virtual int *getRomPlayerInputKeys(int player);
-
-        virtual int *getRomPlayerInputButtons(int player);
 
     private:
         std::vector<RomList::Hardware> hardwareList;
