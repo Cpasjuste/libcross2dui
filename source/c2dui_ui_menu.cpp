@@ -117,7 +117,7 @@ UIMenu::UIMenu(UIMain *ui) : RectangleShape(Vector2f(0, 0)) {
 
     // calculate lines per menu
     Skin::TextGroup textGroup = ui->getSkin()->getText({"OPTIONS_MENU", "ITEMS_TEXT"});
-    float line_height = ui->getSkin()->getFont()->getLineSpacing((unsigned int) textGroup.size) + 4;
+    float line_height = ui->getSkin()->getFont()->getLineSpacing(textGroup.size) + 4;
     int max_lines = (int) ((getSize().y - start_y) / line_height) * 2;
 
     // add selection rectangle (highlight)

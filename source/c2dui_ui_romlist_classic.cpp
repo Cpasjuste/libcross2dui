@@ -275,7 +275,7 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
                 if (res == MessageBox::LEFT) {
                     rom_list->removeFav(getSelection());
                     Option *opt = ui->getConfig()->get(Option::Id::GUI_SHOW_ALL);
-                    if (strcmp(opt->getValueString(), "FAVORITES") == 0) {
+                    if (opt->getValueString() == "FAVORITES") {
                         // update list if we are in favorites
                         updateRomList();
                     }

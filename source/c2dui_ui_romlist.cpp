@@ -76,7 +76,7 @@ void UIRomList::filterRomList() {
     // psnes and pnes have only 2 (0/1) values, so work with value string
     Option *opt = ui->getConfig()->get(Option::Id::GUI_SHOW_ALL);
     int showAll = opt->getIndex();
-    if (strcmp(opt->getValueString(), "FAVORITES") == 0) {
+    if (opt->getValueString() == "FAVORITES") {
         showAll = 2;
     }
 

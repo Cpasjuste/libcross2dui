@@ -89,13 +89,13 @@ namespace c2dui {
         Option(const std::string &text, const std::vector<std::string> &options,
                int defaultValue, int id, unsigned int flags = INTEGER);
 
-        const char *getName();
+        std::string getName()const;
 
         std::string getInfo() const;
 
         void setInfo(const std::string &info);
 
-        const char *getValueString();
+        std::string getValueString() const;
 
         void setValueString(const std::string &value);
 

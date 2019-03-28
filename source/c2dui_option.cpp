@@ -18,8 +18,8 @@ Option::Option(const std::string &text,
     this->id = id;
 }
 
-const char *Option::getName() {
-    return text.c_str();
+std::string Option::getName() const {
+    return text;
 }
 
 std::string Option::getInfo() const {
@@ -34,11 +34,11 @@ std::vector<std::string> *Option::getValues() {
     return &options;
 }
 
-const char *Option::getValueString() {
+std::string Option::getValueString() const {
     if ((size_t) idx >= options.size()) {
         return "NONE";
     }
-    return options[idx].c_str();
+    return options[idx];
 }
 
 void Option::setValueString(const std::string &value) {

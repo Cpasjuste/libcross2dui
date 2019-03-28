@@ -156,8 +156,6 @@ int UIMain::getFontSize() {
 
 void UIMain::updateInputMapping(bool isRomConfig) {
 
-    printf("updateInputMapping: isRomConfig == %i\n", isRomConfig);
-
     getInput()->setKeyboardMapping(config->getPlayerInputKeys(0, isRomConfig));
     int dz = config->get(Option::Id::JOY_DEADZONE, isRomConfig)->getValueInt();
     for (int i = 0; i < PLAYER_MAX; i++) {

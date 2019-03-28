@@ -159,11 +159,11 @@ void Config::load(RomList::Rom *rom) {
 
             for (auto &option : *options) {
                 if (option.getFlags() & Option::Flags::MENU) {
-                    settings = config_setting_lookup(settings_root, option.getName());
+                    settings = config_setting_lookup(settings_root, option.getName().c_str());
                 }
                 if (settings) {
                     int value = 0;
-                    if (config_setting_lookup_int(settings, option.getName(), &value)) {
+                    if (config_setting_lookup_int(settings, option.getName().c_str(), &value)) {
                         if (option.getFlags() & Option::Flags::INPUT) {
                             option.setValueInt(value);
                         } else {
@@ -232,10 +232,10 @@ void Config::save(RomList::Rom *rom) {
 
     for (auto &option : *options) {
         if (option.getFlags() & Option::Flags::MENU) {
-            sub_setting = config_setting_add(setting_fba, option.getName(), CONFIG_TYPE_GROUP);
+            sub_setting = config_setting_add(setting_fba, option.getName().c_str(), CONFIG_TYPE_GROUP);
             continue;
         }
-        config_setting_t *setting = config_setting_add(sub_setting, option.getName(), CONFIG_TYPE_INT);
+        config_setting_t *setting = config_setting_add(sub_setting, option.getName().c_str(), CONFIG_TYPE_INT);
         if (option.getFlags() & Option::Flags::INPUT) {
             config_setting_set_int(setting, option.getValueInt());
         } else {
