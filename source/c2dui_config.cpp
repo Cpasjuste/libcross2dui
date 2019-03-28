@@ -26,7 +26,7 @@ Config::Config(const std::string &home, int ver) {
     /////////////////////////////////////////////////
     /// main/gui config
     /////////////////////////////////////////////////
-    append("MAIN_OPTIONS", {}, 0, 1000, Option::Flags::DELIMITER);
+    append("UI_OPTIONS", {}, 0, 1000, Option::Flags::DELIMITER);
     append("MAIN", {"MAIN"}, 0, Option::Id::MENU_MAIN, Option::Flags::MENU);
     append("SHOW", {"ALL", "FAVORITES"}, 0, Option::Id::GUI_SHOW_ALL);
     append("SHOW_CLONES", {"OFF", "ON"}, 0, Option::Id::GUI_SHOW_CLONES);

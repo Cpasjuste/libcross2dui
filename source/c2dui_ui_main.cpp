@@ -156,16 +156,26 @@ int UIMain::getFontSize() {
 
 void UIMain::updateInputMapping(bool isRomConfig) {
 
-    getInput()->setKeyboardMapping(config->getPlayerInputKeys(0, isRomConfig));
-    int dz = config->get(Option::Id::JOY_DEADZONE, isRomConfig)->getValueInt();
-    for (int i = 0; i < PLAYER_MAX; i++) {
-        getInput()->setJoystickMapping(i, config->getPlayerInputButtons(i, isRomConfig), dz);
-        getInput()->players[i].lx.id = config->get(Option::Id::JOY_AXIS_LX, isRomConfig)->getValueInt();
-        getInput()->players[i].ly.id = config->get(Option::Id::JOY_AXIS_LY, isRomConfig)->getValueInt();
-        getInput()->players[i].rx.id = config->get(Option::Id::JOY_AXIS_RX, isRomConfig)->getValueInt();
-        getInput()->players[i].ry.id = config->get(Option::Id::JOY_AXIS_RY, isRomConfig)->getValueInt();
+    if (isRomConfig) {
+        getInput()->setKeyboardMapping(config->getPlayerInputKeys(0, true));
+        int dz = config->get(Option::Id::JOY_DEADZONE, true)->getValueInt();
+        for (int i = 0; i < PLAYER_MAX; i++) {
+            getInput()->setJoystickMapping(i, config->getPlayerInputButtons(i, true), dz);
+            getInput()->players[i].lx.id = config->get(Option::Id::JOY_AXIS_LX, true)->getValueInt();
+            getInput()->players[i].ly.id = config->get(Option::Id::JOY_AXIS_LY, true)->getValueInt();
+            getInput()->players[i].rx.id = config->get(Option::Id::JOY_AXIS_RX, true)->getValueInt();
+            getInput()->players[i].ry.id = config->get(Option::Id::JOY_AXIS_RY, true)->getValueInt();
+        }
+    } else {
+        getInput()->setKeyboardMapping(C2D_DEFAULT_KB_KEYS);
+        for (int i = 0; i < PLAYER_MAX; i++) {
+            getInput()->setJoystickMapping(i, C2D_DEFAULT_JOY_KEYS);
+            getInput()->players[i].lx.id = KEY_JOY_AXIS_LX;
+            getInput()->players[i].ly.id = KEY_JOY_AXIS_LY;
+            getInput()->players[i].rx.id = KEY_JOY_AXIS_RX;
+            getInput()->players[i].ry.id = KEY_JOY_AXIS_RY;
+        }
     }
-
 #ifdef __SWITCH__
     bool single_joy_mode = config->get(Option::Id::JOY_SINGLEJOYCON)->getValueBool();
     ((SWITCHInput *) getInput())->setSingleJoyconMode(single_joy_mode);
