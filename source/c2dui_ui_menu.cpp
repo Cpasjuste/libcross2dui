@@ -355,24 +355,6 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
                         ui->getUiEmu()->getVideo()->getTexture()->setShader(option->getIndex());
                     }
                     break;
-                case Option::Id::ROM_FORCE_60HZ:
-                    if (option->getValueBool()) {
-                        ui->getConfig()->get(Option::Id::ROM_FORCE_50HZ, isRomMenu)->setValueBool(false);
-                        int idx = optionIndex;
-                        load(isRomMenu, optionMenu);
-                        optionIndex = idx;
-                        updateHighlight();
-                    }
-                    break;
-                case Option::Id::ROM_FORCE_50HZ:
-                    if (option->getValueBool()) {
-                        ui->getConfig()->get(Option::Id::ROM_FORCE_60HZ, isRomMenu)->setValueBool(false);
-                        int idx = optionIndex;
-                        load(isRomMenu, optionMenu);
-                        optionIndex = idx;
-                        updateHighlight();
-                    }
-                    break;
 #ifdef __SWITCH__
                 case Option::Id::JOY_SINGLEJOYCON:
                     ((SWITCHInput *) ui->getInput())->setSingleJoyconMode(option->getValueBool());
