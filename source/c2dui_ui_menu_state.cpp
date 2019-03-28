@@ -219,20 +219,13 @@ UIStateMenu::UIStateMenu(UIMain *u) : RectangleShape(Vector2f(16, 16)) {
 void UIStateMenu::setVisibility(c2d::Visibility visibility, bool tweenPlay) {
 
     if (ui->getUiEmu()) {
-        isEmuRunning = ui->getUiEmu()->isVisible();
-        // should always be the case...
-        if (isEmuRunning) {
-            // if frameskip is enabled, we may get a black buffer,
-            // force a frame to be drawn
-            ui->getUiEmu()->updateFb();
+        if (visibility == Visibility::Visible) {
+            title->setString(ui->getUiRomList()->getSelection()->name);
+            for (auto &state : uiStateList->states) {
+                state->setRom(ui->getUiRomList()->getSelection());
+            }
+            uiStateList->setSelection(0);
         }
-
-        title->setString(ui->getUiRomList()->getSelection()->name);
-
-        for (auto &state : uiStateList->states) {
-            state->setRom(ui->getUiRomList()->getSelection());
-        }
-        uiStateList->setSelection(0);
     }
 
     RectangleShape::setVisibility(visibility, tweenPlay);
@@ -250,6 +243,7 @@ bool UIStateMenu::onInput(c2d::Input::Player *players) {
 
     // FIRE1
     if (key & Input::Key::Fire1) {
+        isEmuRunning = ui->getUiEmu()->isVisible();
         if (isEmuRunning) {
             UIState *state = uiStateList->getSelection();
             if (state->exist) {

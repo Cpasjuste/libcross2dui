@@ -183,7 +183,8 @@ void UIMenu::load(bool isRom, OptionMenu *om) {
     if (isEmuRunning) {
         // if frameskip is enabled, we may get a black buffer,
         // force a frame to be drawn
-        ui->getUiEmu()->updateFb();
+        // not needed anymore.. no frameskip option
+        // ui->getUiEmu()->updateFb();
     }
 
     if (isRomMenu) {

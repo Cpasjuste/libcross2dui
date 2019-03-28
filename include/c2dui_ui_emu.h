@@ -23,12 +23,6 @@ namespace c2dui {
 
         virtual void resume();
 
-        virtual void updateFb() {};
-
-        virtual void updateFrame() {};
-
-        virtual void renderFrame(bool draw = true, int drawFps = false, float fps = 0) {};
-
         UIMain *getUi();
 
         C2DUIVideo *getVideo();
