@@ -155,7 +155,7 @@ void UIEmu::stop() {
         video = nullptr;
     }
 
-    ui->getUiHighlight()->setVisibility(Visibility::Visible);
+    //ui->getUiHighlight()->setVisibility(Visibility::Visible);
     ui->updateInputMapping(false);
     setVisibility(Visibility::Hidden);
 }

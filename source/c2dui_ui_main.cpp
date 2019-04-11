@@ -24,9 +24,9 @@ UIMain::~UIMain() {
     // are deleted by the renderer
 }
 
-void UIMain::init(UIRomList *uiRomList, UIMenu *uiMenu,
-                  UIEmu *uiEmu, UIStateMenu *uiState) {
-
+void UIMain::init(UIRomList *_uiRomList, UIMenu *_uiMenu,
+                  UIEmu *_uiEmu, UIStateMenu *_uiState) {
+#if 0
     uiHighlight = new UIHighlight();
     skin->loadRectangleShape(uiHighlight, {"SKIN_CONFIG", "HIGHLIGHT"});
     float alpha = uiHighlight->getAlpha();
@@ -38,20 +38,21 @@ void UIMain::init(UIRomList *uiRomList, UIMenu *uiMenu,
     uiHighlight->setLayer(1);
     uiHighlight->setVisibility(Visibility::Hidden);
     add(uiHighlight);
+#endif
 
-    this->uiRomList = uiRomList;
-    this->uiRomList->updateRomList();
-    add(this->uiRomList);
+    uiRomList = _uiRomList;
+    uiRomList->updateRomList();
+    add(uiRomList);
 
     // build menus from options
-    this->uiMenu = uiMenu;
-    add(this->uiMenu);
+    uiMenu = _uiMenu;
+    add(uiMenu);
 
-    this->uiEmu = uiEmu;
-    add(this->uiEmu);
+    uiEmu = _uiEmu;
+    add(uiEmu);
 
-    this->uiState = uiState;
-    add(this->uiState);
+    uiState = _uiState;
+    add(uiState);
 
     // scaling factor mainly used for borders,
     // based on switch resolution..
