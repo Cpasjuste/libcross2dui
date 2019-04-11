@@ -31,7 +31,7 @@ public:
         name->setOutlineColor(textGroup.outlineColor);
         name->setOrigin(Origin::Left);
         name->setPosition(16, getSize().y / 2);
-        name->setWidth((getSize().x * 0.66f) - 32);
+        name->setSizeMax((getSize().x * 0.66f) - 32, 0);
         add(name);
 
         value = new Text("OPTION VALUE,)'", textGroup.size, font);
@@ -40,7 +40,7 @@ public:
         value->setOutlineColor(textGroup.outlineColor);
         value->setOrigin(Origin::Left);
         value->setPosition((getSize().x * 0.66f) + 16, getSize().y / 2);
-        value->setWidth((getSize().x * 0.5f) - 32);
+        value->setSizeMax((getSize().x * 0.5f) - 32, 0);
         add(value);
 
         sprite = new Sprite();

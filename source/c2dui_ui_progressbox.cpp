@@ -20,7 +20,7 @@ UIProgressBox::UIProgressBox(UIMain *gui)
 
     title = new Text("TITLE", C2D_DEFAULT_CHAR_SIZE, gui->getSkin()->getFont());
     title->setPosition(margin, margin + 16);
-    title->setWidth(w - (margin * 2));
+    title->setSizeMax(w - (margin * 2), 0);
     title->setOutlineThickness(2);
     title->setOutlineColor(Color::Black);
     add(title);
@@ -45,7 +45,7 @@ UIProgressBox::UIProgressBox(UIMain *gui)
 
     message = new Text("MESSAGE", (unsigned int) gui->getFontSize(), gui->getSkin()->getFont());
     message->setPosition(margin, progress_bg->getPosition().y - C2D_DEFAULT_CHAR_SIZE - 16);
-    message->setWidth(w - (margin * 2));
+    message->setSizeMax(w - (margin * 2), 0);
     message->setOutlineThickness(2);
     message->setOutlineColor(Color::Black);
     add(message);

@@ -412,7 +412,7 @@ void Skin::loadText(c2d::Text *text, const std::vector<std::string> &tree) {
     text->setOrigin(textGroup.origin);
     text->setPosition(textGroup.rect.left, textGroup.rect.top);
     if (textGroup.rect.width > 0) {
-        text->setWidth(textGroup.rect.width);
+        text->setSizeMax(textGroup.rect.width, 0);
     }
 }
 
