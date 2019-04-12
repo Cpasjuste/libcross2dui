@@ -51,3 +51,11 @@ add_library(${PROJECT_NAME} ${CROSS2DUI_SOURCE})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CROSS2DUI_INCLUDE})
 target_compile_options(${PROJECT_NAME} PUBLIC ${FLAGS})
 target_link_libraries(${PROJECT_NAME} cross2d ssscrap)
+# ssscrap
+file(STRINGS "../ssscrap/ss_dev_id.key" DEVID)
+file(STRINGS "../ssscrap/ss_dev_pwd.key" DEVPWD)
+file(STRINGS "../ssscrap/ss_user_id.key" SSID)
+file(STRINGS "../ssscrap/ss_user_pwd.key" SSPWD)
+target_compile_options(
+        ${PROJECT_NAME} PRIVATE -DDEVID=\"${DEVID}\"
+        -DDEVPWD=\"${DEVPWD}\" -DSSID=\"${SSID}\" -DSSPWD=\"${SSPWD}\")

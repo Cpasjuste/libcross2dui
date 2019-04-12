@@ -4,6 +4,7 @@
 #include <algorithm>
 
 #include "c2dui.h"
+#include "ss_api.h"
 
 /// pFBA
 #define BDF_ORIENTATION_FLIPPED     (1 << 1)
@@ -11,6 +12,7 @@
 
 using namespace c2d;
 using namespace c2dui;
+using namespace ss_api;
 
 class UIRomInfo : public Rectangle {
 
@@ -38,12 +40,14 @@ public:
         previewText = new Text("", (unsigned int) fontSize, font);
         ui->getSkin()->loadText(previewText, {"MAIN", "ROM_IMAGE", "TEXT"});
         previewBox->add(previewText);
-
         add(previewBox);
+
+        sscrap = new Api(DEVID, DEVPWD, "SSSCRAP");
     }
 
     ~UIRomInfo() override {
         printf("~UIRomInfo\n");
+        delete (sscrap);
     }
 
     bool loadTexture(RomList::Rom *rom, bool isPreview) {
@@ -75,46 +79,76 @@ public:
 
     void load(RomList::Rom *rom, bool isPreview = false) {
 
+        if (texture) {
+            delete (texture);
+            texture = nullptr;
+        }
+
         if (!rom) {
             printf("load(%s, %i)\n", "nullptr", isPreview);
             infoText->setVisibility(Visibility::Hidden);
         } else {
             printf("load(%s, %i)\n", rom->name.c_str(), isPreview);
-            if (texture) {
-                delete (texture);
-                texture = nullptr;
+            /// WIP
+            Api::JeuInfos jeuInfos = sscrap->jeuInfos("cache/" + rom->name + ".json");
+            if (jeuInfos.jeu.id.empty()) {
+                jeuInfos = sscrap->jeuInfos("", "", "", "3", "rom", rom->name, "", "", SSID, SSPWD);
+                if (!jeuInfos.jeu.id.empty()) {
+                    jeuInfos.save("cache/" + rom->name + ".json");
+                    std::vector<Jeu::Media> medias = sscrap->getMedia(
+                            jeuInfos.jeu, Jeu::Media::Type::Mixrbv2, Api::Region::WOR);
+                    if (!medias.empty()) {
+                        std::string name = Utility::removeExt(rom->drv_name);
+                        std::string type = isPreview ? "previews" : "titles";
+                        std::string home_path = *ui->getConfig()->getHomePath();
+                        std::string path = home_path + type + "/" + name + ".png";
+                        if (!((C2DRenderer *) ui)->getIo()->exist(path)) {
+                            sscrap->download(medias[0], path);
+                        }
+                    }
+                }
             }
+
+            if (!jeuInfos.jeu.id.empty()) {
+                printf("jeuInfos: nom: %s, system: %s\n",
+                       jeuInfos.jeu.noms[0].text.c_str(), jeuInfos.jeu.systemenom.c_str());
+            }
+            /// WIP
 
             // load title/preview texture
             loadTexture(rom, !isPreview);
 
-            // update info text
-            info = "FILE: ";
-            info += rom->drv_name;
-            info += "\nSTATUS: ";
-            info += rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE";
-            if (rom->year) {
-                info += "\nYEAR: ";
-                info += rom->year;
-            }
-            if (rom->system) {
-                info += "\nSYSTEM: ";
-                info += rom->system;
-            }
-            if (rom->manufacturer) {
-                info += "\nMANUFACTURER: ";
-                info += rom->manufacturer;
-            }
-            Option *opt = ui->getConfig()->get(Option::Id::ROM_ROTATION);
-            if (opt && !(opt->getFlags() & Option::Flags::HIDDEN)) {
-                info += "\nROTATION: ";
-                if (rom->flags & BDF_ORIENTATION_VERTICAL) {
-                    info += "VERTICAL";
-                } else {
-                    info += "HORIZONTAL";
+            if (!jeuInfos.jeu.id.empty()) {
+                info = jeuInfos.jeu.synopsis[0].text;
+            } else {
+                // update info text
+                info = "FILE: ";
+                info += rom->drv_name;
+                info += "\nSTATUS: ";
+                info += rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE";
+                if (rom->year) {
+                    info += "\nYEAR: ";
+                    info += rom->year;
                 }
-                if (rom->flags & BDF_ORIENTATION_FLIPPED) {
-                    info += " / FLIPPED";
+                if (rom->system) {
+                    info += "\nSYSTEM: ";
+                    info += rom->system;
+                }
+                if (rom->manufacturer) {
+                    info += "\nMANUFACTURER: ";
+                    info += rom->manufacturer;
+                }
+                Option *opt = ui->getConfig()->get(Option::Id::ROM_ROTATION);
+                if (opt && !(opt->getFlags() & Option::Flags::HIDDEN)) {
+                    info += "\nROTATION: ";
+                    if (rom->flags & BDF_ORIENTATION_VERTICAL) {
+                        info += "VERTICAL";
+                    } else {
+                        info += "HORIZONTAL";
+                    }
+                    if (rom->flags & BDF_ORIENTATION_FLIPPED) {
+                        info += " / FLIPPED";
+                    }
                 }
             }
             infoText->setString(info);
@@ -129,6 +163,7 @@ public:
     Text *infoText = nullptr;
     RectangleShape *previewBox = nullptr;
     Text *previewText = nullptr;
+    Api *sscrap = nullptr;
     std::string info;
 };
 

@@ -328,7 +328,8 @@ void Skin::loadRectangleShape(c2d::RectangleShape *shape, const std::vector<std:
 
 config::Group Skin::createTextGroup(const std::string &name, int size, const c2d::FloatRect &rect,
                                     const c2d::Origin &origin, const c2d::Color &color,
-                                    const c2d::Color &outlineColor, int outlineSize) {
+                                    const c2d::Color &outlineColor, int outlineSize,
+                                    const c2d::Text::Overflow &overflow) {
     config::Group group(name);
     group.addOption({"string", ""});
     group.addOption({"size", size});
@@ -337,6 +338,7 @@ config::Group Skin::createTextGroup(const std::string &name, int size, const c2d
     group.addOption({"outline_size", outlineSize});
     group.addOption({"rectangle", rect});
     group.addOption({"origin", (int) origin});
+    group.addOption({"overflow", (int) overflow});
     return group;
 }
 
@@ -389,6 +391,10 @@ Skin::TextGroup Skin::getText(const std::vector<std::string> &tree) {
     if (option) {
         textGroup.rect = option->getFloatRect();
     }
+    option = group->getOption("overflow");
+    if (option) {
+        textGroup.overflow = (Text::Overflow) option->getInteger();
+    }
 
     textGroup.available = true;
 
@@ -411,9 +417,8 @@ void Skin::loadText(c2d::Text *text, const std::vector<std::string> &tree) {
     text->setOutlineThickness(textGroup.outlineSize);
     text->setOrigin(textGroup.origin);
     text->setPosition(textGroup.rect.left, textGroup.rect.top);
-    if (textGroup.rect.width > 0) {
-        text->setSizeMax(textGroup.rect.width, 0);
-    }
+    text->setOverflow(textGroup.overflow);
+    text->setSizeMax(textGroup.rect.width, textGroup.rect.height);
 }
 
 Skin::Button *Skin::getButton(int id) {
