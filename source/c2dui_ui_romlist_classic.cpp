@@ -14,6 +14,10 @@ using namespace c2d;
 using namespace c2dui;
 using namespace ss_api;
 
+#ifdef __WINDOWS__
+#undef MessageBox
+#endif
+
 class UIRomInfo : public Rectangle {
 
 public:
