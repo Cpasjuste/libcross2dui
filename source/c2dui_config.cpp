@@ -272,8 +272,8 @@ void Config::reset(bool isRom) {
     }
 }
 
-std::string *Config::getHomePath() {
-    return &homePath;
+std::string Config::getHomePath() {
+    return homePath;
 }
 
 std::string *Config::getRomPath(int n) {

@@ -104,7 +104,7 @@ public:
                     if (!medias.empty()) {
                         std::string name = Utility::removeExt(rom->drv_name);
                         std::string type = isPreview ? "previews" : "titles";
-                        std::string home_path = *ui->getConfig()->getHomePath();
+                        std::string home_path = ui->getConfig()->getHomePath();
                         std::string path = home_path + type + "/" + name + ".png";
                         if (!((C2DRenderer *) ui)->getIo()->exist(path)) {
                             sscrap->download(medias[0], path);

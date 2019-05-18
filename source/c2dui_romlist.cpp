@@ -74,7 +74,7 @@ void RomList::build() {
     printf("RomList::build()\n");
 
     // build favorites
-    std::string favPath = *ui->getConfig()->getHomePath() + "favorites.bin";
+    std::string favPath = ui->getConfig()->getHomePath() + "favorites.bin";
     std::ifstream favFile(favPath);
     if (favFile.is_open()) {
         std::string line;
@@ -106,7 +106,7 @@ void RomList::addFav(Rom *rom) {
 
     rom->hardware |= HARDWARE_PREFIX_FAV;
 
-    std::string favPath = *ui->getConfig()->getHomePath() + "favorites.bin";
+    std::string favPath = ui->getConfig()->getHomePath() + "favorites.bin";
     std::ofstream favFile(favPath, std::ios::app);
     if (favFile.is_open()) {
         favFile << rom->path;
@@ -125,7 +125,7 @@ void RomList::removeFav(Rom *rom) {
     rom->hardware &= ~HARDWARE_PREFIX_FAV;
 
     // TODO: only remove specific line ?
-    std::string favPath = *ui->getConfig()->getHomePath() + "favorites.bin";
+    std::string favPath = ui->getConfig()->getHomePath() + "favorites.bin";
     std::ofstream favFile(favPath, std::ios::trunc);
     if (favFile.is_open()) {
         for (auto &r : list) {

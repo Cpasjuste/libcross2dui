@@ -35,7 +35,7 @@ Texture *UIRomList::getPreviewTexture(RomList::Rom *rom, bool isPreview) {
     C2DTexture *texture = nullptr;
     std::string name = Utility::removeExt(rom->drv_name);
     std::string type = isPreview ? "previews" : "titles";
-    std::string home_path = *ui->getConfig()->getHomePath();
+    std::string home_path = ui->getConfig()->getHomePath();
     std::string path;
 
     path = home_path + type + "/" + name + ".png";

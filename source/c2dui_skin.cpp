@@ -12,10 +12,10 @@ using namespace c2dui;
 Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
 
     ui = u;
-    path = ui->getIo()->getDataWritePath() + "skins/";
+    path = ui->getIo()->getHomePath() + "skins/";
 
     // extract config file from zipped skin but create a default one
-    config = new config::Config("SKIN_CONFIG", path + "config.cfg");
+    config = new config::Config("SKIN_CONFIG", path + "default/config.cfg");
 
     std::string skinName = ui->getConfig()->get(Option::GUI_SKIN)->getValueString() + std::string(".zip");
     int configLen = 0;
@@ -30,6 +30,8 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
         path += skinName;
         useZippedSkin = true;
         printf("Skin: zipped skin found: %s\n", path.c_str());
+    } else {
+        path += "default/";
     }
 
     // TODO: cleanup this
@@ -46,7 +48,7 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
             }
         } else {
             std::string buttonPath =
-                    ui->getIo()->getDataWritePath() + "skins/buttons/" + std::to_string(button.id) + ".png";
+                    ui->getIo()->getHomePath() + "skins/buttons/" + std::to_string(button.id) + ".png";
             button.texture = new C2DTexture(buttonPath);
         }
         if (button.texture && !button.texture->available) {

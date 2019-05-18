@@ -13,7 +13,7 @@ namespace c2dui {
 
     public:
 
-        Config(const std::string &homePath, int version);
+        Config(const std::string &home, int version);
 
         virtual ~Config() {};
 
@@ -23,7 +23,7 @@ namespace c2dui {
 
         virtual void reset(bool isRom = true);
 
-        virtual std::string *getHomePath();
+        virtual std::string getHomePath();
 
         virtual std::string *getRomPath(int n = 0);
 
@@ -56,8 +56,9 @@ namespace c2dui {
         std::vector<Option> options_gui;
         std::vector<Option> options_rom;
         std::vector<std::string> roms_paths;
-        std::string homePath;
         std::string configPath;
+        std::string homePath;
+
         int version;
         int keyboard_keys[KEY_COUNT];
         int joystick_keys[KEY_COUNT];

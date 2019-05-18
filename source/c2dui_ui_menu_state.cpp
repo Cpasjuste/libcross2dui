@@ -84,9 +84,9 @@ public:
         memset(path, 0, MAX_PATH);
         memset(shot, 0, MAX_PATH);
         snprintf(path, 1023, "%ssaves/%s%i.sav",
-                 ui->getConfig()->getHomePath()->c_str(), rom->drv_name, id);
+                 ui->getConfig()->getHomePath().c_str(), rom->drv_name, id);
         snprintf(shot, 1023, "%ssaves/%s%i.png",
-                 ui->getConfig()->getHomePath()->c_str(), rom->drv_name, id);
+                 ui->getConfig()->getHomePath().c_str(), rom->drv_name, id);
 
         loadTexture();
     }
