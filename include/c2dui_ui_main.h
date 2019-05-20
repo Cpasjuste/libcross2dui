@@ -45,9 +45,11 @@ namespace c2dui {
 
         void updateInputMapping(bool isRomCfg);
 
-        c2dui::Skin *getSkin();
+        Skin *getSkin();
 
         Config *getConfig();
+
+        Scrapper *getScrapper();
 
         UIHighlight *getUiHighlight();
 
@@ -71,8 +73,9 @@ namespace c2dui {
 
     private:
 
-        c2dui::Config *config = nullptr;
-        c2dui::Skin *skin = nullptr;
+        Config *config = nullptr;
+        Skin *skin = nullptr;
+        Scrapper *scrapper;
         UIHighlight *uiHighlight = nullptr;
         UIMenu *uiMenu = nullptr;
         UIRomList *uiRomList = nullptr;

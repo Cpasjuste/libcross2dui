@@ -35,7 +35,7 @@ namespace c2dui {
         int rom_index = 0;
         bool show_preview = false;
         int title_loaded = 0;
-        int load_delay = 1000;
+        int load_delay = 500;
         c2d::C2DClock timer_load;
     };
 }

@@ -46,12 +46,12 @@ public:
         previewBox->add(previewText);
         add(previewBox);
 
-        sscrap = new Api(DEVID, DEVPWD, "SSSCRAP");
+        //sscrap = new Api(DEVID, DEVPWD, "pemu");
     }
 
     ~UIRomInfo() override {
         printf("~UIRomInfo\n");
-        delete (sscrap);
+        //delete (sscrap);
     }
 
     bool loadTexture(RomList::Rom *rom, bool isPreview) {
@@ -93,9 +93,14 @@ public:
             infoText->setVisibility(Visibility::Hidden);
         } else {
             printf("load(%s, %i)\n", rom->name.c_str(), isPreview);
+            Api::JeuInfos jeuInfos = ui->getScrapper()->scrap->jeuInfos("cache/" + rom->name + ".json");
+            if (jeuInfos.jeu.id.empty()) {
+                ui->getScrapper()->addRom(rom->name);
+            }
+            /*
             /// WIP
             Api::JeuInfos jeuInfos = sscrap->jeuInfos("cache/" + rom->name + ".json");
-            if (jeuInfos.jeu.id.empty()) {
+            Api::JeuInfos jeuInfos = sscrap->jeuInfos("cache/" + rom->name + ".json");
                 jeuInfos = sscrap->jeuInfos("", "", "", "3", "rom", rom->name, "", "", SSID, SSPWD);
                 if (!jeuInfos.jeu.id.empty()) {
                     jeuInfos.save("cache/" + rom->name + ".json");
@@ -106,12 +111,13 @@ public:
                         std::string type = isPreview ? "previews" : "titles";
                         std::string home_path = ui->getConfig()->getHomePath();
                         std::string path = home_path + type + "/" + name + ".png";
-                        if (!((C2DRenderer *) ui)->getIo()->exist(path)) {
+                        if (!ui->getIo()->exist(path)) {
                             sscrap->download(medias[0], path);
                         }
                     }
                 }
             }
+            */
 
             if (!jeuInfos.jeu.id.empty()) {
                 printf("jeuInfos: nom: %s, system: %s\n",
@@ -121,7 +127,6 @@ public:
 
             // load title/preview texture
             loadTexture(rom, !isPreview);
-
             if (!jeuInfos.jeu.id.empty()) {
                 info = jeuInfos.jeu.synopsis[0].text;
             } else {
@@ -167,7 +172,7 @@ public:
     Text *infoText = nullptr;
     RectangleShape *previewBox = nullptr;
     Text *previewText = nullptr;
-    Api *sscrap = nullptr;
+    //Api *sscrap = nullptr;
     std::string info;
 };
 

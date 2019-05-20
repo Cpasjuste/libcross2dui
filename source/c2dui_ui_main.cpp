@@ -16,7 +16,6 @@ using namespace c2d;
 using namespace c2dui;
 
 UIMain::UIMain(const Vector2f &size) : C2DRenderer(size) {
-
 }
 
 UIMain::~UIMain() {
@@ -73,6 +72,8 @@ void UIMain::init(UIRomList *_uiRomList, UIMenu *_uiMenu,
     uiProgressBox = new UIProgressBox(this);
     add(uiProgressBox);
 
+    scrapper = new Scrapper(this);
+
     updateInputMapping(false);
     getInput()->setRepeatDelay(INPUT_DELAY);
 
@@ -121,6 +122,10 @@ Skin *UIMain::getSkin() {
 
 Config *UIMain::getConfig() {
     return config;
+}
+
+Scrapper *UIMain::getScrapper() {
+    return scrapper;
 }
 
 UIHighlight *UIMain::getUiHighlight() {
@@ -182,3 +187,4 @@ void UIMain::updateInputMapping(bool isRomConfig) {
     ((SWITCHInput *) getInput())->setSingleJoyconMode(single_joy_mode);
 #endif
 }
+
