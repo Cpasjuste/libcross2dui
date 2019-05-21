@@ -13,50 +13,68 @@ using namespace ss_api;
 static int scrap_thread(void *ptr) {
 
     auto scrapper = (Scrapper *) ptr;
-    std::vector<std::string> roms;
+    std::string rom;
 
     while (scrapper->running) {
 
-        SDL_Delay(100);
-
+        // get first rom name to be scrapped and remove it from list
         SDL_LockMutex(scrapper->mutex);
-        roms = scrapper->scrapList;
-        scrapper->scrapList.clear();
+        if (!scrapper->scrapList.empty()) {
+            rom = scrapper->scrapList[0];
+            scrapper->scrapList.erase(scrapper->scrapList.begin());
+        }
         SDL_UnlockMutex(scrapper->mutex);
 
-        if (!roms.empty()) {
-            for (const auto &rom : roms) {
+        // if we have nothing to do, sleep a little
+        if (rom.empty()) {
+            SDL_Delay(100);
+            continue;
+        }
 
-                if (!scrapper->running) {
-                    break;
+        std::string cachePath = "cache/" + rom + ".json";
+        // check if json rom already cache exist
+        if (scrapper->main->getIo()->exist(cachePath)) {
+            rom.clear();
+            continue;
+        }
+
+        // scrap rom
+        Api::JeuInfos jeuInfos = scrapper->scrap->jeuInfos("", "", "", "3", "rom", rom, "", "", SSID, SSPWD);
+        if (!jeuInfos.jeu.id.empty()) {
+            // game found, save json data
+            jeuInfos.save(cachePath);
+            rom = c2d::Utility::removeExt(rom);
+            // download title image
+            std::vector<Jeu::Media> medias = scrapper->scrap->getMedia(
+                    jeuInfos.jeu, Jeu::Media::Type::SSTitle, Api::Region::WOR);
+            if (!medias.empty() && scrapper->running) {
+                std::string path = scrapper->main->getConfig()->getTitlesPath() + rom + ".png";
+                if (!scrapper->main->getIo()->exist(path)) {
+                    scrapper->scrap->download(medias[0], path);
                 }
-
-                std::string jsonPath = "cache/" + rom + ".json";
-
-                if (scrapper->main->getIo()->exist(jsonPath)) {
-                    continue;
+            }
+            // download preview image
+            medias = scrapper->scrap->getMedia(
+                    jeuInfos.jeu, Jeu::Media::Type::SS, Api::Region::WOR);
+            if (!medias.empty() && scrapper->running) {
+                std::string path = scrapper->main->getConfig()->getPreviewsPath() + rom + ".png";
+                if (!scrapper->main->getIo()->exist(path)) {
+                    scrapper->scrap->download(medias[0], path);
                 }
-
-                Api::JeuInfos jeuInfos = scrapper->scrap->jeuInfos("cache/" + rom + ".json");
-                if (jeuInfos.jeu.id.empty()) {
-                    jeuInfos = scrapper->scrap->jeuInfos("", "", "", "3", "rom", rom, "", "", SSID, SSPWD);
-                    if (!jeuInfos.jeu.id.empty()) {
-                        jeuInfos.save("cache/" + rom + ".json");
-                        std::vector<Jeu::Media> medias = scrapper->scrap->getMedia(
-                                jeuInfos.jeu, Jeu::Media::Type::Mixrbv2, Api::Region::WOR);
-                        if (!medias.empty()) {
-                            std::string name = c2d::Utility::removeExt(rom);
-                            std::string type = "titles";
-                            std::string home_path = scrapper->main->getConfig()->getHomePath();
-                            std::string path = home_path + type + "/" + name + ".png";
-                            if (!scrapper->main->getIo()->exist(path)) {
-                                scrapper->scrap->download(medias[0], path);
-                            }
-                        }
-                    }
+            }
+            // download mix image
+            medias = scrapper->scrap->getMedia(
+                    jeuInfos.jeu, Jeu::Media::Type::Mixrbv2, Api::Region::WOR);
+            if (!medias.empty() && scrapper->running) {
+                std::string path = scrapper->main->getConfig()->getMixesPath() + rom + ".png";
+                if (!scrapper->main->getIo()->exist(path)) {
+                    scrapper->scrap->download(medias[0], path);
                 }
             }
         }
+
+        // done
+        rom.clear();
     }
 
     return 0;
@@ -75,7 +93,7 @@ void Scrapper::addRom(const std::string &rom) {
     SDL_LockMutex(mutex);
 
     if (std::find(scrapList.begin(), scrapList.end(), rom) == scrapList.end()) {
-        printf("Scrapper::addRom: adding %s\n", rom.c_str());
+        printf("Scrapper::addRom: %s\n", rom.c_str());
         scrapList.insert(scrapList.begin(), rom);
     }
 
@@ -85,8 +103,10 @@ void Scrapper::addRom(const std::string &rom) {
 Scrapper::~Scrapper() {
 
     running = false;
+    SDL_LockMutex(mutex);
     SDL_WaitThread(thread, nullptr);
+    SDL_UnlockMutex(mutex);
     SDL_DestroyMutex(mutex);
     delete (scrap);
-    printf("Scrapper::~Scrapper\n");
+    printf("~Scrapper\n");
 }

@@ -276,6 +276,18 @@ std::string Config::getHomePath() {
     return homePath;
 }
 
+std::string Config::getTitlesPath() {
+    return homePath + "titles/";
+}
+
+std::string Config::getPreviewsPath() {
+    return homePath + "previews/";
+}
+
+std::string Config::getMixesPath() {
+    return homePath + "mixes/";
+}
+
 std::string *Config::getRomPath(int n) {
     if ((size_t) n >= getRomPaths()->size()) {
         return &roms_paths[0];

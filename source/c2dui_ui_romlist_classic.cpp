@@ -45,13 +45,10 @@ public:
         ui->getSkin()->loadText(previewText, {"MAIN", "ROM_IMAGE", "TEXT"});
         previewBox->add(previewText);
         add(previewBox);
-
-        //sscrap = new Api(DEVID, DEVPWD, "pemu");
     }
 
     ~UIRomInfo() override {
         printf("~UIRomInfo\n");
-        //delete (sscrap);
     }
 
     bool loadTexture(RomList::Rom *rom, bool isPreview) {
@@ -93,37 +90,14 @@ public:
             infoText->setVisibility(Visibility::Hidden);
         } else {
             printf("load(%s, %i)\n", rom->name.c_str(), isPreview);
+
             Api::JeuInfos jeuInfos = ui->getScrapper()->scrap->jeuInfos("cache/" + rom->name + ".json");
             if (jeuInfos.jeu.id.empty()) {
                 ui->getScrapper()->addRom(rom->name);
-            }
-            /*
-            /// WIP
-            Api::JeuInfos jeuInfos = sscrap->jeuInfos("cache/" + rom->name + ".json");
-            Api::JeuInfos jeuInfos = sscrap->jeuInfos("cache/" + rom->name + ".json");
-                jeuInfos = sscrap->jeuInfos("", "", "", "3", "rom", rom->name, "", "", SSID, SSPWD);
-                if (!jeuInfos.jeu.id.empty()) {
-                    jeuInfos.save("cache/" + rom->name + ".json");
-                    std::vector<Jeu::Media> medias = sscrap->getMedia(
-                            jeuInfos.jeu, Jeu::Media::Type::Mixrbv2, Api::Region::WOR);
-                    if (!medias.empty()) {
-                        std::string name = Utility::removeExt(rom->drv_name);
-                        std::string type = isPreview ? "previews" : "titles";
-                        std::string home_path = ui->getConfig()->getHomePath();
-                        std::string path = home_path + type + "/" + name + ".png";
-                        if (!ui->getIo()->exist(path)) {
-                            sscrap->download(medias[0], path);
-                        }
-                    }
-                }
-            }
-            */
-
-            if (!jeuInfos.jeu.id.empty()) {
+            } else {
                 printf("jeuInfos: nom: %s, system: %s\n",
                        jeuInfos.jeu.noms[0].text.c_str(), jeuInfos.jeu.systemenom.c_str());
             }
-            /// WIP
 
             // load title/preview texture
             loadTexture(rom, !isPreview);
@@ -172,7 +146,6 @@ public:
     Text *infoText = nullptr;
     RectangleShape *previewBox = nullptr;
     Text *previewText = nullptr;
-    //Api *sscrap = nullptr;
     std::string info;
 };
 

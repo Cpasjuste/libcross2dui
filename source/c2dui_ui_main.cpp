@@ -21,6 +21,7 @@ UIMain::UIMain(const Vector2f &size) : C2DRenderer(size) {
 UIMain::~UIMain() {
     // ui elements (C2DObject)
     // are deleted by the renderer
+    delete (scrapper);
 }
 
 void UIMain::init(UIRomList *_uiRomList, UIMenu *_uiMenu,
