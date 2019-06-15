@@ -2,6 +2,8 @@
 // Created by cpasjuste on 20/05/19.
 //
 
+#ifdef __SSCRAP__
+
 #ifndef PEMU_C2DUI_SCRAPPER_H
 #define PEMU_C2DUI_SCRAPPER_H
 
@@ -32,3 +34,4 @@ namespace c2dui {
 }
 
 #endif //PEMU_C2DUI_SCRAPPER_H
+#endif // SSCRAP

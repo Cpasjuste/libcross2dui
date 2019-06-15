@@ -21,7 +21,9 @@ UIMain::UIMain(const Vector2f &size) : C2DRenderer(size) {
 UIMain::~UIMain() {
     // ui elements (C2DObject)
     // are deleted by the renderer
+#ifdef __SSCRAP__
     delete (scrapper);
+#endif
 }
 
 void UIMain::init(UIRomList *_uiRomList, UIMenu *_uiMenu,
@@ -73,11 +75,12 @@ void UIMain::init(UIRomList *_uiRomList, UIMenu *_uiMenu,
     uiProgressBox = new UIProgressBox(this);
     add(uiProgressBox);
 
-    scrapper = new Scrapper(this);
-
     updateInputMapping(false);
     getInput()->setRepeatDelay(INPUT_DELAY);
 
+#ifdef __SSCRAP__
+    scrapper = new Scrapper(this);
+#endif
 }
 
 void UIMain::setConfig(Config *cfg) {
@@ -123,10 +126,6 @@ Skin *UIMain::getSkin() {
 
 Config *UIMain::getConfig() {
     return config;
-}
-
-Scrapper *UIMain::getScrapper() {
-    return scrapper;
 }
 
 UIHighlight *UIMain::getUiHighlight() {
@@ -189,3 +188,8 @@ void UIMain::updateInputMapping(bool isRomConfig) {
 #endif
 }
 
+#ifdef __SSCRAP__
+Scrapper *UIMain::getScrapper() {
+    return scrapper;
+}
+#endif

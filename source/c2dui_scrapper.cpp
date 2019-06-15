@@ -2,6 +2,8 @@
 // Created by cpasjuste on 20/05/19.
 //
 
+#ifdef __SSCRAP__
+
 #include <algorithm>
 #include <SDL_timer.h>
 #include <c2dui.h>
@@ -39,7 +41,7 @@ static int scrap_thread(void *ptr) {
         }
 
         // scrap rom
-        Api::JeuInfos jeuInfos = scrapper->scrap->jeuInfos("", "", "", "3", "rom", rom, "", "", SSID, SSPWD);
+        Api::JeuInfos jeuInfos = scrapper->scrap->jeuInfos("", "", "", "3", "rom", rom, "", "", SS_ID, SS_PWD);
         if (!jeuInfos.jeu.id.empty()) {
             // game found, save json data
             jeuInfos.save(cachePath);
@@ -83,7 +85,7 @@ static int scrap_thread(void *ptr) {
 Scrapper::Scrapper(UIMain *m) {
 
     main = m;
-    scrap = new Api(DEVID, DEVPWD, "pemu");
+    scrap = new Api(SS_DEV_ID, SS_DEV_PWD, "pemu");
     mutex = SDL_CreateMutex();
     thread = SDL_CreateThread(scrap_thread, "scrap_thread", (void *) this);
 }
@@ -110,3 +112,5 @@ Scrapper::~Scrapper() {
     delete (scrap);
     printf("~Scrapper\n");
 }
+
+#endif // SSCRAP

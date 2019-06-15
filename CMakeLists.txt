@@ -28,6 +28,11 @@ if (UPDATE_CONFIG)
     list(APPEND FLAGS -D__UPDATE_CONFIG__)
 endif ()
 
+if (OPTION_SSCRAP)
+    list(APPEND FLAGS -D__SSCRAP__)
+    list(APPEND LDFLAGS ssscrap)
+endif ()
+
 if (BUILD_VITA)
     #################
     # PSP2 (ps vita)
@@ -50,4 +55,5 @@ endif (BUILD_VITA)
 add_library(${PROJECT_NAME} ${CROSS2DUI_SOURCE})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CROSS2DUI_INCLUDE})
 target_compile_options(${PROJECT_NAME} PUBLIC ${FLAGS})
-target_link_libraries(${PROJECT_NAME} cross2d ssscrap)
+
+target_link_libraries(${PROJECT_NAME} cross2d ${LDFLAGS})

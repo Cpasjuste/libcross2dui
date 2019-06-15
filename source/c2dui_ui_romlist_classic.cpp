@@ -4,7 +4,10 @@
 #include <algorithm>
 
 #include "c2dui.h"
+
+#ifdef __SSCRAP__
 #include "ss_api.h"
+#endif
 
 /// pFBA
 #define BDF_ORIENTATION_FLIPPED     (1 << 1)
@@ -12,7 +15,9 @@
 
 using namespace c2d;
 using namespace c2dui;
+#ifdef __SSCRAP__
 using namespace ss_api;
+#endif
 
 #ifdef __WINDOWS__
 #undef MessageBox
@@ -90,7 +95,7 @@ public:
             infoText->setVisibility(Visibility::Hidden);
         } else {
             printf("load(%s, %i)\n", rom->name.c_str(), isPreview);
-
+#ifdef __SSCRAP__
             Api::JeuInfos jeuInfos = ui->getScrapper()->scrap->jeuInfos("cache/" + rom->name + ".json");
             if (jeuInfos.jeu.id.empty()) {
                 ui->getScrapper()->addRom(rom->name);
@@ -98,42 +103,46 @@ public:
                 printf("jeuInfos: nom: %s, system: %s\n",
                        jeuInfos.jeu.noms[0].text.c_str(), jeuInfos.jeu.systemenom.c_str());
             }
-
+#endif
             // load title/preview texture
             loadTexture(rom, !isPreview);
+#ifdef __SSCRAP__
             if (!jeuInfos.jeu.id.empty()) {
                 info = jeuInfos.jeu.synopsis[0].text;
             } else {
-                // update info text
-                info = "FILE: ";
-                info += rom->drv_name;
-                info += "\nSTATUS: ";
-                info += rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE";
-                if (rom->year) {
-                    info += "\nYEAR: ";
-                    info += rom->year;
+#endif
+            // update info text
+            info = "FILE: ";
+            info += rom->drv_name;
+            info += "\nSTATUS: ";
+            info += rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE";
+            if (rom->year) {
+                info += "\nYEAR: ";
+                info += rom->year;
+            }
+            if (rom->system) {
+                info += "\nSYSTEM: ";
+                info += rom->system;
+            }
+            if (rom->manufacturer) {
+                info += "\nMANUFACTURER: ";
+                info += rom->manufacturer;
+            }
+            Option *opt = ui->getConfig()->get(Option::Id::ROM_ROTATION);
+            if (opt && !(opt->getFlags() & Option::Flags::HIDDEN)) {
+                info += "\nROTATION: ";
+                if (rom->flags & BDF_ORIENTATION_VERTICAL) {
+                    info += "VERTICAL";
+                } else {
+                    info += "HORIZONTAL";
                 }
-                if (rom->system) {
-                    info += "\nSYSTEM: ";
-                    info += rom->system;
-                }
-                if (rom->manufacturer) {
-                    info += "\nMANUFACTURER: ";
-                    info += rom->manufacturer;
-                }
-                Option *opt = ui->getConfig()->get(Option::Id::ROM_ROTATION);
-                if (opt && !(opt->getFlags() & Option::Flags::HIDDEN)) {
-                    info += "\nROTATION: ";
-                    if (rom->flags & BDF_ORIENTATION_VERTICAL) {
-                        info += "VERTICAL";
-                    } else {
-                        info += "HORIZONTAL";
-                    }
-                    if (rom->flags & BDF_ORIENTATION_FLIPPED) {
-                        info += " / FLIPPED";
-                    }
+                if (rom->flags & BDF_ORIENTATION_FLIPPED) {
+                    info += " / FLIPPED";
                 }
             }
+#ifdef __SSCRAP__
+            }
+#endif
             infoText->setString(info);
             infoText->setVisibility(Visibility::Visible);
         }

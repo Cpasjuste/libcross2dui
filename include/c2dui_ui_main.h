@@ -49,8 +49,6 @@ namespace c2dui {
 
         Config *getConfig();
 
-        Scrapper *getScrapper();
-
         UIHighlight *getUiHighlight();
 
         UIRomList *getUiRomList();
@@ -71,11 +69,14 @@ namespace c2dui {
 
         bool done = false;
 
+#ifdef __SSCRAP__
+        Scrapper *getScrapper();
+#endif
+
     private:
 
         Config *config = nullptr;
         Skin *skin = nullptr;
-        Scrapper *scrapper;
         UIHighlight *uiHighlight = nullptr;
         UIMenu *uiMenu = nullptr;
         UIRomList *uiRomList = nullptr;
@@ -86,7 +87,9 @@ namespace c2dui {
         c2d::C2DClock timer;
 
         float scaling = 1;
-
+#ifdef __SSCRAP__
+        Scrapper *scrapper;
+#endif
     };
 }
 
