@@ -218,7 +218,7 @@ config::Group Skin::createRectangleShapeGroup(const std::string &name,
                                               const c2d::Origin &origin,
                                               const std::string &texture,
                                               const c2d::Color &color,
-                                              const c2d::Color &outlineColor, int outlineSize) {
+                                              const c2d::Color &outlineColor, int outlineSize, Vector2f scale) {
     config::Group group(name);
     group.addOption({"texture", texture});
     group.addOption({"color", color});
@@ -226,6 +226,7 @@ config::Group Skin::createRectangleShapeGroup(const std::string &name,
     group.addOption({"outline_size", outlineSize});
     group.addOption({"rectangle", rect});
     group.addOption({"origin", (int) origin});
+    group.addOption({"scaling", scale});
     return group;
 }
 
@@ -266,9 +267,15 @@ Skin::RectangleShapeGroup Skin::getRectangleShape(const std::vector<std::string>
     if (option) {
         rectangleShapeGroup.outlineSize = option->getInteger();
     }
+    option = group->getOption("scaling");
+    if (option) {
+        rectangleShapeGroup.scaling = option->getVector2f();
+    }
     option = group->getOption("rectangle");
     if (option) {
         rectangleShapeGroup.rect = option->getFloatRect();
+        rectangleShapeGroup.rect.width *= rectangleShapeGroup.scaling.x;
+        rectangleShapeGroup.rect.height *= rectangleShapeGroup.scaling.y;
     }
     option = group->getOption("origin");
     if (option) {
@@ -288,9 +295,18 @@ void Skin::loadRectangleShape(c2d::RectangleShape *shape, const std::vector<std:
     }
 
     shape->setOrigin(rectangleShapeGroup.origin);
-    if (rectangleShapeGroup.rect.width > 0 && rectangleShapeGroup.rect.height > 0) {
-        shape->setPosition(rectangleShapeGroup.rect.left, rectangleShapeGroup.rect.top);
-        shape->setSize(rectangleShapeGroup.rect.width, rectangleShapeGroup.rect.height);
+
+    if (rectangleShapeGroup.rect.left > 0) {
+        shape->setPosition(rectangleShapeGroup.rect.left, shape->getPosition().y);
+    }
+    if (rectangleShapeGroup.rect.top > 0) {
+        shape->setPosition(shape->getPosition().x, rectangleShapeGroup.rect.top);
+    }
+    if (rectangleShapeGroup.rect.width > 0) {
+        shape->setSize(rectangleShapeGroup.rect.width, shape->getSize().y);
+    }
+    if (rectangleShapeGroup.rect.height > 0) {
+        shape->setSize(shape->getSize().x, rectangleShapeGroup.rect.height);
     }
 
     C2DTexture *tex = nullptr;
@@ -331,7 +347,7 @@ void Skin::loadRectangleShape(c2d::RectangleShape *shape, const std::vector<std:
 config::Group Skin::createTextGroup(const std::string &name, int size, const c2d::FloatRect &rect,
                                     const c2d::Origin &origin, const c2d::Color &color,
                                     const c2d::Color &outlineColor, int outlineSize,
-                                    const c2d::Text::Overflow &overflow) {
+                                    const c2d::Text::Overflow &overflow, Vector2f scale) {
     config::Group group(name);
     group.addOption({"string", ""});
     group.addOption({"size", size});
@@ -341,6 +357,7 @@ config::Group Skin::createTextGroup(const std::string &name, int size, const c2d
     group.addOption({"rectangle", rect});
     group.addOption({"origin", (int) origin});
     group.addOption({"overflow", (int) overflow});
+    group.addOption({"scaling", scale});
     return group;
 }
 
@@ -389,9 +406,15 @@ Skin::TextGroup Skin::getText(const std::vector<std::string> &tree) {
     if (option) {
         textGroup.origin = (Origin) option->getInteger();
     }
+    option = group->getOption("scaling");
+    if (option) {
+        textGroup.scaling = option->getVector2f();
+    }
     option = group->getOption("rectangle");
     if (option) {
         textGroup.rect = option->getFloatRect();
+        textGroup.rect.width *= textGroup.scaling.x;
+        textGroup.rect.height *= textGroup.scaling.y;
     }
     option = group->getOption("overflow");
     if (option) {

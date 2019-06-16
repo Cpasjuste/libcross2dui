@@ -21,6 +21,7 @@ namespace c2dui {
             c2d::Color color;
             c2d::Color outlineColor;
             int outlineSize;
+            c2d::Vector2f scaling = {1, 1};
             bool available = false;
         };
 
@@ -33,6 +34,7 @@ namespace c2dui {
             c2d::Color outlineColor;
             c2d::Text::Overflow overflow;
             int outlineSize;
+            c2d::Vector2f scaling = {1, 1};
             bool available = false;
         };
 
@@ -80,7 +82,8 @@ namespace c2dui {
                                                      const c2d::Origin &origin,
                                                      const std::string &texture,
                                                      const c2d::Color &color,
-                                                     const c2d::Color &outlineColor, int outlineSize);
+                                                     const c2d::Color &outlineColor, int outlineSize,
+                                                     c2d::Vector2f scale = {1, 1});
 
         c2d::config::Group createTextGroup(const std::string &name,
                                            int size,
@@ -88,7 +91,8 @@ namespace c2dui {
                                            const c2d::Origin &origin,
                                            const c2d::Color &color,
                                            const c2d::Color &outlineColor, int outlineSize,
-                                           const c2d::Text::Overflow &overflow = c2d::Text::Overflow::Clamp);
+                                           const c2d::Text::Overflow &overflow = c2d::Text::Overflow::Clamp,
+                                           c2d::Vector2f scale = {1, 1});
 
         UIMain *ui = nullptr;
         c2d::config::Config *config = nullptr;
