@@ -310,17 +310,24 @@ void Skin::loadRectangleShape(c2d::RectangleShape *shape, const std::vector<std:
     }
 
     C2DTexture *tex = nullptr;
-    if (useZippedSkin) {
-        int size = 0;
-        char *data = getZippedData(path, rectangleShapeGroup.texture, &size);
-        if (data) {
-            tex = new C2DTexture((const unsigned char *) data, size);
-            free(data);
-        }
-    } else {
-        std::string bg_path = path + rectangleShapeGroup.texture;
-        if (ui->getIo()->exist(bg_path)) {
-            tex = new C2DTexture(bg_path);
+    if (!rectangleShapeGroup.texture.empty()) {
+        if (useZippedSkin) {
+            int size = 0;
+            char *data = getZippedData(path, rectangleShapeGroup.texture, &size);
+            printf("Skin::loadRectangleShape(%s, %s)\n",
+                   path.c_str(), rectangleShapeGroup.texture.c_str());
+            if (data) {
+                tex = new C2DTexture((const unsigned char *) data, size);
+                free(data);
+            } else {
+                printf("Skin::loadRectangleShape(%s, %s): failed to load texture\n",
+                       path.c_str(), rectangleShapeGroup.texture.c_str());
+            }
+        } else {
+            std::string bg_path = path + rectangleShapeGroup.texture;
+            if (ui->getIo()->exist(bg_path)) {
+                tex = new C2DTexture(bg_path);
+            }
         }
     }
 
@@ -460,12 +467,13 @@ c2d::Font *Skin::getFont() {
     return font;
 }
 
-char *Skin::getZippedData(const std::string &path, const std::string &name, int *size) {
+char *Skin::getZippedData(const std::string &p, const std::string &name, int *size) {
 
     char *data = nullptr;
 
-    unzFile zip = unzOpen(path.c_str());
+    unzFile zip = unzOpen(p.c_str());
     if (!zip) {
+        printf("Skin::getZippedData(%s, %s): unzOpen failed\n", p.c_str(), name.c_str());
         return data;
     }
 
