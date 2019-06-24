@@ -3,10 +3,6 @@ cmake_minimum_required(VERSION 3.0)
 
 add_subdirectory(libcross2d)
 
-if (PLATFORM_LINUX)
-    message(FATAL_ERROR "libcross2dui cmake: LINUX")
-endif ()
-
 project(cross2dui)
 
 #################
@@ -31,22 +27,6 @@ if (OPTION_BUILTIN_MINIZIP)
             source/minizip/miniunz.c
             source/minizip/minizip.c
             source/minizip/unzip.c)
-endif ()
-
-if (PLATFORM_VITA)
-    #################
-    # PSP2 (ps vita)
-    #################
-    list(APPEND FLAGS -DNO_KEYBOARD)
-elseif (PLATFORM_3DS)
-    ##############
-    # 3DS
-    ##############
-elseif (PLATFORM_SWITCH)
-    ##############
-    # SWITCH
-    ##############
-    list(APPEND FLAGS -DNO_KEYBOARD)
 endif ()
 
 ##########################
