@@ -57,6 +57,13 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     }
 
     ///
+    /// GENERAL
+    ///
+    config::Group gen("GENERAL");
+    gen.addOption({"global_scaling", Vector2f{1.0f, 1.0f}});
+    config->addGroup(gen);
+
+    ///
     /// FONT
     ///
     config::Group font_group("FONT");
@@ -180,6 +187,18 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
         }
     }
 
+
+    ///
+    /// load global scaling from loaded configuration
+    ///
+    c2d::config::Group *genGrp = config->getGroup("GENERAL");
+    if (genGrp) {
+        c2d::config::Option *opt = genGrp->getOption("global_scaling");
+        if (opt) {
+            global_scaling = opt->getVector2f();
+        }
+    }
+
     ///
     /// load skin font from loaded configuration
     ///
@@ -274,6 +293,10 @@ Skin::RectangleShapeGroup Skin::getRectangleShape(const std::vector<std::string>
     option = group->getOption("rectangle");
     if (option) {
         rectangleShapeGroup.rect = option->getFloatRect();
+        rectangleShapeGroup.rect.left *= global_scaling.x;
+        rectangleShapeGroup.rect.top *= global_scaling.y;
+        rectangleShapeGroup.rect.width *= global_scaling.x;
+        rectangleShapeGroup.rect.height *= global_scaling.y;
         rectangleShapeGroup.rect.width *= rectangleShapeGroup.scaling.x;
         rectangleShapeGroup.rect.height *= rectangleShapeGroup.scaling.y;
     }
@@ -396,6 +419,7 @@ Skin::TextGroup Skin::getText(const std::vector<std::string> &tree) {
     option = group->getOption("size");
     if (option) {
         textGroup.size = (unsigned int) option->getInteger();
+        textGroup.size = (unsigned int) ((float) textGroup.size * global_scaling.y);
     }
     option = group->getOption("color");
     if (option) {
@@ -420,6 +444,10 @@ Skin::TextGroup Skin::getText(const std::vector<std::string> &tree) {
     option = group->getOption("rectangle");
     if (option) {
         textGroup.rect = option->getFloatRect();
+        textGroup.rect.left *= global_scaling.x;
+        textGroup.rect.top *= global_scaling.y;
+        textGroup.rect.width *= global_scaling.x;
+        textGroup.rect.height *= global_scaling.y;
         textGroup.rect.width *= textGroup.scaling.x;
         textGroup.rect.height *= textGroup.scaling.y;
     }
