@@ -218,9 +218,12 @@ void UIRomListClassic::updateRomList() {
     if (!list_box) {
         // add rom list ui
         Skin::RectangleShapeGroup romListGroup = ui->getSkin()->getRectangleShape({"MAIN", "ROM_LIST"});
+        bool use_icons = false;
+#if !(defined(__PSP2__) || defined(__3DS__)) // two slow
+        use_icons = ui->getConfig()->get(Option::Id::GUI_SHOW_ICONS)->getValueBool();
+#endif
         list_box = new ListBox(ui->getSkin()->font, (int) textGroup.size,
-                               romListGroup.rect, (std::vector<Io::File *> &) roms,
-                               ui->getConfig()->get(Option::Id::GUI_SHOW_ICONS)->getValueBool());
+                               romListGroup.rect, (std::vector<Io::File *> &) roms, use_icons);
         list_box->setFillColor(romListGroup.color);
         list_box->setOutlineColor(romListGroup.outlineColor);
         list_box->setOutlineThickness(romListGroup.outlineSize);
@@ -342,7 +345,9 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
     return true;
 }
 
-void UIRomListClassic::onDraw(c2d::Transform &transform, bool draw) {
+void UIRomListClassic::onUpdate() {
+
+    RectangleShape::onUpdate();
 
     unsigned int keys = ui->getInput()->getKeys();
 
@@ -355,8 +360,6 @@ void UIRomListClassic::onDraw(c2d::Transform &transform, bool draw) {
             title_loaded = 1;
         }
     }
-
-    RectangleShape::onDraw(transform, draw);
 }
 
 UIRomListClassic::~UIRomListClassic() {

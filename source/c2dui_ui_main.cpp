@@ -83,10 +83,6 @@ void UIMain::init(UIRomList *_uiRomList, UIMenu *_uiMenu,
 #endif
 }
 
-void UIMain::setConfig(Config *cfg) {
-    config = cfg;
-}
-
 void UIMain::setSkin(Skin *s) {
     skin = s;
 }
@@ -95,7 +91,9 @@ bool UIMain::onInput(c2d::Input::Player *players) {
     return Renderer::onInput(players);
 }
 
-void UIMain::onDraw(c2d::Transform &transform, bool draw) {
+void UIMain::onUpdate() {
+
+    Renderer::onUpdate();
 
     if (uiEmu && !uiEmu->isVisible()) {
         unsigned int keys = getInput()->getKeys(0);
@@ -112,8 +110,6 @@ void UIMain::onDraw(c2d::Transform &transform, bool draw) {
             }
         }
     }
-
-    Renderer::onDraw(transform, draw);
 }
 
 float UIMain::getScaling() {
@@ -122,6 +118,10 @@ float UIMain::getScaling() {
 
 Skin *UIMain::getSkin() {
     return skin;
+}
+
+void UIMain::setConfig(Config *cfg) {
+    config = cfg;
 }
 
 Config *UIMain::getConfig() {

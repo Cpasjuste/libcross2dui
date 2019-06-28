@@ -30,7 +30,7 @@ Config::Config(const std::string &home, int ver) {
     append("MAIN", {"MAIN"}, 0, Option::Id::MENU_MAIN, Option::Flags::MENU);
     append("SHOW", {"ALL", "FAVORITES"}, 0, Option::Id::GUI_SHOW_ALL);
     append("SHOW_CLONES", {"OFF", "ON"}, 0, Option::Id::GUI_SHOW_CLONES);
-#ifndef __PSP2__ // two slow on vita
+#if !(defined(__PSP2__) || defined(__3DS__)) // two slow
     append("SHOW_ICONS", {"OFF", "ON"}, 0, Option::Id::GUI_SHOW_ICONS);
     get()->at(get()->size() - 1).setInfo("Enabling icons needs a restart...");
 #endif
