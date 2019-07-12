@@ -57,8 +57,13 @@ Config::Config(const std::string &home, int ver) {
     /////////////////////////////////////////////////
     append("DEFAULT_ROMS_OPTIONS", {}, 0, 1001, Option::Flags::DELIMITER);
     append("EMULATION", {"EMULATION"}, 0, Option::Id::MENU_ROM_OPTIONS, Option::Flags::MENU);
+#ifdef __FREEPLAY__
+    append("SCALING", {"NONE", "2X", "3X", "FIT", "FIT 4:3", "FULL"}, 5, Option::Id::ROM_SCALING);
+    append("FILTER", {"POINT", "LINEAR"}, 1, Option::Id::ROM_FILTER);
+#else
     append("SCALING", {"NONE", "2X", "3X", "FIT", "FIT 4:3", "FULL"}, 2, Option::Id::ROM_SCALING);
     append("FILTER", {"POINT", "LINEAR"}, 0, Option::Id::ROM_FILTER);
+#endif
     if (c2d_renderer->getShaderList() != nullptr) {
         append("EFFECT", c2d_renderer->getShaderList()->getNames(), 0, Option::Id::ROM_SHADER);
     } else {
