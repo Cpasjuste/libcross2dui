@@ -145,6 +145,10 @@ void C2DUIVideo::updateScaling(bool vertical, bool flip) {
             break;
 
         default:
+            // small screens 1x == downscale
+            if (scale_max.x < 1 || scale_max.y < 1) {
+                sx = sy = rotated ? scale_max.y : scale_max.x;
+            }
             break;
     }
 
