@@ -21,7 +21,7 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     int configLen = 0;
     char *configData = getZippedData(path + skinName, "config.cfg", &configLen);
     if (!configData) {
-        ui->getConfig()->get(Option::GUI_SKIN)->setIndex(0);
+        ui->getConfig()->get(Option::GUI_SKIN)->setValueString("default");
         skinName = "default.zip";
         configData = getZippedData(path + skinName, "config.cfg", &configLen);
     }

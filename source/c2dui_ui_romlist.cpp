@@ -68,14 +68,15 @@ void UIRomList::filterRomList() {
     roms.clear();
 
     static RomList *list = rom_list;
-    int showClone = ui->getConfig()->get(Option::Id::GUI_SHOW_CLONES)->getValueBool();
+    bool showClone = ui->getConfig()->get(Option::Id::GUI_SHOW_CLONES)->getValueBool();
     Option *hwOpt = ui->getConfig()->get(Option::Id::GUI_SHOW_HARDWARE);
     int showHardwareCfg = hwOpt ? hwOpt->getIndex() : 0;
     int showHardware = ui->getConfig()->getHardwareList()->at((unsigned int) showHardwareCfg).prefix;
+    printf("showClone: %i, showHardwareCfg: %i, showHardware: %i\n", showClone, showHardwareCfg, showHardware);
 
     // psnes and pnes have only 2 (0/1) values, so work with value string
     Option *opt = ui->getConfig()->get(Option::Id::GUI_SHOW_ALL);
-    int showAll = opt->getIndex();
+    int showAll = opt->getValueString() != "ALL";
     if (opt->getValueString() == "FAVORITES") {
         showAll = 2;
     }

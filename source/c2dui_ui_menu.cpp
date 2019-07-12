@@ -65,7 +65,7 @@ public:
             return;
         }
 
-        if (option->getFlags() == Option::Flags::INPUT) {
+        if (option->getFlags() & Option::Flags::INPUT) {
             Skin::Button *button = ui->getSkin()->getButton(option->getValueInt());
             // don't use button textures on keyboard for now
             if (button && option->getId() < Option::Id::JOY_DEADZONE) {
@@ -235,8 +235,8 @@ void UIMenu::load(bool isRom, OptionMenu *om) {
 
         // don't show custom in-game options when a game is not running
         if (isRomMenu && !isEmuRunning) {
-            std::string title = optionMenu->childs[i]->title;
-            if (title == "EXIT" || title == "RETURN") {
+            std::string t = optionMenu->childs[i]->title;
+            if (t == "EXIT" || t == "RETURN") {
                 optionCount--;
                 continue;
             }
@@ -321,7 +321,7 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
             return true;
         }
         option_changed = true;
-        if (option->getFlags() == Option::Flags::INTEGER) {
+        if (!(option->getFlags() & Option::Flags::MENU)) {
             if (keys & Input::Key::Left) {
                 option->prev();
             } else {

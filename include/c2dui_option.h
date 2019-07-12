@@ -19,9 +19,11 @@ namespace c2dui {
         enum Flags {
             MENU = BIT(0),
             INTEGER = BIT(1),
-            INPUT = BIT(2),
-            HIDDEN = BIT(3),
-            DELIMITER = BIT(4)
+            STRING = BIT(2),
+            BOOLEAN = BIT(3),
+            INPUT = BIT(4),
+            HIDDEN = BIT(5),
+            DELIMITER = BIT(6)
         };
 
         enum Id {
@@ -86,8 +88,8 @@ namespace c2dui {
 #endif
         };
 
-        Option(const std::string &text, const std::vector<std::string> &options,
-               int defaultValue, int id, unsigned int flags = INTEGER);
+        Option(const std::string &name, const std::vector<std::string> &options,
+               int defaultValueIndex, int id, unsigned int flags = INTEGER);
 
         std::string getName() const;
 
@@ -109,13 +111,11 @@ namespace c2dui {
 
         std::vector<std::string> *getValues();
 
+        int getIndex();
+
         int getId();
 
         void setId(int id);
-
-        int getIndex();
-
-        void setIndex(int idx);
 
         unsigned int getFlags();
 
@@ -125,13 +125,15 @@ namespace c2dui {
 
         void prev();
 
+        int size();
+
     private:
-        std::string text;
+        std::string name;
         std::string info;
         std::vector<std::string> options;
+        std::string current_option;
         unsigned int flags = INTEGER;
         int id = 0;
-        int idx = 0;
     };
 }
 

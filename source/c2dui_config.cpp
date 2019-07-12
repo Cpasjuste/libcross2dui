@@ -12,15 +12,15 @@ Config::Config(const std::string &home, int ver) {
 
     printf("Config(%s, v%i)\n", home.c_str(), ver);
 
-    homePath = home;
-    configPath = homePath + "config.cfg";
+    dataPath = home;
+    configPath = dataPath + "config.cfg";
     version = ver;
 
     /// add default roms paths
     getRomPaths()->clear();
     getRomPaths()->emplace_back(home + "roms/");
     // default hardware filter (all)
-    getHardwareList()->emplace_back(HARDWARE_PREFIX_ALL, "All");
+    getHardwareList()->emplace_back(HARDWARE_PREFIX_ALL, "ALL");
 
     /// default options available for all cores
     /////////////////////////////////////////////////
@@ -28,26 +28,38 @@ Config::Config(const std::string &home, int ver) {
     /////////////////////////////////////////////////
     append("UI_OPTIONS", {}, 0, 1000, Option::Flags::DELIMITER);
     append("MAIN", {"MAIN"}, 0, Option::Id::MENU_MAIN, Option::Flags::MENU);
-    append("SHOW", {"ALL", "FAVORITES"}, 0, Option::Id::GUI_SHOW_ALL);
-    append("SHOW_CLONES", {"OFF", "ON"}, 0, Option::Id::GUI_SHOW_CLONES);
+    append("SHOW", {"ALL", "FAVORITES"}, 0, Option::Id::GUI_SHOW_ALL, Option::Flags::STRING);
+    append("SHOW_CLONES", {"OFF", "ON"}, 0, Option::Id::GUI_SHOW_CLONES, Option::Flags::BOOLEAN);
 #if !(defined(__PSP2__) || defined(__3DS__)) // two slow
-    append("SHOW_ICONS", {"OFF", "ON"}, 0, Option::Id::GUI_SHOW_ICONS);
+    append("SHOW_ICONS", {"OFF", "ON"}, 0, Option::Id::GUI_SHOW_ICONS, Option::Flags::BOOLEAN);
     get()->at(get()->size() - 1).setInfo("Enabling icons needs a restart...");
 #endif
-    append("USE_DATABASE", {"OFF", "ON"}, 0, Option::Id::GUI_USE_DATABASE);
+    append("USE_DATABASE", {"OFF", "ON"}, 0, Option::Id::GUI_USE_DATABASE, Option::Flags::BOOLEAN);
     get()->at(get()->size() - 1).setInfo("Using a DB needs a restart...");
-    append("FULLSCREEN", {"OFF", "ON"}, 1, Option::Id::GUI_FULLSCREEN, Option::Flags::HIDDEN);
+    append("FULLSCREEN", {"OFF", "ON"}, 1, Option::Id::GUI_FULLSCREEN, Option::Flags::BOOLEAN | Option::Flags::HIDDEN);
     // build zipped skin list
-    std::vector<std::string> paths;
-    std::vector<Io::File> files = c2d_renderer->getIo()->getDirList(homePath + "skins/", true);
+    std::vector <std::string> paths;
+    std::vector <Io::File> files = c2d_renderer->getIo()->getDirList(dataPath + "skins/", true);
     for (const auto &file : files) {
         if (file.name[0] == '.') {
             continue;
         }
         paths.emplace_back(Utility::removeExt(file.name));
+        printf("skin found: %s\n", Utility::removeExt(file.name).c_str());
     }
-    append("SKIN", paths, 0, Option::Id::GUI_SKIN);
-    get()->at(get()->size() - 1).setInfo("Changing skin needs a restart...");
+    // set 320x240 skin by default for 320x240 screens
+    if (C2D_SCREEN_WIDTH == 320 && C2D_SCREEN_HEIGHT == 240) {
+        for (size_t i = 0; i < paths.size(); i++) {
+            if (paths.at(i) == "default_320x240") {
+                append("SKIN", paths, i, Option::Id::GUI_SKIN, Option::Flags::STRING);
+                break;
+            }
+        }
+    }
+    if (get(Option::Id::GUI_SKIN) == nullptr) {
+        append("SKIN", paths, 0, Option::Id::GUI_SKIN, Option::Flags::STRING);
+    }
+    get()->at(get()->size() - 1).setInfo("Changing skins needs a restart...");
 #ifdef __SWITCH__
     append("SINGLE_JOYCONS", {"OFF", "ON"}, 0, Option::Id::JOY_SINGLEJOYCON);
 #endif
@@ -57,19 +69,23 @@ Config::Config(const std::string &home, int ver) {
     /////////////////////////////////////////////////
     append("DEFAULT_ROMS_OPTIONS", {}, 0, 1001, Option::Flags::DELIMITER);
     append("EMULATION", {"EMULATION"}, 0, Option::Id::MENU_ROM_OPTIONS, Option::Flags::MENU);
+    if (C2D_SCREEN_WIDTH > 320) {
+        append("SCALING", {"NONE", "2X", "3X", "FIT", "FIT 4:3", "FULL"}, 2,
+               Option::Id::ROM_SCALING, Option::Flags::STRING);
+    } else {
+        append("SCALING", {"NONE", "FIT", "FIT 4:3", "FULL"}, 3, Option::Id::ROM_SCALING, Option::Flags::STRING);
+    }
 #ifdef __FREEPLAY__
-    append("SCALING", {"NONE", "2X", "3X", "FIT", "FIT 4:3", "FULL"}, 5, Option::Id::ROM_SCALING);
     append("FILTER", {"POINT", "LINEAR"}, 1, Option::Id::ROM_FILTER);
 #else
-    append("SCALING", {"NONE", "2X", "3X", "FIT", "FIT 4:3", "FULL"}, 2, Option::Id::ROM_SCALING);
-    append("FILTER", {"POINT", "LINEAR"}, 0, Option::Id::ROM_FILTER);
+    append("FILTER", {"POINT", "LINEAR"}, 0, Option::Id::ROM_FILTER, Option::Flags::STRING);
 #endif
     if (c2d_renderer->getShaderList() != nullptr) {
-        append("EFFECT", c2d_renderer->getShaderList()->getNames(), 0, Option::Id::ROM_SHADER);
+        append("EFFECT", c2d_renderer->getShaderList()->getNames(), 0, Option::Id::ROM_SHADER, Option::Flags::STRING);
     } else {
-        append("EFFECT", {"NONE"}, 0, Option::Id::ROM_SHADER, Option::Flags::HIDDEN);
+        append("EFFECT", {"NONE"}, 0, Option::Id::ROM_SHADER, Option::Flags::STRING | Option::Flags::HIDDEN);
     }
-    append("SHOW_FPS", {"OFF", "ON"}, 0, Option::Id::ROM_SHOW_FPS);
+    append("SHOW_FPS", {"OFF", "ON"}, 0, Option::Id::ROM_SHOW_FPS, Option::Flags::BOOLEAN);
 
     /// joysticks config
     append("JOYPAD", {"JOYPAD"}, 0, Option::Id::MENU_JOYPAD, Option::Flags::MENU);
@@ -86,13 +102,14 @@ Config::Config(const std::string &home, int ver) {
     append("JOY_COIN1", KEY_JOY_COIN1_DEFAULT, Option::Id::JOY_COIN1, Option::Flags::INPUT);
     append("JOY_START1", KEY_JOY_START1_DEFAULT, Option::Id::JOY_START1, Option::Flags::INPUT);
     // TODO: add gui option for axis in option menu
-    append("JOY_AXIS_LX", KEY_JOY_AXIS_LX, Option::Id::JOY_AXIS_LX, Option::Flags::HIDDEN);
-    append("JOY_AXIS_LY", KEY_JOY_AXIS_LY, Option::Id::JOY_AXIS_LY, Option::Flags::HIDDEN);
-    append("JOY_AXIS_RX", KEY_JOY_AXIS_RX, Option::Id::JOY_AXIS_RX, Option::Flags::HIDDEN);
-    append("JOY_AXIS_RY", KEY_JOY_AXIS_RY, Option::Id::JOY_AXIS_RY, Option::Flags::HIDDEN);
+    append("JOY_AXIS_LX", KEY_JOY_AXIS_LX, Option::Id::JOY_AXIS_LX, Option::Flags::INPUT | Option::Flags::HIDDEN);
+    append("JOY_AXIS_LY", KEY_JOY_AXIS_LY, Option::Id::JOY_AXIS_LY, Option::Flags::INPUT | Option::Flags::HIDDEN);
+    append("JOY_AXIS_RX", KEY_JOY_AXIS_RX, Option::Id::JOY_AXIS_RX, Option::Flags::INPUT | Option::Flags::HIDDEN);
+    append("JOY_AXIS_RY", KEY_JOY_AXIS_RY, Option::Id::JOY_AXIS_RY, Option::Flags::INPUT | Option::Flags::HIDDEN);
     append("JOY_DEADZONE",
            {"2000", "4000", "6000", "8000", "10000", "12000", "14000", "16000",
-            "18000", "20000", "22000", "24000", "26000", "28000", "30000"}, 3, Option::Id::JOY_DEADZONE);
+            "18000", "20000", "22000", "24000", "26000", "28000", "30000"}, 3, Option::Id::JOY_DEADZONE,
+           Option::Flags::INTEGER);
 #ifndef NO_KEYBOARD
     // keyboard
     append("KEYBOARD", {"KEYBOARD"}, 0, Option::Id::MENU_KEYBOARD, Option::Flags::MENU);
@@ -118,10 +135,10 @@ void Config::load(RomList::Rom *rom) {
     config_init(&cfg);
 
     bool isRomCfg = rom != nullptr;
-    std::vector<Option> *options = isRomCfg ? &options_rom : &options_gui;
+    std::vector <Option> *options = isRomCfg ? &options_rom : &options_gui;
     std::string path = configPath;
     if (isRomCfg) {
-        path = homePath;
+        path = dataPath;
         path += "configs/";
         path += rom->drv_name;
         path += ".cfg";
@@ -165,21 +182,28 @@ void Config::load(RomList::Rom *rom) {
             }
 
             for (auto &option : *options) {
-                if (option.getFlags() & Option::Flags::DELIMITER) {
+                unsigned int flags = option.getFlags();
+                if (flags & Option::Flags::DELIMITER) {
                     continue;
                 }
-                if (option.getFlags() & Option::Flags::MENU) {
+                if (flags & Option::Flags::MENU) {
                     settings = config_setting_lookup(settings_root, option.getName().c_str());
                 }
                 if (settings) {
-                    int value = 0;
-                    if (config_setting_lookup_int(settings, option.getName().c_str(), &value)) {
-                        if (option.getFlags() & Option::Flags::INPUT) {
+                    if (flags & Option::Flags::INTEGER || flags & Option::Flags::INPUT) {
+                        int value = 0;
+                        if (config_setting_lookup_int(settings, option.getName().c_str(), &value)) {
                             option.setValueInt(value);
-                        } else {
-                            option.setIndex(value);
+                            printf("Config::load: OPTION: %s, VALUE: %i\n", option.getName().c_str(),
+                                   option.getValueInt());
                         }
-                        //printf("[%i] => %s: %i\n", option.index, option.getName(), value);
+                    } else {
+                        const char *value;
+                        if (config_setting_lookup_string(settings, option.getName().c_str(), &value)) {
+                            option.setValueString(value);
+                            printf("Config::load: OPTION: %s, VALUE: %s\n", option.getName().c_str(),
+                                   option.getValueString().c_str());
+                        }
                     }
                 }
             }
@@ -208,10 +232,10 @@ void Config::save(RomList::Rom *rom) {
     config_init(&cfg);
 
     bool isRomCfg = rom != nullptr;
-    std::vector<Option> *options = isRomCfg ? &options_rom : &options_gui;
+    std::vector <Option> *options = isRomCfg ? &options_rom : &options_gui;
     std::string path = configPath;
     if (isRomCfg) {
-        path = homePath;
+        path = dataPath;
         path += "configs/";
         path += rom->drv_name;
         path += ".cfg";
@@ -241,18 +265,21 @@ void Config::save(RomList::Rom *rom) {
     }
 
     for (auto &option : *options) {
-        if (option.getFlags() & Option::Flags::DELIMITER) {
+        unsigned int flags = option.getFlags();
+        if (flags & Option::Flags::DELIMITER) {
             continue;
         }
-        if (option.getFlags() & Option::Flags::MENU) {
+        if (flags & Option::Flags::MENU) {
             sub_setting = config_setting_add(setting_fba, option.getName().c_str(), CONFIG_TYPE_GROUP);
             continue;
         }
-        config_setting_t *setting = config_setting_add(sub_setting, option.getName().c_str(), CONFIG_TYPE_INT);
-        if (option.getFlags() & Option::Flags::INPUT) {
+
+        if (flags & Option::Flags::INTEGER || flags & Option::Flags::INPUT) {
+            config_setting_t *setting = config_setting_add(sub_setting, option.getName().c_str(), CONFIG_TYPE_INT);
             config_setting_set_int(setting, option.getValueInt());
         } else {
-            config_setting_set_int(setting, option.getIndex());
+            config_setting_t *setting = config_setting_add(sub_setting, option.getName().c_str(), CONFIG_TYPE_STRING);
+            config_setting_set_string(setting, option.getValueString().c_str());
         }
     }
 
@@ -278,19 +305,19 @@ void Config::reset(bool isRom) {
 }
 
 std::string Config::getHomePath() {
-    return homePath;
+    return dataPath;
 }
 
 std::string Config::getTitlesPath() {
-    return homePath + "titles/";
+    return dataPath + "titles/";
 }
 
 std::string Config::getPreviewsPath() {
-    return homePath + "previews/";
+    return dataPath + "previews/";
 }
 
 std::string Config::getMixesPath() {
-    return homePath + "mixes/";
+    return dataPath + "mixes/";
 }
 
 std::string *Config::getRomPath(int n) {
@@ -301,17 +328,17 @@ std::string *Config::getRomPath(int n) {
     }
 }
 
-std::vector<std::string> *Config::getRomPaths() {
+std::vector <std::string> *Config::getRomPaths() {
     return &roms_paths;
 }
 
-std::vector<Option> *Config::get(bool isRom) {
+std::vector <Option> *Config::get(bool isRom) {
     return isRom ? &options_rom : &options_gui;
 }
 
 Option *Config::get(int index, bool isRom) {
 
-    std::vector<Option> *options = get(isRom);
+    std::vector <Option> *options = get(isRom);
 
     for (auto &option : *options) {
         if (option.getId() == index) {
@@ -322,7 +349,7 @@ Option *Config::get(int index, bool isRom) {
 }
 
 bool Config::add(int target,
-                 const std::string &text, const std::vector<std::string> &values,
+                 const std::string &text, const std::vector <std::string> &values,
                  int defaultValue, int index, unsigned int flags) {
 
     for (unsigned int i = 0; i < options_gui.size(); i++) {
@@ -336,7 +363,7 @@ bool Config::add(int target,
     return false;
 }
 
-void Config::append(const std::string &text, const std::vector<std::string> &values,
+void Config::append(const std::string &text, const std::vector <std::string> &values,
                     int defaultValue, int id, unsigned int flags) {
     options_gui.emplace_back(text, values, defaultValue, id, flags);
 }
@@ -347,7 +374,7 @@ void Config::append(const std::string &text, int value, int id, unsigned int fla
 
 bool Config::hide(int index, bool isRom) {
 
-    std::vector<Option> *options = get(isRom);
+    std::vector <Option> *options = get(isRom);
 
     for (auto &option : *options) {
         if (option.getId() == index) {
@@ -401,6 +428,6 @@ int *Config::getPlayerInputButtons(int player, bool isRom) {
     return joystick_keys;
 }
 
-std::vector<RomList::Hardware> *Config::getHardwareList() {
+std::vector <RomList::Hardware> *Config::getHardwareList() {
     return &hardwareList;
 }

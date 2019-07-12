@@ -47,7 +47,7 @@ void C2DUIVideo::updateScaling(bool vertical, bool flip) {
 
     int rotated = 0;
     float rotation = 0;
-    int scale_mode = ui->getConfig()->get(Option::Id::ROM_SCALING, true)->getIndex();
+    std::string scale_mode = ui->getConfig()->get(Option::Id::ROM_SCALING, true)->getValueString();
     int rotation_cfg = 0;
     if (ui->getConfig()->get(Option::Id::ROM_ROTATION, true)) {
         rotation_cfg = ui->getConfig()->get(Option::Id::ROM_ROTATION, true)->getIndex();
@@ -104,53 +104,43 @@ void C2DUIVideo::updateScaling(bool vertical, bool flip) {
         scale_max.y = screen.y / getTextureRect().height;
     }
 
-    switch (scale_mode) {
-
-        case 1: // 2x
-            sx = sy = std::min(scale_max.x, 2.0f);
-            if (sy > scale_max.y) {
-                sx = sy = std::min(scale_max.y, 2.0f);
-            }
-            break;
-
-        case 2: // 3x
-            sx = sy = std::min(scale_max.x, 3.0f);
-            if (sy > scale_max.y) {
-                sx = sy = std::min(scale_max.y, 3.0f);
-            }
-            break;
-
-        case 3: // fit
-            sx = sy = scale_max.y;
-            if (sx > scale_max.x) {
-                sx = sy = scale_max.x;
-            }
-            break;
-
-        case 4: // fit 4:3
-            if (rotated) {
-                sx = scale_max.y;
-                float size_y = sx * getTextureRect().width * 1.33f;
-                sy = std::min(scale_max.x, size_y / getTextureRect().height);
-            } else {
-                sy = scale_max.y;
-                float size_x = sy * getTextureRect().height * 1.33f;
-                sx = std::min(scale_max.x, size_x / getTextureRect().width);
-            }
-            break;
-
-        case 5: // fullscreen
-            sx = rotated ? scale_max.y : scale_max.x;
-            sy = rotated ? scale_max.x : scale_max.y;
-            break;
-
-        default:
-            // small screens 1x == downscale
-            if (scale_max.x < 1 || scale_max.y < 1) {
-                sx = sy = rotated ? scale_max.y : scale_max.x;
-            }
-            break;
+    if (scale_mode == "NONE") {
+        // small screens 1x == downscale
+        if (scale_max.x < 1 || scale_max.y < 1) {
+            sx = sy = rotated ? scale_max.y : scale_max.x;
+        }
+    } else if (scale_mode == "2X") {
+        sx = sy = std::min(scale_max.x, 2.0f);
+        if (sy > scale_max.y) {
+            sx = sy = std::min(scale_max.y, 2.0f);
+        }
+    } else if (scale_mode == "3X") {
+        sx = sy = std::min(scale_max.x, 3.0f);
+        if (sy > scale_max.y) {
+            sx = sy = std::min(scale_max.y, 3.0f);
+        }
+    } else if (scale_mode == "FIT") {
+        sx = sy = scale_max.y;
+        if (sx > scale_max.x) {
+            sx = sy = scale_max.x;
+        }
+    } else if (scale_mode == "FIT 4:3") {
+        if (rotated) {
+            sx = scale_max.y;
+            float size_y = sx * getTextureRect().width * 1.33f;
+            sy = std::min(scale_max.x, size_y / getTextureRect().height);
+        } else {
+            sy = scale_max.y;
+            float size_x = sy * getTextureRect().height * 1.33f;
+            sx = std::min(scale_max.x, size_x / getTextureRect().width);
+        }
+    } else if (scale_mode == "FULL") {
+        sx = rotated ? scale_max.y : scale_max.x;
+        sy = rotated ? scale_max.x : scale_max.y;
     }
+
+    printf("C2DUIVideo::updateScaling: mode: %s, scaling: %f x %f, size: %i x %i\n",
+           scale_mode.c_str(), sx, sy, (int) (screen.x * sx), (int) (screen.y * sy));
 
     setOrigin(Origin::Center);
     setPosition(screen.x / 2, screen.y / 2);

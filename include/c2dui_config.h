@@ -15,7 +15,7 @@ namespace c2dui {
 
         Config(const std::string &home, int version);
 
-        virtual ~Config() {};
+        virtual ~Config() = default;
 
         virtual void load(RomList::Rom *rom = nullptr);
 
@@ -41,13 +41,12 @@ namespace c2dui {
 
         virtual bool add(int target,
                          const std::string &text, const std::vector<std::string> &values,
-                         int defaultValue, int id, unsigned int flags = Option::INTEGER);
+                         int defaultValue, int id, unsigned int flags);
 
         virtual void append(const std::string &text, const std::vector<std::string> &values,
-                            int defaultValue, int id, unsigned int flags = Option::INTEGER);
+                            int defaultValue, int id, unsigned int flags);
 
-        virtual void append(const std::string &text, int value, int id,
-                            unsigned int flags = Option::INTEGER);
+        virtual void append(const std::string &text, int value, int id, unsigned int flags);
 
         bool hide(int id, bool isRom = false);
 
@@ -63,7 +62,7 @@ namespace c2dui {
         std::vector<Option> options_rom;
         std::vector<std::string> roms_paths;
         std::string configPath;
-        std::string homePath;
+        std::string dataPath;
 
         int version;
         int keyboard_keys[KEY_COUNT];
