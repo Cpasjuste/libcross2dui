@@ -76,7 +76,7 @@ Config::Config(const std::string &home, int ver) {
         append("SCALING", {"NONE", "FIT", "FIT 4:3", "FULL"}, 3, Option::Id::ROM_SCALING, Option::Flags::STRING);
     }
 #ifdef __FREEPLAY__
-    append("FILTER", {"POINT", "LINEAR"}, 1, Option::Id::ROM_FILTER);
+    append("FILTER", {"POINT", "LINEAR"}, 1, Option::Id::ROM_FILTER, Option::Flags::STRING);
 #else
     append("FILTER", {"POINT", "LINEAR"}, 0, Option::Id::ROM_FILTER, Option::Flags::STRING);
 #endif
