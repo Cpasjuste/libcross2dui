@@ -30,8 +30,8 @@ public:
         name->setOutlineThickness(textGroup.outlineSize);
         name->setOutlineColor(textGroup.outlineColor);
         name->setOrigin(Origin::Left);
-        name->setPosition(16, getSize().y / 2);
-        name->setSizeMax((getSize().x * 0.66f) - 32, 0);
+        name->setPosition(0, getSize().y / 2);
+        name->setSizeMax((getSize().x * 0.50f), 0);
         add(name);
 
         value = new Text("OPTION VALUE,)'", textGroup.size, font);
@@ -39,8 +39,8 @@ public:
         value->setOutlineThickness(textGroup.outlineSize);
         value->setOutlineColor(textGroup.outlineColor);
         value->setOrigin(Origin::Left);
-        value->setPosition((getSize().x * 0.66f) + 16, getSize().y / 2);
-        value->setSizeMax((getSize().x * 0.5f) - 32, 0);
+        value->setPosition((getSize().x * 0.67f), getSize().y / 2);
+        value->setSizeMax(getSize().x * 0.5f, 0);
         add(value);
 
         sprite = new Sprite();
@@ -121,12 +121,11 @@ UIMenu::UIMenu(UIMain *ui) : RectangleShape(Vector2f(0, 0)) {
     title = new Text("TITLE", C2D_DEFAULT_CHAR_SIZE, ui->getSkin()->font);
     title->setStyle(Text::Underlined);
     skin->loadText(title, {"OPTIONS_MENU", "TITLE_TEXT"});
-
-    int start_y = (int) (title->getGlobalBounds().top + title->getGlobalBounds().height + 32);
     add(title);
 
-    // calculate lines per menu
     textGroup = ui->getSkin()->getText({"OPTIONS_MENU", "ITEMS_TEXT"});
+    int start_y = (int) textGroup.rect.top;
+    // calculate lines per menu
     float line_height = ui->getSkin()->getFont()->getLineSpacing(textGroup.size) + 4;
     int max_lines = (int) ((getSize().y - start_y) / line_height) * 2;
 
@@ -138,10 +137,11 @@ UIMenu::UIMenu(UIMain *ui) : RectangleShape(Vector2f(0, 0)) {
 
     // add lines of text
     for (int i = 0; i < max_lines; i++) {
-        FloatRect rect = {0, start_y + (i * line_height), getSize().x / 2, line_height};
+        FloatRect rect = {textGroup.rect.left, start_y + (i * line_height), getSize().x / 2, line_height};
         if (i >= max_lines / 2) {
-            rect.left = getSize().x / 2;
-            rect.top = start_y + ((i - ((float) max_lines / 2)) * line_height);
+#warning "todo: fix menu height on small screens"
+            //rect.left = getSize().x / 2;
+            //rect.top = start_y + ((i - ((float) max_lines / 2)) * line_height);
         }
         lines.push_back(new MenuLine(ui, rect, textGroup));
         add(lines[i]);
@@ -259,9 +259,10 @@ void UIMenu::load(bool isRom, OptionMenu *om) {
 void UIMenu::updateHighlight() {
 
     MenuLine *line = lines[optionIndex];
-    Vector2f pos = {line->value->getPosition().x - 6, line->getPosition().y};
-    highlight->setPosition(pos);
-    highlight->setSize(line->value->getLocalBounds().width + 12, highlight->getSize().y);
+    highlight->setOrigin(Origin::Left);
+    highlight->setPosition(line->getPosition() + line->value->getPosition());
+    highlight->move(-4, 0);
+    highlight->setSize(line->value->getLocalBounds().width + 8, highlight->getSize().y);
     for (size_t i = 0; i < lines.size(); i++) {
         Color color = (int) i == optionIndex ? getOutlineColor() : textGroup.outlineColor;
         lines.at(i)->value->setOutlineColor(color);

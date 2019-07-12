@@ -114,30 +114,34 @@ public:
             // update info text
             info = "FILE: ";
             info += rom->drv_name;
-            info += "\nSTATUS: ";
-            info += rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE";
-            if (rom->year) {
-                info += "\nYEAR: ";
-                info += rom->year;
+            if (C2D_SCREEN_HEIGHT > 240) {
+                info += "\nSTATUS: ";
+                info += rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE";
+                if (rom->year) {
+                    info += "\nYEAR: ";
+                    info += rom->year;
+                }
             }
             if (rom->system) {
                 info += "\nSYSTEM: ";
                 info += rom->system;
             }
-            if (rom->manufacturer) {
-                info += "\nMANUFACTURER: ";
-                info += rom->manufacturer;
-            }
-            Option *opt = ui->getConfig()->get(Option::Id::ROM_ROTATION);
-            if (opt && !(opt->getFlags() & Option::Flags::HIDDEN)) {
-                info += "\nROTATION: ";
-                if (rom->flags & BDF_ORIENTATION_VERTICAL) {
-                    info += "VERTICAL";
-                } else {
-                    info += "HORIZONTAL";
+            if (C2D_SCREEN_HEIGHT > 240) {
+                if (rom->manufacturer) {
+                    info += "\nMANUFACTURER: ";
+                    info += rom->manufacturer;
                 }
-                if (rom->flags & BDF_ORIENTATION_FLIPPED) {
-                    info += " / FLIPPED";
+                Option *opt = ui->getConfig()->get(Option::Id::ROM_ROTATION);
+                if (opt && !(opt->getFlags() & Option::Flags::HIDDEN)) {
+                    info += "\nROTATION: ";
+                    if (rom->flags & BDF_ORIENTATION_VERTICAL) {
+                        info += "VERTICAL";
+                    } else {
+                        info += "HORIZONTAL";
+                    }
+                    if (rom->flags & BDF_ORIENTATION_FLIPPED) {
+                        info += " / FLIPPED";
+                    }
                 }
             }
 #ifdef __SSCRAP__
