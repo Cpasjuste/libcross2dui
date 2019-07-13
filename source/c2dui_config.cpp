@@ -41,8 +41,8 @@ Config::Config(c2d::Io *io, int ver) {
     append("SCREEN_HEIGHT", C2D_SCREEN_HEIGHT, Option::Id::GUI_SCREEN_HEIGHT,
            Option::Flags::INTEGER | Option::Flags::HIDDEN);
 #ifdef __FREEPLAY__
-    append("WINDOW_LEFT", 4, Option::Id::GUI_WINDOW_LEFT, Option::Flags::INTEGER | Option::Flags::HIDDEN);
-    append("WINDOW_TOP", 9, Option::Id::GUI_WINDOW_TOP, Option::Flags::INTEGER | Option::Flags::HIDDEN);
+    append("WINDOW_LEFT", 9, Option::Id::GUI_WINDOW_LEFT, Option::Flags::INTEGER | Option::Flags::HIDDEN);
+    append("WINDOW_TOP", 4, Option::Id::GUI_WINDOW_TOP, Option::Flags::INTEGER | Option::Flags::HIDDEN);
     append("WINDOW_WIDTH", 301, Option::Id::GUI_WINDOW_WIDTH, Option::Flags::INTEGER | Option::Flags::HIDDEN);
     append("WINDOW_HEIGHT", 203, Option::Id::GUI_WINDOW_HEIGHT, Option::Flags::INTEGER | Option::Flags::HIDDEN);
 #else
