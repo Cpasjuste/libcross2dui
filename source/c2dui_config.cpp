@@ -30,10 +30,13 @@ Config::Config(c2d::Io *io, int ver) {
     append("MAIN", {"MAIN"}, 0, Option::Id::MENU_MAIN, Option::Flags::MENU);
     append("SHOW", {"ALL", "FAVORITES"}, 0, Option::Id::GUI_SHOW_ALL, Option::Flags::STRING);
     append("SHOW_CLONES", {"OFF", "ON"}, 0, Option::Id::GUI_SHOW_CLONES, Option::Flags::BOOLEAN);
-#if !(defined(__PSP2__) || defined(__3DS__)) // two slow
-    append("SHOW_ICONS", {"OFF", "ON"}, 0, Option::Id::GUI_SHOW_ICONS, Option::Flags::BOOLEAN);
+    if (C2D_SCREEN_HEIGHT > 544) {
+        append("SHOW_ICONS", {"OFF", "ON"}, 0, Option::Id::GUI_SHOW_ICONS, Option::Flags::BOOLEAN);
+    } else {
+        append("SHOW_ICONS", {"OFF", "ON"}, 0, Option::Id::GUI_SHOW_ICONS,
+               Option::Flags::BOOLEAN | Option::Flags::HIDDEN);
+    }
     get()->at(get()->size() - 1).setInfo("Enabling icons needs a restart...");
-#endif
     append("USE_DATABASE", {"OFF", "ON"}, 0, Option::Id::GUI_USE_DATABASE, Option::Flags::BOOLEAN);
     get()->at(get()->size() - 1).setInfo("Using a DB needs a restart...");
     append("SCREEN_WIDTH", C2D_SCREEN_WIDTH, Option::Id::GUI_SCREEN_WIDTH,
