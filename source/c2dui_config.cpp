@@ -8,17 +8,17 @@
 using namespace c2d;
 using namespace c2dui;
 
-Config::Config(const std::string &home, int ver) {
+Config::Config(c2d::Io *io, int ver) {
 
-    printf("Config(%s, v%i)\n", home.c_str(), ver);
+    printf("Config(%s, v%i)\n", io->getDataWritePath().c_str(), ver);
 
-    dataPath = home;
+    dataPath = io->getDataWritePath();
     configPath = dataPath + "config.cfg";
     version = ver;
 
     /// add default roms paths
     getRomPaths()->clear();
-    getRomPaths()->emplace_back(home + "roms/");
+    getRomPaths()->emplace_back(io->getDataWritePath() + "roms/");
     // default hardware filter (all)
     getHardwareList()->emplace_back(HARDWARE_PREFIX_ALL, "ALL");
 
@@ -36,10 +36,27 @@ Config::Config(const std::string &home, int ver) {
 #endif
     append("USE_DATABASE", {"OFF", "ON"}, 0, Option::Id::GUI_USE_DATABASE, Option::Flags::BOOLEAN);
     get()->at(get()->size() - 1).setInfo("Using a DB needs a restart...");
+    append("SCREEN_WIDTH", C2D_SCREEN_WIDTH, Option::Id::GUI_SCREEN_WIDTH,
+           Option::Flags::INTEGER | Option::Flags::HIDDEN);
+    append("SCREEN_HEIGHT", C2D_SCREEN_HEIGHT, Option::Id::GUI_SCREEN_HEIGHT,
+           Option::Flags::INTEGER | Option::Flags::HIDDEN);
+#ifdef __FREEPLAY__
+    append("WINDOW_LEFT", 4, Option::Id::GUI_WINDOW_LEFT, Option::Flags::INTEGER | Option::Flags::HIDDEN);
+    append("WINDOW_TOP", 9, Option::Id::GUI_WINDOW_TOP, Option::Flags::INTEGER | Option::Flags::HIDDEN);
+    append("WINDOW_WIDTH", 301, Option::Id::GUI_WINDOW_WIDTH, Option::Flags::INTEGER | Option::Flags::HIDDEN);
+    append("WINDOW_HEIGHT", 203, Option::Id::GUI_WINDOW_HEIGHT, Option::Flags::INTEGER | Option::Flags::HIDDEN);
+#else
+    append("WINDOW_LEFT", 0, Option::Id::GUI_WINDOW_LEFT, Option::Flags::INTEGER | Option::Flags::HIDDEN);
+    append("WINDOW_TOP", 0, Option::Id::GUI_WINDOW_TOP, Option::Flags::INTEGER | Option::Flags::HIDDEN);
+    append("WINDOW_WIDTH", C2D_SCREEN_WIDTH, Option::Id::GUI_WINDOW_WIDTH,
+           Option::Flags::INTEGER | Option::Flags::HIDDEN);
+    append("WINDOW_HEIGHT", C2D_SCREEN_HEIGHT, Option::Id::GUI_WINDOW_HEIGHT,
+           Option::Flags::INTEGER | Option::Flags::HIDDEN);
+#endif
     append("FULLSCREEN", {"OFF", "ON"}, 1, Option::Id::GUI_FULLSCREEN, Option::Flags::BOOLEAN | Option::Flags::HIDDEN);
     // build zipped skin list
-    std::vector <std::string> paths;
-    std::vector <Io::File> files = c2d_renderer->getIo()->getDirList(dataPath + "skins/", true);
+    std::vector<std::string> paths;
+    std::vector<Io::File> files = io->getDirList(dataPath + "skins/", true);
     for (const auto &file : files) {
         if (file.name[0] == '.') {
             continue;
@@ -69,7 +86,7 @@ Config::Config(const std::string &home, int ver) {
     /////////////////////////////////////////////////
     append("DEFAULT_ROMS_OPTIONS", {}, 0, 1001, Option::Flags::DELIMITER);
     append("EMULATION", {"EMULATION"}, 0, Option::Id::MENU_ROM_OPTIONS, Option::Flags::MENU);
-    if (C2D_SCREEN_WIDTH > 320) {
+    if (C2D_SCREEN_WIDTH > 400) {
         append("SCALING", {"NONE", "2X", "3X", "FIT", "FIT 4:3", "FULL"}, 2,
                Option::Id::ROM_SCALING, Option::Flags::STRING);
     } else {
@@ -80,11 +97,6 @@ Config::Config(const std::string &home, int ver) {
 #else
     append("FILTER", {"POINT", "LINEAR"}, 0, Option::Id::ROM_FILTER, Option::Flags::STRING);
 #endif
-    if (c2d_renderer->getShaderList() != nullptr) {
-        append("EFFECT", c2d_renderer->getShaderList()->getNames(), 0, Option::Id::ROM_SHADER, Option::Flags::STRING);
-    } else {
-        append("EFFECT", {"NONE"}, 0, Option::Id::ROM_SHADER, Option::Flags::STRING | Option::Flags::HIDDEN);
-    }
     append("SHOW_FPS", {"OFF", "ON"}, 0, Option::Id::ROM_SHOW_FPS, Option::Flags::BOOLEAN);
 
     /// joysticks config
@@ -135,7 +147,7 @@ void Config::load(RomList::Rom *rom) {
     config_init(&cfg);
 
     bool isRomCfg = rom != nullptr;
-    std::vector <Option> *options = isRomCfg ? &options_rom : &options_gui;
+    std::vector<Option> *options = isRomCfg ? &options_rom : &options_gui;
     std::string path = configPath;
     if (isRomCfg) {
         path = dataPath;
@@ -232,7 +244,7 @@ void Config::save(RomList::Rom *rom) {
     config_init(&cfg);
 
     bool isRomCfg = rom != nullptr;
-    std::vector <Option> *options = isRomCfg ? &options_rom : &options_gui;
+    std::vector<Option> *options = isRomCfg ? &options_rom : &options_gui;
     std::string path = configPath;
     if (isRomCfg) {
         path = dataPath;
@@ -328,17 +340,17 @@ std::string *Config::getRomPath(int n) {
     }
 }
 
-std::vector <std::string> *Config::getRomPaths() {
+std::vector<std::string> *Config::getRomPaths() {
     return &roms_paths;
 }
 
-std::vector <Option> *Config::get(bool isRom) {
+std::vector<Option> *Config::get(bool isRom) {
     return isRom ? &options_rom : &options_gui;
 }
 
 Option *Config::get(int index, bool isRom) {
 
-    std::vector <Option> *options = get(isRom);
+    std::vector<Option> *options = get(isRom);
 
     for (auto &option : *options) {
         if (option.getId() == index) {
@@ -349,7 +361,7 @@ Option *Config::get(int index, bool isRom) {
 }
 
 bool Config::add(int target,
-                 const std::string &text, const std::vector <std::string> &values,
+                 const std::string &text, const std::vector<std::string> &values,
                  int defaultValue, int index, unsigned int flags) {
 
     for (unsigned int i = 0; i < options_gui.size(); i++) {
@@ -363,7 +375,7 @@ bool Config::add(int target,
     return false;
 }
 
-void Config::append(const std::string &text, const std::vector <std::string> &values,
+void Config::append(const std::string &text, const std::vector<std::string> &values,
                     int defaultValue, int id, unsigned int flags) {
     options_gui.emplace_back(text, values, defaultValue, id, flags);
 }
@@ -374,7 +386,7 @@ void Config::append(const std::string &text, int value, int id, unsigned int fla
 
 bool Config::hide(int index, bool isRom) {
 
-    std::vector <Option> *options = get(isRom);
+    std::vector<Option> *options = get(isRom);
 
     for (auto &option : *options) {
         if (option.getId() == index) {
@@ -428,6 +440,6 @@ int *Config::getPlayerInputButtons(int player, bool isRom) {
     return joystick_keys;
 }
 
-std::vector <RomList::Hardware> *Config::getHardwareList() {
+std::vector<RomList::Hardware> *Config::getHardwareList() {
     return &hardwareList;
 }

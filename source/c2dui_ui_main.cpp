@@ -16,6 +16,7 @@ using namespace c2d;
 using namespace c2dui;
 
 UIMain::UIMain(const Vector2f &size) : C2DRenderer(size) {
+
 }
 
 UIMain::~UIMain() {

@@ -33,6 +33,12 @@ namespace c2dui {
             GUI_SHOW_HARDWARE,
             GUI_SHOW_ICONS,
             GUI_USE_DATABASE,
+            GUI_SCREEN_WIDTH,
+            GUI_SCREEN_HEIGHT,
+            GUI_WINDOW_TOP,
+            GUI_WINDOW_LEFT,
+            GUI_WINDOW_WIDTH,
+            GUI_WINDOW_HEIGHT,
             GUI_FULLSCREEN,
             GUI_SKIN,
 #ifdef __SWITCH__

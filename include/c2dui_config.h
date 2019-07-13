@@ -13,7 +13,7 @@ namespace c2dui {
 
     public:
 
-        Config(const std::string &home, int version);
+        Config(c2d::Io *io, int version);
 
         virtual ~Config() = default;
 

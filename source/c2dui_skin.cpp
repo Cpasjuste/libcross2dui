@@ -196,6 +196,10 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
         c2d::config::Option *opt = genGrp->getOption("global_scaling");
         if (opt) {
             global_scaling = opt->getVector2f();
+            global_scaling.x *= (float) ui->getConfig()->get(c2dui::Option::Id::GUI_WINDOW_WIDTH)->getValueInt()
+                                / (float) ui->getConfig()->get(c2dui::Option::Id::GUI_SCREEN_WIDTH)->getValueInt();
+            global_scaling.y *= (float) ui->getConfig()->get(c2dui::Option::Id::GUI_WINDOW_HEIGHT)->getValueInt()
+                                / (float) ui->getConfig()->get(c2dui::Option::Id::GUI_SCREEN_HEIGHT)->getValueInt();
         }
     }
 
