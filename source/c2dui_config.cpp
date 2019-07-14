@@ -209,15 +209,15 @@ void Config::load(RomList::Rom *rom) {
                         int value = 0;
                         if (config_setting_lookup_int(settings, option.getName().c_str(), &value)) {
                             option.setValueInt(value);
-                            printf("Config::load: OPTION: %s, VALUE: %i\n", option.getName().c_str(),
-                                   option.getValueInt());
+                            //printf("Config::load: OPTION: %s, VALUE: %i\n", option.getName().c_str(),
+                            //       option.getValueInt());
                         }
                     } else {
                         const char *value;
                         if (config_setting_lookup_string(settings, option.getName().c_str(), &value)) {
                             option.setValueString(value);
-                            printf("Config::load: OPTION: %s, VALUE: %s\n", option.getName().c_str(),
-                                   option.getValueString().c_str());
+                            //printf("Config::load: OPTION: %s, VALUE: %s\n", option.getName().c_str(),
+                            //       option.getValueString().c_str());
                         }
                     }
                 }
