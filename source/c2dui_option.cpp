@@ -78,6 +78,16 @@ void Option::setFlags(unsigned int _flags) {
 
 void Option::next() {
 
+    if (flags & Flags::INPUT) {
+        return;
+    }
+
+    if (flags & Flags::INTEGER) {
+        int value = getValueInt();
+        setValueInt(value + 1);
+        return;
+    }
+
     int size = (int) options.size();
     for (int i = 0; i < size; i++) {
         if (options.at(i) == current_option) {
@@ -92,6 +102,16 @@ void Option::next() {
 }
 
 void Option::prev() {
+
+    if (flags & Flags::INPUT) {
+        return;
+    }
+
+    if (flags & Flags::INTEGER) {
+        int value = getValueInt();
+        setValueInt(value - 1);
+        return;
+    }
 
     int size = (int) options.size();
     for (int i = size - 1; i > -1; i--) {

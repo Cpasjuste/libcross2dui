@@ -314,8 +314,8 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
     }
 
     // LEFT /RIGHT
-    if ((keys & Input::Key::Left || keys & Input::Key::Right)
-        && (unsigned int) optionIndex < optionMenu->option_ids.size()) {
+    if ((keys & Input::Key::Left || keys & Input::Key::Right) &&
+        (unsigned int) optionIndex < optionMenu->option_ids.size()) {
         Option *option = lines[optionIndex]->option;
         if (!option) {
             // should never happen
@@ -356,6 +356,17 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
                     if (isEmuRunning) {
                         ui->getUiEmu()->getVideo()->setShader(option->getIndex());
                     }
+                case Option::Id::GUI_WINDOW_LEFT:
+                    ui->setPosition(option->getValueInt(), ui->getPosition().y);
+                    break;
+                case Option::Id::GUI_WINDOW_TOP:
+                    ui->setPosition(ui->getPosition().x, option->getValueInt());
+                    break;
+                case Option::Id::GUI_WINDOW_WIDTH:
+                    ui->setScale((float) option->getValueInt() / ui->getSize().x, ui->getScale().y);
+                    break;
+                case Option::Id::GUI_WINDOW_HEIGHT:
+                    ui->setScale(ui->getScale().x, (float) option->getValueInt() / ui->getSize().y);
                     break;
 #ifdef __SWITCH__
                 case Option::Id::JOY_SINGLEJOYCON:
