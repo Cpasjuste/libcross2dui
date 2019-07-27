@@ -89,12 +89,11 @@ void UIMain::setSkin(Skin *s) {
 }
 
 bool UIMain::onInput(c2d::Input::Player *players) {
+
     return Renderer::onInput(players);
 }
 
-void UIMain::onUpdate() {
-
-    Renderer::onUpdate();
+void UIMain::onDraw(c2d::Transform &transform, bool draw) {
 
     if (uiEmu && !uiEmu->isVisible()) {
         unsigned int keys = getInput()->getKeys(0);
@@ -111,6 +110,8 @@ void UIMain::onUpdate() {
             }
         }
     }
+
+    C2DObject::onDraw(transform, draw);
 }
 
 float UIMain::getScaling() {

@@ -41,7 +41,7 @@ namespace c2dui {
 
         bool onInput(c2d::Input::Player *players) override;
 
-        void onUpdate() override;
+        void onDraw(c2d::Transform &transform, bool draw = true) override;
 
         void updateInputMapping(bool isRomCfg);
 

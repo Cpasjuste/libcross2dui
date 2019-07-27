@@ -91,8 +91,9 @@ public:
         }
 
         if (!rom) {
-            printf("load(%s, %i)\n", "nullptr", isPreview);
+            //printf("load(%s, %i)\n", "nullptr", isPreview);
             infoText->setVisibility(Visibility::Hidden);
+            infoText->setString("");
         } else {
             printf("load(%s, %i)\n", rom->name.c_str(), isPreview);
 #ifdef __SSCRAP__
@@ -117,10 +118,10 @@ public:
             if (C2D_SCREEN_HEIGHT > 240) {
                 info += "\nSTATUS: ";
                 info += rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE";
-                if (rom->year) {
-                    info += "\nYEAR: ";
-                    info += rom->year;
-                }
+            }
+            if (rom->year) {
+                info += "\nYEAR: ";
+                info += rom->year;
             }
             if (rom->system) {
                 info += "\nSYSTEM: ";
@@ -173,12 +174,12 @@ UIRomListClassic::UIRomListClassic(UIMain *u, RomList *romList, const c2d::Vecto
     skin->loadRectangleShape(this, {"MAIN"});
 
     // add title image if available
-    RectangleShape *title = new RectangleShape({16, 16});
+    auto title = new RectangleShape({16, 16});
     skin->loadRectangleShape(title, {"MAIN", "TITLE"});
     add(title);
 
     // add help image if available
-    RectangleShape *help = new RectangleShape({16, 16});
+    auto help = new RectangleShape({16, 16});
     skin->loadRectangleShape(help, {"MAIN", "HELP"});
     add(help);
 
@@ -230,13 +231,16 @@ void UIRomListClassic::updateRomList() {
                                romListGroup.rect, (std::vector<Io::File *> &) roms, use_icons);
         list_box->setFillColor(romListGroup.color);
         list_box->setOutlineColor(romListGroup.outlineColor);
-        list_box->setOutlineThickness(romListGroup.outlineSize);
+        list_box->setOutlineThickness((float) romListGroup.outlineSize);
         list_box->setSelection(0);
         // rom item
         list_box->setTextOutlineColor(textGroup.outlineColor);
-        list_box->setTextOutlineThickness(textGroup.outlineSize);
+        list_box->setTextOutlineThickness((float) textGroup.outlineSize);
         // hihglight
-        ui->getSkin()->loadRectangleShape(list_box->getHighlight(), {"SKIN_CONFIG", "HIGHLIGHT"});
+        Skin::RectangleShapeGroup rectShape = ui->getSkin()->getRectangleShape({"SKIN_CONFIG", "HIGHLIGHT"});
+        list_box->getHighlight()->setFillColor(rectShape.color);
+        list_box->getHighlight()->setOutlineColor(rectShape.outlineColor);
+        list_box->getHighlight()->setOutlineThickness((float) rectShape.outlineSize);
         list_box->setHighlightUseFileColor(highlightUseFileColors);
         add(list_box);
     } else {
@@ -302,7 +306,7 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
     } else if (keys & Input::Key::Fire4) {
         if (getSelection() != nullptr) {
             // remove from favorites
-            if (getSelection()->hardware & HARDWARE_PREFIX_FAV) {
+            if (getSelection()->hardware & (unsigned int) HARDWARE_PREFIX_FAV) {
                 int res = ui->getUiMessageBox()->show("FAVORITES",
                                                       "remove selection from favorites ?", "OK", "CANCEL");
                 if (res == MessageBox::LEFT) {
@@ -318,7 +322,7 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
     } else if (keys & Input::Key::Fire3) {
         if (getSelection() != nullptr) {
             // add to favorites
-            if (!(getSelection()->hardware & HARDWARE_PREFIX_FAV)) {
+            if (!(getSelection()->hardware & (unsigned int) HARDWARE_PREFIX_FAV)) {
                 int res = ui->getUiMessageBox()->show("FAVORITES",
                                                       "add selection to favorites ?", "OK", "CANCEL");
                 if (res == MessageBox::LEFT) {
