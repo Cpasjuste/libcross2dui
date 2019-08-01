@@ -267,7 +267,7 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
         rom_index--;
         if (rom_index < 0)
             rom_index = (int) (roms.size() - 1);
-        list_box->setSelection(rom_index);
+        list_box->up();
         show_preview = false;
         rom_info->load(nullptr);
         title_loaded = 0;
@@ -275,7 +275,7 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
         rom_index++;
         if ((unsigned int) rom_index >= roms.size())
             rom_index = 0;
-        list_box->setSelection(rom_index);
+        list_box->down();
         show_preview = false;
         rom_info->load(nullptr);
         title_loaded = 0;
