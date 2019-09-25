@@ -51,8 +51,10 @@ Config::Config(c2d::Io *io, int ver) {
 #else
     append("WINDOW_LEFT", 0, Option::Id::GUI_WINDOW_LEFT, Option::Flags::INTEGER | Option::Flags::HIDDEN);
     append("WINDOW_TOP", 0, Option::Id::GUI_WINDOW_TOP, Option::Flags::INTEGER | Option::Flags::HIDDEN);
-    append("WINDOW_WIDTH", C2D_SCREEN_WIDTH, Option::Id::GUI_WINDOW_WIDTH, Option::Flags::INTEGER | Option::Flags::HIDDEN);
-    append("WINDOW_HEIGHT", C2D_SCREEN_HEIGHT, Option::Id::GUI_WINDOW_HEIGHT, Option::Flags::INTEGER | Option::Flags::HIDDEN);
+    append("WINDOW_WIDTH", C2D_SCREEN_WIDTH, Option::Id::GUI_WINDOW_WIDTH,
+           Option::Flags::INTEGER | Option::Flags::HIDDEN);
+    append("WINDOW_HEIGHT", C2D_SCREEN_HEIGHT, Option::Id::GUI_WINDOW_HEIGHT,
+           Option::Flags::INTEGER | Option::Flags::HIDDEN);
 #endif
     append("FULLSCREEN", {"OFF", "ON"}, 1, Option::Id::GUI_FULLSCREEN, Option::Flags::BOOLEAN | Option::Flags::HIDDEN);
     // build zipped skin list
@@ -79,7 +81,7 @@ Config::Config(c2d::Io *io, int ver) {
     }
     get()->at(get()->size() - 1).setInfo("Changing skins needs a restart...");
 #ifdef __SWITCH__
-    append("SINGLE_JOYCONS", {"OFF", "ON"}, 0, Option::Id::JOY_SINGLEJOYCON);
+    append("SINGLE_JOYCONS", {"OFF", "ON"}, 0, Option::Id::JOY_SINGLEJOYCON, Option::Flags::BOOLEAN);
 #endif
 
     /////////////////////////////////////////////////
