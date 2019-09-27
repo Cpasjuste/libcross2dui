@@ -10,15 +10,15 @@ using namespace c2dui;
 
 Config::Config(c2d::Io *io, int ver) {
 
-    printf("Config(%s, v%i)\n", io->getDataWritePath().c_str(), ver);
+    printf("Config(%s, v%i)\n", io->getDataPath().c_str(), ver);
 
-    dataPath = io->getDataWritePath();
+    dataPath = io->getDataPath();
     configPath = dataPath + "config.cfg";
     version = ver;
 
     /// add default roms paths
     getRomPaths()->clear();
-    getRomPaths()->emplace_back(io->getDataWritePath() + "roms/");
+    getRomPaths()->emplace_back(io->getDataPath() + "roms/");
     // default hardware filter (all)
     getHardwareList()->emplace_back(HARDWARE_PREFIX_ALL, "ALL");
 
