@@ -17,9 +17,9 @@ namespace c2dui {
 
         virtual ~Config() = default;
 
-        virtual void load(RomList::Rom *rom = nullptr);
+        virtual void load(const ss_api::Game &game);
 
-        virtual void save(RomList::Rom *rom = nullptr);
+        virtual void save(const ss_api::Game &game);
 
         virtual void reset(bool isRom = true);
 

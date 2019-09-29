@@ -15,7 +15,7 @@ namespace c2dui {
 
         UIEmu(UIMain *ui);
 
-        virtual int load(RomList::Rom *rom);
+        virtual int load(const ss_api::Game &game);
 
         virtual void stop();
 

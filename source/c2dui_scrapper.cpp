@@ -1,7 +1,7 @@
 //
 // Created by cpasjuste on 20/05/19.
 //
-
+#if 0
 #ifdef __SSCRAP__
 
 #include <algorithm>
@@ -114,3 +114,4 @@ Scrapper::~Scrapper() {
 }
 
 #endif // SSCRAP
+#endif

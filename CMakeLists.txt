@@ -17,7 +17,7 @@ endif ()
 
 if (OPTION_SSCRAP)
     list(APPEND FLAGS -D__SSCRAP__)
-    list(APPEND LDFLAGS ssscrap)
+    list(APPEND LDFLAGS sscrap)
 endif ()
 
 if (OPTION_BUILTIN_MINIZIP)

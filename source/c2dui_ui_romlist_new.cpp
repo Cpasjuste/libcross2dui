@@ -12,14 +12,15 @@
 
 using namespace c2d;
 using namespace c2dui;
+using namespace ss_api;
 
 class UIRomItem : public RoundedRectangleShape {
 
 public:
 
-    UIRomItem(UIMain *u, RomList::Rom *r) : RoundedRectangleShape() {
+    UIRomItem(UIMain *u, const Game &g) : RoundedRectangleShape() {
         ui = u;
-        rom = r;
+        game = g;
     }
 
     void setPreview(Texture *tex) {
@@ -57,7 +58,7 @@ private:
         if (bounds.left > -(getSize().x + ROM_ITEM_MARGIN) &&
             bounds.left < ui->getSize().x + getSize().x + ROM_ITEM_MARGIN) {
             if (!previewLoaded && ui->getInput()->getRepeatDelay() >= INPUT_DELAY / 2) {
-                setPreview(ui->getUiRomList()->getPreviewTexture(rom, false));
+                setPreview(ui->getUiRomList()->getPreviewTexture(game, false));
                 previewLoaded = true;
             }
             Shape::onDraw(transform, draw);
@@ -71,7 +72,7 @@ private:
     }
 
     UIMain *ui = nullptr;
-    RomList::Rom *rom = nullptr;
+    Game game;
     Texture *preview = nullptr;
     bool previewLoaded = false;
 };
@@ -88,7 +89,7 @@ UIRomListNew::UIRomListNew(UIMain *u, RomList *romList, const c2d::Vector2f &siz
     // load bg skin
     ui->getSkin()->loadRectangleShape(this, {"MAIN"});
 
-    RoundedRectangleShape *titleRect = new RoundedRectangleShape();
+    auto titleRect = new RoundedRectangleShape();
     ui->getSkin()->loadRectangleShape(titleRect, {"MAIN", "TITLE"});
     title = new Text("NO ROM INFORMATION", (unsigned int) ui->getFontSize(), ui->getSkin()->getFont());
     ui->getSkin()->loadText(title, {"MAIN", "TITLE", "TEXT"});
@@ -98,6 +99,7 @@ UIRomListNew::UIRomListNew(UIMain *u, RomList *romList, const c2d::Vector2f &siz
 
 void UIRomListNew::updateRomList() {
 
+    /*
     filterRomList();
 
     rom_items.clear();
@@ -132,10 +134,12 @@ void UIRomListNew::updateRomList() {
         ui->getUiHighlight()->setVisibility(Visibility::Hidden);
         title->setString("NO ROM FOUND");
     }
+    */
 }
 
-RomList::Rom *UIRomListNew::getSelection() {
-    return roms.at((size_t) rom_index);
+Game UIRomListNew::getSelection() {
+    return Game();
+    //return roms.at((size_t) rom_index);
 }
 
 FloatRect UIRomListNew::getHighlightPosition(int index) {
@@ -150,6 +154,7 @@ FloatRect UIRomListNew::getHighlightPosition(int index) {
 
 bool UIRomListNew::onInput(c2d::Input::Player *players) {
 
+    /*
     if (ui->getUiMenu()->isVisible()) {
         return false;
     }
@@ -227,7 +232,7 @@ bool UIRomListNew::onInput(c2d::Input::Player *players) {
     if (keys & EV_QUIT) {
         ui->done = true;
     }
-
+    */
     return true;
 }
 

@@ -11,6 +11,7 @@
 
 using namespace c2d;
 using namespace c2dui;
+using namespace ss_api;
 
 UIRomList::UIRomList(UIMain *u, RomList *romList, const c2d::Vector2f &size) : RectangleShape(size) {
 
@@ -20,20 +21,22 @@ UIRomList::UIRomList(UIMain *u, RomList *romList, const c2d::Vector2f &size) : R
     rom_list = romList;
 }
 
-RomList::Rom *UIRomList::getSelection() {
-    return nullptr;
+Game UIRomList::getSelection() {
+    return Game();
 }
 
 RomList *UIRomList::getRomList() {
     return rom_list;
 }
 
-Texture *UIRomList::getPreviewTexture(RomList::Rom *rom, bool isPreview) {
+Texture *UIRomList::getPreviewTexture(const ss_api::Game &game, bool isPreview) {
 
     // load image
     // TODO: verify loading with psnes and no db.xml)
+    // TODO: fix game.path
     C2DTexture *texture = nullptr;
-    std::string name = Utility::removeExt(rom->drv_name);
+    printf("getPreviewTexture: file: %s\n", game.path.c_str());
+    std::string name = Utility::removeExt(game.path);
     std::string type = isPreview ? "previews" : "titles";
     std::string home_path = ui->getConfig()->getHomePath();
     std::string path;
@@ -42,6 +45,8 @@ Texture *UIRomList::getPreviewTexture(RomList::Rom *rom, bool isPreview) {
     printf("getPreviewTexture(%s, %i)\n", path.c_str(), isPreview);
 #ifndef __SWITCH__
     // TODO: fix switch stat/fopen slow on non existing files
+    // TODO: fix sscrap parent (cloneof)
+    /*
     if (!ui->getIo()->exist(path)) {
         path = home_path + type + "/" + name + ".jpg";
         printf("getPreviewTexture(%s, %i)\n", path.c_str(), isPreview);
@@ -55,6 +60,7 @@ Texture *UIRomList::getPreviewTexture(RomList::Rom *rom, bool isPreview) {
             }
         }
     }
+    */
 #endif
     if (ui->getIo()->exist(path)) {
         texture = new C2DTexture(path);
@@ -65,6 +71,10 @@ Texture *UIRomList::getPreviewTexture(RomList::Rom *rom, bool isPreview) {
 
 void UIRomList::filterRomList() {
 
+    // TODO: sscrap - filering
+    games = ss_api::Api::gameListFilter(rom_list->gameList.games);
+
+    /*
     roms.clear();
 
     static RomList *list = rom_list;
@@ -74,7 +84,7 @@ void UIRomList::filterRomList() {
     int showHardware = ui->getConfig()->getHardwareList()->at((unsigned int) showHardwareCfg).prefix;
     printf("showClone: %i, showHardwareCfg: %i, showHardware: %i\n", showClone, showHardwareCfg, showHardware);
 
-    // psnes and pnes have only 2 (0/1) values, so work with value string
+// psnes and pnes have only 2 (0/1) values, so work with value string
     Option *opt = ui->getConfig()->get(Option::Id::GUI_SHOW_ALL);
     int showAll = opt->getValueString() != "ALL";
     if (opt->getValueString() == "FAVORITES") {
@@ -96,6 +106,7 @@ void UIRomList::filterRomList() {
                                       && !list->isHardware(r->hardware, showHardware));
                        });
     }
+    */
 }
 
 void UIRomList::updateRomList() {

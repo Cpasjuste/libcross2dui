@@ -6,7 +6,7 @@
 #define C2DUI_UI_ROMLIST_CLASSIC_H
 
 #include "cross2d/skeleton/sfml/RectangleShape.hpp"
-#include "cross2d/widgets/listbox.h"
+#include "c2dui_listbox.h"
 
 class UIRomInfo;
 
@@ -26,12 +26,12 @@ namespace c2dui {
 
         void updateRomList() override;
 
-        RomList::Rom *getSelection() override;
+        ss_api::Game getSelection() override;
 
     private:
 
         UIRomInfo *rom_info = nullptr;
-        c2d::ListBox *list_box = nullptr;
+        UIListBox *list_box = nullptr;
         int rom_index = 0;
         bool show_preview = false;
         int title_loaded = 0;

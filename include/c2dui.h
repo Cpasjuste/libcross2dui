@@ -5,6 +5,7 @@
 #ifndef C2DUI_H
 #define C2DUI_H
 
+#include "ss_api.h"
 #include "cross2d/c2d.h"
 #include "c2dui_option.h"
 #include "c2dui_option_menu.h"

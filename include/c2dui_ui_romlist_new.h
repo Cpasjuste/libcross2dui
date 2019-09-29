@@ -26,7 +26,7 @@ namespace c2dui {
 
         void updateRomList() override;
 
-        RomList::Rom *getSelection() override;
+        ss_api::Game getSelection() override;
 
     private:
 

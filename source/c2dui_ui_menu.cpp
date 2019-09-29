@@ -188,7 +188,7 @@ void UIMenu::load(bool isRom, OptionMenu *om) {
     }
 
     if (isRomMenu) {
-        title->setString(ui->getUiRomList()->getSelection()->name);
+        title->setString(ui->getUiRomList()->getSelection().getName().text);
     } else {
         title->setString(optionMenu->title);
     }
@@ -442,7 +442,7 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
         if (isRomMenu) {
             ui->getConfig()->save(ui->getUiRomList()->getSelection());
         } else {
-            ui->getConfig()->save();
+            ui->getConfig()->save(ss_api::Game());
         }
     }
 

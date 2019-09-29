@@ -6,6 +6,7 @@
 
 using namespace c2d;
 using namespace c2dui;
+using namespace ss_api;
 
 UIEmu::UIEmu(UIMain *u) : RectangleShape(u->getSize()) {
 
@@ -91,9 +92,9 @@ void UIEmu::addVideo(UIMain *ui, void **pixels, int *pitch,
     addVideo(_video);
 }
 
-int UIEmu::load(RomList::Rom *rom) {
+int UIEmu::load(const Game &game) {
 
-    printf("UIEmu::load(%s)\n", rom->path.c_str());
+    printf("UIEmu::load(%s)\n", game.path.c_str());
 
     // set fps text on top
     getFpsText()->setLayer(2);

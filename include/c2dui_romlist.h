@@ -36,6 +36,7 @@ namespace c2dui {
             }
         };
 
+        /*
         class Rom : public c2d::Io::File {
         public:
             const char *parent = nullptr;
@@ -49,6 +50,7 @@ namespace c2dui {
             unsigned int drv;
             int genre;
         };
+        */
 
         RomList(UIMain *ui, const std::string &emuVersion);
 
@@ -56,9 +58,9 @@ namespace c2dui {
 
         virtual void build();
 
-        void addFav(Rom *rom);
+        void addFav(ss_api::Game *rom);
 
-        void removeFav(Rom *rom);
+        void removeFav(ss_api::Game *rom);
 
         enum RomState {
             NOT_WORKING = 0,
@@ -69,10 +71,11 @@ namespace c2dui {
         UIMain *ui;
         c2d::RectangleShape *rect;
         c2d::Text *text;
-        std::vector<Rom *> list;
+        //std::vector<Rom *> list;
+        ss_api::Api::GameList gameList;
         std::vector<Hardware> *hardwareList;
         std::vector<std::string> *paths;
-        std::vector<std::vector<c2d::Io::File>> files;
+        //std::vector<std::vector<c2d::Io::File>> files;
         char icon_path[1024];
         char text_str[512];
         float time_start = 0;

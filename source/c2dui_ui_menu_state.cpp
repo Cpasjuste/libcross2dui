@@ -79,14 +79,14 @@ public:
         }
     }
 
-    void setRom(RomList::Rom *rom) {
+    void setRom(const ss_api::Game &game) {
 
         memset(path, 0, MAX_PATH);
         memset(shot, 0, MAX_PATH);
         snprintf(path, 1023, "%ssaves/%s%i.sav",
-                 ui->getConfig()->getHomePath().c_str(), rom->drv_name, id);
+                 ui->getConfig()->getHomePath().c_str(), game.id.c_str(), id);
         snprintf(shot, 1023, "%ssaves/%s%i.png",
-                 ui->getConfig()->getHomePath().c_str(), rom->drv_name, id);
+                 ui->getConfig()->getHomePath().c_str(), game.id.c_str(), id);
 
         loadTexture();
     }
@@ -220,7 +220,7 @@ void UIStateMenu::setVisibility(c2d::Visibility visibility, bool tweenPlay) {
 
     if (ui->getUiEmu()) {
         if (visibility == Visibility::Visible) {
-            title->setString(ui->getUiRomList()->getSelection()->name);
+            title->setString(ui->getUiRomList()->getSelection().getName().text);
             for (auto &state : uiStateList->states) {
                 state->setRom(ui->getUiRomList()->getSelection());
             }
@@ -265,12 +265,12 @@ bool UIStateMenu::onInput(c2d::Input::Player *players) {
                 ui->getUiEmu()->resume();
             }
         } else {
-            RomList::Rom *rom = ui->getUiRomList()->getSelection();
-            if (rom && rom->state != RomList::RomState::MISSING) {
+            ss_api::Game game = ui->getUiRomList()->getSelection();
+            if (game.available) {
                 UIState *state = uiStateList->getSelection();
                 if (state->exist) {
-                    ui->getConfig()->load(rom);
-                    ui->getUiEmu()->load(rom);
+                    ui->getConfig()->load(game);
+                    ui->getUiEmu()->load(game);
                     state->load();
                     setVisibility(Visibility::Hidden);
                     return true;

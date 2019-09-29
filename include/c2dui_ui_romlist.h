@@ -24,15 +24,17 @@ namespace c2dui {
 
         virtual RomList *getRomList();
 
-        virtual RomList::Rom *getSelection();
+        virtual ss_api::Game getSelection();
 
-        virtual c2d::Texture *getPreviewTexture(RomList::Rom *rom, bool isPreview);
+        virtual c2d::Texture *getPreviewTexture(const ss_api::Game &game, bool isPreview);
 
     protected:
 
         UIMain *ui = nullptr;
         RomList *rom_list = nullptr;
-        std::vector<RomList::Rom *> roms;
+        std::vector<ss_api::Game> games;
+        //std::vector<RomList::Rom *> roms;
+        //ss_api::Api::GameList gameList;
     };
 }
 

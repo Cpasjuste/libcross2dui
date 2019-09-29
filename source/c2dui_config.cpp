@@ -7,6 +7,7 @@
 
 using namespace c2d;
 using namespace c2dui;
+using namespace ss_api;
 
 Config::Config(c2d::Io *io, int ver) {
 
@@ -144,18 +145,18 @@ Config::Config(c2d::Io *io, int ver) {
 
 }
 
-void Config::load(RomList::Rom *rom) {
+void Config::load(const Game &game) {
 
     config_t cfg;
     config_init(&cfg);
 
-    bool isRomCfg = rom != nullptr;
+    bool isRomCfg = !game.id.empty();
     std::vector<Option> *options = isRomCfg ? &options_rom : &options_gui;
     std::string path = configPath;
     if (isRomCfg) {
         path = dataPath;
         path += "configs/";
-        path += rom->drv_name;
+        path += game.id;
         path += ".cfg";
     }
 
@@ -173,7 +174,7 @@ void Config::load(RomList::Rom *rom) {
                 || cfg_version != version) {
                 // update cfg to newer version
                 printf("CONFIG VERSION (%i) != EXE VERSION (%i)\n", cfg_version, version);
-                save(rom);
+                save(game);
                 config_destroy(&cfg);
                 return;
             }
@@ -224,7 +225,7 @@ void Config::load(RomList::Rom *rom) {
             }
         } else {
             printf("NOK: root configuration not found\n");
-            save(rom);
+            save(game);
             config_destroy(&cfg);
             return;
         }
@@ -234,25 +235,25 @@ void Config::load(RomList::Rom *rom) {
         reset();
         // no need to save default rom config
         if (!isRomCfg) {
-            save();
+            save(Game());
         }
     }
 
     config_destroy(&cfg);
 }
 
-void Config::save(RomList::Rom *rom) {
+void Config::save(const Game &game) {
 
     config_t cfg{};
     config_init(&cfg);
 
-    bool isRomCfg = rom != nullptr;
+    bool isRomCfg = !game.id.empty();
     std::vector<Option> *options = isRomCfg ? &options_rom : &options_gui;
     std::string path = configPath;
     if (isRomCfg) {
         path = dataPath;
         path += "configs/";
-        path += rom->drv_name;
+        path += game.id;
         path += ".cfg";
     }
 

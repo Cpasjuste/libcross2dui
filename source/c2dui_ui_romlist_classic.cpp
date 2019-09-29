@@ -6,7 +6,9 @@
 #include "c2dui.h"
 
 #ifdef __SSCRAP__
+
 #include "ss_api.h"
+
 #endif
 
 /// pFBA
@@ -56,13 +58,13 @@ public:
         printf("~UIRomInfo\n");
     }
 
-    bool loadTexture(RomList::Rom *rom, bool isPreview) {
+    bool loadTexture(const Game &game, bool isPreview) {
 
-        texture = (C2DTexture *) uiRomList->getPreviewTexture(rom, !isPreview);
+        texture = (C2DTexture *) uiRomList->getPreviewTexture(game, !isPreview);
 #ifndef __SWITCH__
         // TODO: fix slow stat fs on switch
         if (texture == nullptr) {
-            texture = (C2DTexture *) uiRomList->getPreviewTexture(rom, isPreview);
+            texture = (C2DTexture *) uiRomList->getPreviewTexture(game, isPreview);
         }
 #endif
         // set image
@@ -83,20 +85,20 @@ public:
         return true;
     }
 
-    void load(RomList::Rom *rom, bool isPreview = false) {
+    void load(const Game &game, bool isPreview = false) {
 
         if (texture) {
             delete (texture);
             texture = nullptr;
         }
 
-        if (!rom) {
+        if (game.id.empty()) {
             //printf("load(%s, %i)\n", "nullptr", isPreview);
             infoText->setVisibility(Visibility::Hidden);
             infoText->setString("");
         } else {
-            printf("load(%s, %i)\n", rom->name.c_str(), isPreview);
-#ifdef __SSCRAP__
+            printf("load(%s, %i)\n", game.getName().text.c_str(), isPreview);
+#if 0
             Api::JeuInfos jeuInfos = ui->getScrapper()->scrap->jeuInfos("cache/" + rom->name + ".json");
             if (jeuInfos.jeu.id.empty()) {
                 ui->getScrapper()->addRom(rom->name);
@@ -106,46 +108,50 @@ public:
             }
 #endif
             // load title/preview texture
-            loadTexture(rom, !isPreview);
-#ifdef __SSCRAP__
+            loadTexture(game, !isPreview);
+#if 0
             if (!jeuInfos.jeu.id.empty()) {
                 info = jeuInfos.jeu.synopsis[0].text;
             } else {
 #endif
-            // update info text
-            info = "FILE: ";
-            info += rom->drv_name;
-            if (C2D_SCREEN_HEIGHT > 240) {
-                info += "\nSTATUS: ";
-                info += rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE";
+                info = "FILE: " + game.path + "\n";
+                info += game.getSynopsis().text;
+            /*
+        // update info text
+        info = "FILE: ";
+        info += game.path;
+        if (C2D_SCREEN_HEIGHT > 240) {
+            info += "\nSTATUS: ";
+            info += rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE";
+        }
+        if (rom->year) {
+            info += "\nYEAR: ";
+            info += rom->year;
+        }
+        if (rom->system) {
+            info += "\nSYSTEM: ";
+            info += rom->system;
+        }
+        if (C2D_SCREEN_HEIGHT > 240) {
+            if (rom->manufacturer) {
+                info += "\nMANUFACTURER: ";
+                info += rom->manufacturer;
             }
-            if (rom->year) {
-                info += "\nYEAR: ";
-                info += rom->year;
-            }
-            if (rom->system) {
-                info += "\nSYSTEM: ";
-                info += rom->system;
-            }
-            if (C2D_SCREEN_HEIGHT > 240) {
-                if (rom->manufacturer) {
-                    info += "\nMANUFACTURER: ";
-                    info += rom->manufacturer;
+            Option *opt = ui->getConfig()->get(Option::Id::ROM_ROTATION);
+            if (opt && !(opt->getFlags() & Option::Flags::HIDDEN)) {
+                info += "\nROTATION: ";
+                if (rom->flags & BDF_ORIENTATION_VERTICAL) {
+                    info += "VERTICAL";
+                } else {
+                    info += "HORIZONTAL";
                 }
-                Option *opt = ui->getConfig()->get(Option::Id::ROM_ROTATION);
-                if (opt && !(opt->getFlags() & Option::Flags::HIDDEN)) {
-                    info += "\nROTATION: ";
-                    if (rom->flags & BDF_ORIENTATION_VERTICAL) {
-                        info += "VERTICAL";
-                    } else {
-                        info += "HORIZONTAL";
-                    }
-                    if (rom->flags & BDF_ORIENTATION_FLIPPED) {
-                        info += " / FLIPPED";
-                    }
+                if (rom->flags & BDF_ORIENTATION_FLIPPED) {
+                    info += " / FLIPPED";
                 }
             }
-#ifdef __SSCRAP__
+        }
+             */
+#if 0
             }
 #endif
             infoText->setString(info);
@@ -191,13 +197,14 @@ UIRomListClassic::UIRomListClassic(UIMain *u, RomList *romList, const c2d::Vecto
     updateRomList();
 }
 
-RomList::Rom *UIRomListClassic::getSelection() {
-    return (RomList::Rom *) list_box->getSelection();
+Game UIRomListClassic::getSelection() {
+    return list_box->getSelection();
 }
 
 void UIRomListClassic::updateRomList() {
 
     rom_index = 0;
+    // TODO: sscrap - filterRomList
     filterRomList();
 
     Skin::TextGroup textGroup = ui->getSkin()->getText({"MAIN", "ROM_LIST", "TEXT"});
@@ -207,15 +214,14 @@ void UIRomListClassic::updateRomList() {
     bool highlightUseFileColors = grp->getOption("highlight_use_text_color")->getInteger() == 1;
 
     // set item/rom text color
-    if (!roms.empty()) {
-        for (auto &rom : roms) {
-            if (rom->state == RomList::RomState::WORKING) {
-                rom->color = textGroup.color;
-            } else if (rom->state == RomList::RomState::MISSING) {
-                rom->color = colorMissing;
-            }
-            if (rom->state == RomList::RomState::NOT_WORKING) {
-                rom->color = colorNotWorking;
+    if (!games.empty()) {
+        for (auto &game : games) {
+            if (game.available) {
+                // TODO: sscrap - color
+                //rom->color = textGroup.color;
+            } else {
+                // TODO: sscrap - color
+                //rom->color = colorMissing;
             }
         }
     }
@@ -227,8 +233,7 @@ void UIRomListClassic::updateRomList() {
 #if !(defined(__PSP2__) || defined(__3DS__)) // two slow
         use_icons = ui->getConfig()->get(Option::Id::GUI_SHOW_ICONS)->getValueBool();
 #endif
-        list_box = new ListBox(ui->getSkin()->font, (int) textGroup.size,
-                               romListGroup.rect, (std::vector<Io::File *> &) roms, use_icons);
+        list_box = new UIListBox(ui->getSkin()->font, (int) textGroup.size, romListGroup.rect, games, use_icons);
         list_box->setFillColor(romListGroup.color);
         list_box->setOutlineColor(romListGroup.outlineColor);
         list_box->setOutlineThickness((float) romListGroup.outlineSize);
@@ -244,11 +249,11 @@ void UIRomListClassic::updateRomList() {
         list_box->setHighlightUseFileColor(highlightUseFileColors);
         add(list_box);
     } else {
-        list_box->setFiles((std::vector<Io::File *> &) roms);
+        list_box->setGames(games);
     }
 
     if (rom_info) {
-        rom_info->load(nullptr);
+        rom_info->load(Game());
         title_loaded = 0;
         timer_load.restart();
     }
@@ -266,26 +271,26 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
     if (keys & Input::Key::Up) {
         rom_index--;
         if (rom_index < 0)
-            rom_index = (int) (roms.size() - 1);
+            rom_index = (int) (games.size() - 1);
         list_box->up();
         show_preview = false;
-        rom_info->load(nullptr);
+        rom_info->load(Game());
         title_loaded = 0;
     } else if (keys & Input::Key::Down) {
         rom_index++;
-        if ((unsigned int) rom_index >= roms.size())
+        if ((unsigned int) rom_index >= games.size())
             rom_index = 0;
         list_box->down();
         show_preview = false;
-        rom_info->load(nullptr);
+        rom_info->load(Game());
         title_loaded = 0;
     } else if (keys & Input::Key::Right) {
         rom_index += list_box->getMaxLines();
-        if ((unsigned int) rom_index >= roms.size())
-            rom_index = (int) (roms.size() - 1);
+        if ((unsigned int) rom_index >= games.size())
+            rom_index = (int) (games.size() - 1);
         list_box->setSelection(rom_index);
         show_preview = false;
-        rom_info->load(nullptr);
+        rom_info->load(Game());
         title_loaded = 0;
     } else if (keys & Input::Key::Left) {
         rom_index -= list_box->getMaxLines();
@@ -293,19 +298,21 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
             rom_index = 0;
         list_box->setSelection(rom_index);
         show_preview = false;
-        rom_info->load(nullptr);
+        rom_info->load(Game());
         title_loaded = 0;
     } else if (keys & Input::Key::Fire1) {
-        RomList::Rom *rom = getSelection();
-        if (rom && rom->state != RomList::RomState::MISSING) {
+        Game game = getSelection();
+        if (game.available) {
             show_preview = false;
-            ui->getConfig()->load(rom);
-            ui->getUiEmu()->load(rom);
+            ui->getConfig()->load(game);
+            ui->getUiEmu()->load(game);
             return true;
         }
     } else if (keys & Input::Key::Fire4) {
-        if (getSelection() != nullptr) {
+        if (!getSelection().id.empty()) {
             // remove from favorites
+            // TODO: sscrap - favs
+            /*
             if (getSelection()->hardware & (unsigned int) HARDWARE_PREFIX_FAV) {
                 int res = ui->getUiMessageBox()->show("FAVORITES",
                                                       "remove selection from favorites ?", "OK", "CANCEL");
@@ -318,8 +325,11 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
                     }
                 }
             }
+            */
         }
     } else if (keys & Input::Key::Fire3) {
+        // TODO: sscrap - favs
+        /*
         if (getSelection() != nullptr) {
             // add to favorites
             if (!(getSelection()->hardware & (unsigned int) HARDWARE_PREFIX_FAV)) {
@@ -330,18 +340,19 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
                 }
             }
         }
+        */
     } else if (keys & Input::Key::Fire5) {
         show_preview = !show_preview;
-        rom_info->load(roms.size() > (unsigned int) rom_index ?
-                       roms[rom_index] : nullptr, show_preview);
+        rom_info->load(games.size() > (unsigned int) rom_index ?
+                       games[rom_index] : Game(), show_preview);
     } else if (keys & Input::Key::Fire6) {
         show_preview = !show_preview;
-        rom_info->load(roms.size() > (unsigned int) rom_index ?
-                       roms[rom_index] : nullptr, show_preview);
+        rom_info->load(games.size() > (unsigned int) rom_index ?
+                       games[rom_index] : Game(), show_preview);
     } else if (keys & Input::Key::Start) {
         ui->getUiMenu()->load();
     } else if (keys & Input::Key::Select) {
-        if (getSelection() != nullptr) {
+        if (!getSelection().id.empty()) {
             ui->getConfig()->load(getSelection());
             ui->getUiMenu()->load(true);
 
@@ -363,8 +374,8 @@ void UIRomListClassic::onUpdate() {
         timer_load.restart();
     } else if (keys == 0) {
         if (!title_loaded && timer_load.getElapsedTime().asMilliseconds() > load_delay) {
-            rom_info->load(roms.size() > (unsigned int) rom_index ?
-                           roms[rom_index] : nullptr, show_preview);
+            rom_info->load(games.size() > (unsigned int) rom_index ?
+                           games[rom_index] : Game(), show_preview);
             title_loaded = 1;
         }
     }

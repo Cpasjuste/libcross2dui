@@ -12,6 +12,7 @@
 
 using namespace c2d;
 using namespace c2dui;
+using namespace ss_api;
 
 RomList::RomList(UIMain *_ui, const std::string &emuVersion) {
 
@@ -26,7 +27,7 @@ RomList::RomList(UIMain *_ui, const std::string &emuVersion) {
             Vector2f(ui->getSize().x - 8, ui->getSize().y - 8));
     ui->getSkin()->loadRectangleShape(rect, {"MAIN"});
 
-    RectangleShape *title = new RectangleShape({16, 16});
+    auto title = new RectangleShape({16, 16});
     ui->getSkin()->loadRectangleShape(title, {"MAIN", "TITLE"});
     title->setOrigin(Origin::Center);
     title->setPosition(Vector2f(rect->getSize().x / 2, rect->getSize().y / 2));
@@ -57,6 +58,7 @@ RomList::RomList(UIMain *_ui, const std::string &emuVersion) {
     printf("RomList: building list...\n");
     time_start = ui->getElapsedTime().asSeconds();
 
+    /*
     for (auto &path : *paths) {
         if (!path.empty()) {
             printf("RomList: scanning path: `%s`\n", path.c_str());
@@ -65,6 +67,8 @@ RomList::RomList(UIMain *_ui, const std::string &emuVersion) {
             printf("RomList: found %i files in `%s`\n", (int) filesList.size(), path.c_str());
         }
     }
+    */
+
     printf("RomList()\n");
 }
 
@@ -72,6 +76,11 @@ void RomList::build() {
 
     printf("RomList::build()\n");
 
+    gameList = Api::gameList("gamelist.xml", "roms");
+    printf("RomList::build: %zu roms\n", gameList.games.size());
+
+    /*
+     * TODO: add/fix favorites back
     // build favorites
     std::string favPath = ui->getConfig()->getHomePath() + "favorites.bin";
     std::ifstream favFile(favPath);
@@ -87,6 +96,7 @@ void RomList::build() {
         }
         favFile.close();
     }
+    */
 
     float time_spent = ui->getElapsedTime().asSeconds() - time_start;
     printf("RomList::build(): list built in %f\n", time_spent);
@@ -96,8 +106,9 @@ void RomList::build() {
     delete (rect);
 }
 
-void RomList::addFav(Rom *rom) {
+void RomList::addFav(Game *rom) {
 
+    /*
     if (!rom || rom->hardware & HARDWARE_PREFIX_FAV) {
         printf("RomList::addFav: already in favorites\n");
         return;
@@ -112,10 +123,12 @@ void RomList::addFav(Rom *rom) {
         favFile << "\n";
         favFile.close();
     }
+    */
 }
 
-void RomList::removeFav(Rom *rom) {
+void RomList::removeFav(Game *rom) {
 
+    /*
     if (!rom || !(rom->hardware & HARDWARE_PREFIX_FAV)) {
         printf("RomList::addFav: not in favorites\n");
         return;
@@ -135,13 +148,15 @@ void RomList::removeFav(Rom *rom) {
         }
         favFile.close();
     }
+    */
 }
 
 RomList::~RomList() {
 
     printf("~RomList()\n");
 
-    for (auto &rom : list) {
+    /*
+    for (auto &rom : list.games) {
         if (rom && !rom->parent && rom->icon) {
             delete (rom->icon);
             rom->icon = nullptr;
@@ -150,4 +165,5 @@ RomList::~RomList() {
             delete (rom);
         }
     }
+    */
 }

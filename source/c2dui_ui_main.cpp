@@ -22,7 +22,7 @@ UIMain::UIMain(const Vector2f &size) : C2DRenderer(size) {
 UIMain::~UIMain() {
     // ui elements (C2DObject)
     // are deleted by the renderer
-#ifdef __SSCRAP__
+#if 0
     delete (scrapper);
 #endif
 }
@@ -79,7 +79,7 @@ void UIMain::init(UIRomList *_uiRomList, UIMenu *_uiMenu,
     updateInputMapping(false);
     getInput()->setRepeatDelay(INPUT_DELAY);
 
-#ifdef __SSCRAP__
+#if 0
     scrapper = new Scrapper(this);
 #endif
 }
