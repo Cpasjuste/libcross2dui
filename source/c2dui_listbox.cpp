@@ -160,19 +160,18 @@ void UIListBox::updateLines() {
             Game game = games[start_index + i];
             lines[i]->setVisibility(Visibility::Visible);
             lines[i]->setString(game.getName().text);
-            // set text color based on file color
-            // TODO: COLOR
+            // TODO: ICON
             //lines[i]->setIcon(file->icon);
-            //lines[i]->setColor(file->color);
+            lines[i]->setColor(game.available ? colorAvailable : colorMissing);
             // set highlight position and color
             if ((int) i == highlight_index) {
                 highlight->setPosition(lines[i]->getPosition());
-                Color color = /*highlight_use_files_color ?
-                              file->color :*/ highlight->getFillColor();
+                Color color = highlight_use_files_color ?
+                              lines[i]->getText()->getFillColor() : highlight->getFillColor();
                 color.a = highlight->getAlpha();
                 highlight->setFillColor(color);
-                color = /*highlight_use_files_color ?
-                        file->color :*/ highlight->getOutlineColor();
+                color = highlight_use_files_color ?
+                        lines[i]->getText()->getFillColor() : highlight->getOutlineColor();
                 //color.a = highlight->getAlpha();
                 highlight->setOutlineColor(color);
             }

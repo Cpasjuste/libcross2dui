@@ -92,7 +92,7 @@ public:
             texture = nullptr;
         }
 
-        if (game.id.empty()) {
+        if (game.path.empty()) {
             //printf("load(%s, %i)\n", "nullptr", isPreview);
             infoText->setVisibility(Visibility::Hidden);
             infoText->setString("");
@@ -114,8 +114,8 @@ public:
                 info = jeuInfos.jeu.synopsis[0].text;
             } else {
 #endif
-                info = "FILE: " + game.path + "\n";
-                info += game.getSynopsis().text;
+            info = "FILE: " + game.path + "\n";
+            info += game.getSynopsis().text;
             /*
         // update info text
         info = "FILE: ";
@@ -210,21 +210,7 @@ void UIRomListClassic::updateRomList() {
     Skin::TextGroup textGroup = ui->getSkin()->getText({"MAIN", "ROM_LIST", "TEXT"});
     config::Group *grp = ui->getSkin()->getConfig()->getGroup("ROM_LIST")->getGroup("TEXT");
     Color colorMissing = grp->getOption("color_missing")->getColor();
-    Color colorNotWorking = grp->getOption("color_not_working")->getColor();
     bool highlightUseFileColors = grp->getOption("highlight_use_text_color")->getInteger() == 1;
-
-    // set item/rom text color
-    if (!games.empty()) {
-        for (auto &game : games) {
-            if (game.available) {
-                // TODO: sscrap - color
-                //rom->color = textGroup.color;
-            } else {
-                // TODO: sscrap - color
-                //rom->color = colorMissing;
-            }
-        }
-    }
 
     if (!list_box) {
         // add rom list ui
@@ -234,6 +220,8 @@ void UIRomListClassic::updateRomList() {
         use_icons = ui->getConfig()->get(Option::Id::GUI_SHOW_ICONS)->getValueBool();
 #endif
         list_box = new UIListBox(ui->getSkin()->font, (int) textGroup.size, romListGroup.rect, games, use_icons);
+        list_box->colorMissing = colorMissing;
+        list_box->colorAvailable = textGroup.color;
         list_box->setFillColor(romListGroup.color);
         list_box->setOutlineColor(romListGroup.outlineColor);
         list_box->setOutlineThickness((float) romListGroup.outlineSize);

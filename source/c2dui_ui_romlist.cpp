@@ -35,7 +35,6 @@ Texture *UIRomList::getPreviewTexture(const ss_api::Game &game, bool isPreview) 
     // TODO: verify loading with psnes and no db.xml)
     // TODO: fix game.path
     C2DTexture *texture = nullptr;
-    printf("getPreviewTexture: file: %s\n", game.path.c_str());
     std::string name = Utility::removeExt(game.path);
     std::string type = isPreview ? "previews" : "titles";
     std::string home_path = ui->getConfig()->getHomePath();
@@ -73,6 +72,9 @@ void UIRomList::filterRomList() {
 
     // TODO: sscrap - filering
     games = ss_api::Api::gameListFilter(rom_list->gameList.games);
+    for(auto s : rom_list->gameList.systems) {
+        printf("system: %s\n", s.c_str());
+    }
 
     /*
     roms.clear();

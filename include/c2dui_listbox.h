@@ -82,6 +82,9 @@ namespace c2dui {
 
         int getIndex();
 
+        c2d::Color colorMissing;
+        c2d::Color colorAvailable;
+
     private:
 
         void init(c2d::Font *font, int fontSize, bool useIcons);

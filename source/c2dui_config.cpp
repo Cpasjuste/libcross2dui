@@ -156,7 +156,7 @@ void Config::load(const Game &game) {
     if (isRomCfg) {
         path = dataPath;
         path += "configs/";
-        path += game.id;
+        path += Utility::removeExt(game.path);
         path += ".cfg";
     }
 
@@ -253,7 +253,7 @@ void Config::save(const Game &game) {
     if (isRomCfg) {
         path = dataPath;
         path += "configs/";
-        path += game.id;
+        path += Utility::removeExt(game.path);
         path += ".cfg";
     }
 
