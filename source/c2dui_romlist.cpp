@@ -79,6 +79,10 @@ void RomList::build() {
     gameList = Api::gameList("gamelist.xml", "roms");
     printf("RomList::build: %zu roms\n", gameList.games.size());
 
+    ui->getConfig()->add(
+            Option::Id::GUI_SHOW_CLONES, "SHOW_HARDWARE",
+            gameList.systems, 0, Option::Id::GUI_SHOW_HARDWARE, Option::Flags::STRING);
+
     /*
      * TODO: add/fix favorites back
     // build favorites

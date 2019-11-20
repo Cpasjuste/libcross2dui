@@ -21,7 +21,7 @@ Config::Config(c2d::Io *io, int ver) {
     getRomPaths()->clear();
     getRomPaths()->emplace_back(io->getDataPath() + "roms/");
     // default hardware filter (all)
-    getHardwareList()->emplace_back(HARDWARE_PREFIX_ALL, "ALL");
+    getHardwareList()->emplace_back(HARDWARE_PREFIX_ALL, "All");
 
     /// default options available for all cores
     /////////////////////////////////////////////////
