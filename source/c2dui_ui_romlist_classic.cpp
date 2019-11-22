@@ -87,7 +87,7 @@ public:
 
     void load(const Game &game, bool isPreview = false) {
 
-        if (texture) {
+        if (texture != nullptr) {
             delete (texture);
             texture = nullptr;
         }

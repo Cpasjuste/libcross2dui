@@ -71,10 +71,10 @@ Texture *UIRomList::getPreviewTexture(const ss_api::Game &game, bool isPreview) 
 void UIRomList::filterRomList() {
 
     // TODO: sscrap - filering
-    games = ss_api::Api::gameListFilter(rom_list->gameList.games);
-    for(auto s : rom_list->gameList.systems) {
-        printf("system: %s\n", s.c_str());
-    }
+    games = ss_api::Api::gameListFilter(rom_list->gameList.games,
+                                        !ui->getConfig()->get(Option::Id::GUI_SHOW_ALL)->getValueBool(),
+                                        ui->getConfig()->get(Option::Id::GUI_SHOW_CLONES)->getValueBool(),
+                                        ui->getConfig()->get(Option::Id::GUI_SHOW_HARDWARE)->getValueString());
 
     /*
     roms.clear();
