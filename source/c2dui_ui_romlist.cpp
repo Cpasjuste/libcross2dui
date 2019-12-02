@@ -38,29 +38,27 @@ Texture *UIRomList::getPreviewTexture(const ss_api::Game &game, bool isPreview) 
     std::string path = isPreview ?
                        ui->getConfig()->getRomPath(0) + game.getMedia(Game::Media::Type::Box3D).url
                                  : ui->getConfig()->getRomPath(0) + game.getMedia(Game::Media::Type::SS).url;
-
-    printf("getPreviewTexture(%s, %i)\n", path.c_str(), isPreview);
+    printf("getPreviewTexture(%s, %i)\n", path.c_str(), (int) isPreview);
 #ifndef __SWITCH__
     // TODO: fix switch stat/fopen slow on non existing files
-    // TODO: fix sscrap parent (cloneof)
-    /*
-    if (!ui->getIo()->exist(path)) {
-        path = home_path + type + "/" + name + ".jpg";
-        printf("getPreviewTexture(%s, %i)\n", path.c_str(), isPreview);
-        if (!ui->getIo()->exist(path) && rom->parent) {
-            name = Utility::removeExt(rom->parent);
-            path = home_path + type + "/" + name + ".png";
-            printf("getPreviewTexture(%s, %i)\n", path.c_str(), isPreview);
-            if (!ui->getIo()->exist(path)) {
-                path = home_path + type + "/" + name + ".jpg";
-                printf("getPreviewTexture(%s, %i)\n", path.c_str(), isPreview);
-            }
+    if (!ui->getIo()->exist(path) && game.cloneof != "0") {
+        ss_api::Api::GameList gameList = ui->getUiRomList()->getRomList()->gameList;
+        std::string parentRomId = game.cloneof;
+        auto parent = std::find_if(gameList.games.begin(), gameList.games.end(), [parentRomId](const Game &g) {
+            return parentRomId == g.romid;
+        });
+        if (parent != gameList.games.end()) {
+            path = isPreview ?
+                   ui->getConfig()->getRomPath(0) + (*parent).getMedia(Game::Media::Type::Box3D).url
+                             : ui->getConfig()->getRomPath(0) + (*parent).getMedia(Game::Media::Type::SS).url;
+            printf("getPreviewTexture(%s, %i)\n", path.c_str(), (int) isPreview);
         }
     }
-    */
 #endif
-    if (ui->getIo()->exist(path)) {
-        texture = new C2DTexture(path);
+    texture = new C2DTexture(path);
+    if (!texture->available) {
+        delete (texture);
+        return nullptr;
     }
 
     return texture;

@@ -140,7 +140,7 @@ void C2DUIVideo::updateScaling(bool vertical, bool flip) {
     }
 
     printf("C2DUIVideo::updateScaling: mode: %s, scaling: %f x %f, size: %i x %i\n",
-           scale_mode.c_str(), sx, sy, (int) (screen.x * sx), (int) (screen.y * sy));
+           scale_mode.c_str(), sx, sy, (int) (getSize().x * sx), (int) (getSize().y * sy));
 
     setOrigin(Origin::Center);
     setPosition(screen.x / 2, screen.y / 2);
