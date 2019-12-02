@@ -68,7 +68,7 @@ public:
         }
 #endif
         // set image
-        if (texture && texture->available) {
+        if ((texture != nullptr) && texture->available) {
             previewText->setVisibility(Visibility::Hidden);
             texture->setOrigin(Origin::Center);
             texture->setPosition(Vector2f(previewBox->getSize().x / 2, previewBox->getSize().y / 2));
@@ -92,68 +92,16 @@ public:
             texture = nullptr;
         }
 
-        if (game.path.empty()) {
+        if (game.id.empty()) {
             //printf("load(%s, %i)\n", "nullptr", isPreview);
             infoText->setVisibility(Visibility::Hidden);
             infoText->setString("");
         } else {
-            printf("load(%s, %i)\n", game.getName().text.c_str(), isPreview);
-#if 0
-            Api::JeuInfos jeuInfos = ui->getScrapper()->scrap->jeuInfos("cache/" + rom->name + ".json");
-            if (jeuInfos.jeu.id.empty()) {
-                ui->getScrapper()->addRom(rom->name);
-            } else {
-                printf("jeuInfos: nom: %s, system: %s\n",
-                       jeuInfos.jeu.noms[0].text.c_str(), jeuInfos.jeu.systemenom.c_str());
-            }
-#endif
+            printf("load(%s, %i)\n", game.getName().text.c_str(), (int) isPreview);
             // load title/preview texture
             loadTexture(game, !isPreview);
-#if 0
-            if (!jeuInfos.jeu.id.empty()) {
-                info = jeuInfos.jeu.synopsis[0].text;
-            } else {
-#endif
             info = "FILE: " + game.path + "\n";
             info += game.getSynopsis().text;
-            /*
-        // update info text
-        info = "FILE: ";
-        info += game.path;
-        if (C2D_SCREEN_HEIGHT > 240) {
-            info += "\nSTATUS: ";
-            info += rom->state == RomList::RomState::MISSING ? "MISSING" : "AVAILABLE";
-        }
-        if (rom->year) {
-            info += "\nYEAR: ";
-            info += rom->year;
-        }
-        if (rom->system) {
-            info += "\nSYSTEM: ";
-            info += rom->system;
-        }
-        if (C2D_SCREEN_HEIGHT > 240) {
-            if (rom->manufacturer) {
-                info += "\nMANUFACTURER: ";
-                info += rom->manufacturer;
-            }
-            Option *opt = ui->getConfig()->get(Option::Id::ROM_ROTATION);
-            if (opt && !(opt->getFlags() & Option::Flags::HIDDEN)) {
-                info += "\nROTATION: ";
-                if (rom->flags & BDF_ORIENTATION_VERTICAL) {
-                    info += "VERTICAL";
-                } else {
-                    info += "HORIZONTAL";
-                }
-                if (rom->flags & BDF_ORIENTATION_FLIPPED) {
-                    info += " / FLIPPED";
-                }
-            }
-        }
-             */
-#if 0
-            }
-#endif
             infoText->setString(info);
             infoText->setVisibility(Visibility::Visible);
         }

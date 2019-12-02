@@ -65,7 +65,7 @@ void RomList::build() {
 
     printf("RomList::build()\n");
 
-    gameList = Api::gameList("gamelist.xml", ui->getConfig()->getRomPaths()->at(0));
+    gameList = Api::gameList("gamelist.xml", ui->getConfig()->getRomPaths().at(0));
     printf("RomList::build: %zu roms\n", gameList.games.size());
 
     ui->getConfig()->add(

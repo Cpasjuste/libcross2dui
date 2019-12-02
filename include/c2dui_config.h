@@ -17,36 +17,38 @@ namespace c2dui {
 
         virtual ~Config() = default;
 
-        virtual void load(const ss_api::Game &game);
+        void load(const ss_api::Game &game);
 
-        virtual void save(const ss_api::Game &game);
+        void save(const ss_api::Game &game);
 
-        virtual void reset(bool isRom = true);
+        void reset(bool isRom = true);
 
-        virtual std::string getHomePath();
+        std::string getHomePath();
 
-        virtual std::string getTitlesPath();
+        std::string getConfigPath();
 
-        virtual std::string getPreviewsPath();
+        std::string getTitlesPath();
 
-        virtual std::string getMixesPath();
+        std::string getPreviewsPath();
 
-        virtual std::string *getRomPath(int n = 0);
+        std::string getMixesPath();
 
-        virtual std::vector<std::string> *getRomPaths();
+        std::string getRomPath(int n = 0);
 
-        virtual std::vector<Option> *get(bool isRom = false);
+        std::vector<std::string> getRomPaths();
 
-        virtual Option *get(int id, bool isRom = false);
+        std::vector<Option> *get(bool isRom = false);
 
-        virtual bool add(int target,
+        Option *get(int id, bool isRom = false);
+
+        bool add(int target,
                          const std::string &text, const std::vector<std::string> &values,
                          int defaultValue, int id, unsigned int flags);
 
-        virtual void append(const std::string &text, const std::vector<std::string> &values,
+        void append(const std::string &text, const std::vector<std::string> &values,
                             int defaultValue, int id, unsigned int flags);
 
-        virtual void append(const std::string &text, int value, int id, unsigned int flags);
+        void append(const std::string &text, int value, int id, unsigned int flags);
 
         bool hide(int id, bool isRom = false);
 

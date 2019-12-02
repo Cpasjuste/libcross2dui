@@ -35,12 +35,10 @@ Texture *UIRomList::getPreviewTexture(const ss_api::Game &game, bool isPreview) 
     // TODO: verify loading with psnes and no db.xml)
     // TODO: fix game.path
     C2DTexture *texture = nullptr;
-    std::string name = Utility::removeExt(game.path);
-    std::string type = isPreview ? "previews" : "titles";
-    std::string home_path = ui->getConfig()->getHomePath();
-    std::string path;
+    std::string path = isPreview ?
+                       ui->getConfig()->getRomPath(0) + game.getMedia(Game::Media::Type::Box3D).url
+                                 : ui->getConfig()->getRomPath(0) + game.getMedia(Game::Media::Type::SS).url;
 
-    path = home_path + type + "/" + name + ".png";
     printf("getPreviewTexture(%s, %i)\n", path.c_str(), isPreview);
 #ifndef __SWITCH__
     // TODO: fix switch stat/fopen slow on non existing files

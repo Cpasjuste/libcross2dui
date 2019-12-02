@@ -74,7 +74,7 @@ namespace c2dui {
         //std::vector<Rom *> list;
         ss_api::Api::GameList gameList;
         std::vector<Hardware> *hardwareList;
-        std::vector<std::string> *paths;
+        std::vector<std::string> paths;
         //std::vector<std::vector<c2d::Io::File>> files;
         char icon_path[1024];
         char text_str[512];

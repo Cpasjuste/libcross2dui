@@ -335,8 +335,8 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
             }
 
             switch (option->getId()) {
-                case Option::Id::GUI_FILTER_CLONES:
                 case Option::Id::GUI_SHOW_ALL:
+                case Option::Id::GUI_FILTER_CLONES:
                 case Option::Id::GUI_FILTER_SYSTEM:
                 case Option::Id::GUI_FILTER_EDITOR:
                 case Option::Id::GUI_FILTER_DEVELOPER:
@@ -364,6 +364,7 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
                     if (isEmuRunning) {
                         ui->getUiEmu()->getVideo()->setShader(option->getIndex());
                     }
+                    break;
                 case Option::Id::GUI_WINDOW_LEFT:
                     ui->setPosition((float) option->getValueInt(), ui->getPosition().y);
                     break;

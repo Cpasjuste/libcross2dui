@@ -18,10 +18,10 @@ Config::Config(c2d::Io *io, int ver) {
     printf("Config(%s, v%i)\n", configPath.c_str(), ver);
 
     /// add default roms paths
-    getRomPaths()->clear();
-    getRomPaths()->emplace_back(io->getDataPath() + "roms/");
+    roms_paths.clear();
+    roms_paths.emplace_back(io->getDataPath() + "roms/");
     // default hardware filter (all)
-    getHardwareList()->emplace_back(HARDWARE_PREFIX_ALL, "All");
+    hardwareList.emplace_back(HARDWARE_PREFIX_ALL, "All");
 
     /// default options available for all cores
     /////////////////////////////////////////////////
@@ -163,15 +163,15 @@ void Config::load(const Game &game) {
 
     printf("Config::load: %s ...", path.c_str());
 
-    if (config_read_file(&cfg, path.c_str())) {
+    if (config_read_file(&cfg, path.c_str()) != 0) {
 
         config_setting_t *settings_root = config_lookup(&cfg, "CONFIG");
-        if (settings_root) {
+        if (settings_root != nullptr) {
             printf("OK\n");
 #ifdef __UPDATE_CONFIG__
             // verify cfg version
             int cfg_version = 0;
-            if (!config_setting_lookup_int(settings_root, "VERSION", &cfg_version)
+            if ((config_setting_lookup_int(settings_root, "VERSION", &cfg_version) == 0)
                 || cfg_version != version) {
                 // update cfg to newer version
                 printf("CONFIG VERSION (%i) != EXE VERSION (%i)\n", cfg_version, version);
@@ -325,6 +325,10 @@ std::string Config::getHomePath() {
     return dataPath;
 }
 
+std::string Config::getConfigPath() {
+    return configPath;
+}
+
 std::string Config::getTitlesPath() {
     return dataPath + "titles/";
 }
@@ -337,16 +341,16 @@ std::string Config::getMixesPath() {
     return dataPath + "mixes/";
 }
 
-std::string *Config::getRomPath(int n) {
-    if ((size_t) n >= getRomPaths()->size()) {
-        return &roms_paths[0];
+std::string Config::getRomPath(int n) {
+    if ((size_t) n >= roms_paths.size()) {
+        return roms_paths.at(0);
     } else {
-        return &roms_paths[n];
+        return roms_paths.at(n);
     }
 }
 
-std::vector<std::string> *Config::getRomPaths() {
-    return &roms_paths;
+std::vector<std::string> Config::getRomPaths() {
+    return roms_paths;
 }
 
 std::vector<Option> *Config::get(bool isRom) {
@@ -448,3 +452,4 @@ int *Config::getPlayerInputButtons(int player, bool isRom) {
 std::vector<RomList::Hardware> *Config::getHardwareList() {
     return &hardwareList;
 }
+
