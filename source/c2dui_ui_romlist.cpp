@@ -70,45 +70,21 @@ Texture *UIRomList::getPreviewTexture(const ss_api::Game &game, bool isPreview) 
 
 void UIRomList::filterRomList() {
 
-    // TODO: sscrap - filering
     games = ss_api::Api::gameListFilter(rom_list->gameList.games,
-                                        !ui->getConfig()->get(Option::Id::GUI_SHOW_ALL)->getValueBool(),
-                                        ui->getConfig()->get(Option::Id::GUI_SHOW_CLONES)->getValueBool(),
-                                        ui->getConfig()->get(Option::Id::GUI_SHOW_HARDWARE)->getValueString());
+                                        ui->getConfig()->get(Option::Id::GUI_SHOW_ALL)->getValueString() == "AVAILABLE",
+                                        ui->getConfig()->get(Option::Id::GUI_FILTER_CLONES)->getValueBool(),
+                                        ui->getConfig()->get(Option::Id::GUI_FILTER_SYSTEM)->getValueString(),
+                                        ui->getConfig()->get(Option::Id::GUI_FILTER_EDITOR)->getValueString(),
+                                        ui->getConfig()->get(Option::Id::GUI_FILTER_DEVELOPER)->getValueString(),
 
-    /*
-    roms.clear();
-
-    static RomList *list = rom_list;
-    bool showClone = ui->getConfig()->get(Option::Id::GUI_SHOW_CLONES)->getValueBool();
-    Option *hwOpt = ui->getConfig()->get(Option::Id::GUI_SHOW_HARDWARE);
-    int showHardwareCfg = hwOpt ? hwOpt->getIndex() : 0;
-    int showHardware = ui->getConfig()->getHardwareList()->at((unsigned int) showHardwareCfg).prefix;
-    printf("showClone: %i, showHardwareCfg: %i, showHardware: %i\n", showClone, showHardwareCfg, showHardware);
-
-// psnes and pnes have only 2 (0/1) values, so work with value string
-    Option *opt = ui->getConfig()->get(Option::Id::GUI_SHOW_ALL);
-    int showAll = opt->getValueString() != "ALL";
-    if (opt->getValueString() == "FAVORITES") {
-        showAll = 2;
-    }
-
-    if (showAll == 2) {
-        // filter/show favorites
-        remove_copy_if(rom_list->list.begin(), rom_list->list.end(), back_inserter(roms),
-                       [](RomList::Rom *r) {
-                           return !(r->hardware & HARDWARE_PREFIX_FAV);
-                       });
-    } else {
-        remove_copy_if(rom_list->list.begin(), rom_list->list.end(), back_inserter(roms),
-                       [showAll, showClone, showHardware](RomList::Rom *r) {
-                           return (showAll && r->state != RomList::RomState::WORKING)
-                                  || (!showClone && r->parent != nullptr)
-                                  || ((unsigned int) showHardware != HARDWARE_PREFIX_ALL
-                                      && !list->isHardware(r->hardware, showHardware));
-                       });
-    }
-    */
+                                        ui->getConfig()->get(Option::Id::GUI_FILTER_PLAYERS)->getValueString(),
+                                        ui->getConfig()->get(Option::Id::GUI_FILTER_RATING)->getValueString(),
+                                        "All",
+                                        ui->getConfig()->get(Option::Id::GUI_FILTER_ROTATION)->getValueString(),
+                                        ui->getConfig()->get(Option::Id::GUI_FILTER_RESOLUTION)->getValueString(),
+                                        ui->getConfig()->get(Option::Id::GUI_FILTER_DATE)->getValueString(),
+                                        ui->getConfig()->get(Option::Id::GUI_FILTER_GENRE)->getValueString()
+    );
 }
 
 void UIRomList::updateRomList() {
@@ -118,4 +94,3 @@ UIRomList::~UIRomList() {
     printf("~UIRomList\n");
     delete (rom_list);
 }
-

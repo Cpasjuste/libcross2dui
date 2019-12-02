@@ -335,9 +335,17 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
             }
 
             switch (option->getId()) {
-                case Option::Id::GUI_SHOW_CLONES:
+                case Option::Id::GUI_FILTER_CLONES:
                 case Option::Id::GUI_SHOW_ALL:
-                case Option::Id::GUI_SHOW_HARDWARE:
+                case Option::Id::GUI_FILTER_SYSTEM:
+                case Option::Id::GUI_FILTER_EDITOR:
+                case Option::Id::GUI_FILTER_DEVELOPER:
+                case Option::Id::GUI_FILTER_PLAYERS:
+                case Option::Id::GUI_FILTER_RATING:
+                case Option::Id::GUI_FILTER_ROTATION:
+                case Option::Id::GUI_FILTER_RESOLUTION:
+                case Option::Id::GUI_FILTER_DATE:
+                case Option::Id::GUI_FILTER_GENRE:
                     ui->getUiRomList()->updateRomList();
                     break;
 
@@ -357,10 +365,10 @@ bool UIMenu::onInput(c2d::Input::Player *players) {
                         ui->getUiEmu()->getVideo()->setShader(option->getIndex());
                     }
                 case Option::Id::GUI_WINDOW_LEFT:
-                    ui->setPosition(option->getValueInt(), ui->getPosition().y);
+                    ui->setPosition((float) option->getValueInt(), ui->getPosition().y);
                     break;
                 case Option::Id::GUI_WINDOW_TOP:
-                    ui->setPosition(ui->getPosition().x, option->getValueInt());
+                    ui->setPosition(ui->getPosition().x, (float) option->getValueInt());
                     break;
                 case Option::Id::GUI_WINDOW_WIDTH:
                     ui->setScale((float) option->getValueInt() / ui->getSize().x, ui->getScale().y);

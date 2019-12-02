@@ -58,17 +58,6 @@ RomList::RomList(UIMain *_ui, const std::string &emuVersion) {
     printf("RomList: building list...\n");
     time_start = ui->getElapsedTime().asSeconds();
 
-    /*
-    for (auto &path : *paths) {
-        if (!path.empty()) {
-            printf("RomList: scanning path: `%s`\n", path.c_str());
-            std::vector<Io::File> filesList = ui->getIo()->getDirList(path);
-            files.emplace_back(filesList);
-            printf("RomList: found %i files in `%s`\n", (int) filesList.size(), path.c_str());
-        }
-    }
-    */
-
     printf("RomList()\n");
 }
 
@@ -76,12 +65,44 @@ void RomList::build() {
 
     printf("RomList::build()\n");
 
-    gameList = Api::gameList("gamelist.xml", "roms");
+    gameList = Api::gameList("gamelist.xml", ui->getConfig()->getRomPaths()->at(0));
     printf("RomList::build: %zu roms\n", gameList.games.size());
 
     ui->getConfig()->add(
-            Option::Id::GUI_SHOW_CLONES, "SHOW_HARDWARE",
-            gameList.systems, 0, Option::Id::GUI_SHOW_HARDWARE, Option::Flags::STRING);
+            Option::Id::GUI_FILTER_CLONES, "FILTER_SYSTEM",
+            gameList.systems, 0, Option::Id::GUI_FILTER_SYSTEM, Option::Flags::STRING);
+
+    ui->getConfig()->add(
+            Option::Id::GUI_FILTER_SYSTEM, "FILTER_EDITOR",
+            gameList.editors, 0, Option::Id::GUI_FILTER_EDITOR, Option::Flags::STRING);
+
+    ui->getConfig()->add(
+            Option::Id::GUI_FILTER_EDITOR, "FILTER_DEVELOPER",
+            gameList.developers, 0, Option::Id::GUI_FILTER_DEVELOPER, Option::Flags::STRING);
+
+    ui->getConfig()->add(
+            Option::Id::GUI_FILTER_DEVELOPER, "FILTER_PLAYERS",
+            gameList.players, 0, Option::Id::GUI_FILTER_PLAYERS, Option::Flags::STRING);
+
+    ui->getConfig()->add(
+            Option::Id::GUI_FILTER_PLAYERS, "FILTER_RATING",
+            gameList.ratings, 0, Option::Id::GUI_FILTER_RATING, Option::Flags::STRING);
+
+    ui->getConfig()->add(
+            Option::Id::GUI_FILTER_RATING, "FILTER_ROTATION",
+            gameList.rotations, 0, Option::Id::GUI_FILTER_ROTATION, Option::Flags::STRING);
+
+    ui->getConfig()->add(
+            Option::Id::GUI_FILTER_ROTATION, "FILTER_RESOLUTION",
+            gameList.resolutions, 0, Option::Id::GUI_FILTER_RESOLUTION, Option::Flags::STRING);
+
+    ui->getConfig()->add(
+            Option::Id::GUI_FILTER_RESOLUTION, "FILTER_DATE",
+            gameList.dates, 0, Option::Id::GUI_FILTER_DATE, Option::Flags::STRING);
+
+    ui->getConfig()->add(
+            Option::Id::GUI_FILTER_DATE, "FILTER_GENRE",
+            gameList.genres, 0, Option::Id::GUI_FILTER_GENRE, Option::Flags::STRING);
 
     /*
      * TODO: add/fix favorites back

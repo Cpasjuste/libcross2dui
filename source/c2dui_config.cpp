@@ -11,11 +11,11 @@ using namespace ss_api;
 
 Config::Config(c2d::Io *io, int ver) {
 
-    printf("Config(%s, v%i)\n", io->getDataPath().c_str(), ver);
-
     dataPath = io->getDataPath();
     configPath = dataPath + "config.cfg";
     version = ver;
+
+    printf("Config(%s, v%i)\n", configPath.c_str(), ver);
 
     /// add default roms paths
     getRomPaths()->clear();
@@ -29,11 +29,12 @@ Config::Config(c2d::Io *io, int ver) {
     /////////////////////////////////////////////////
     append("UI_OPTIONS", {}, 0, 1000, Option::Flags::DELIMITER);
     append("MAIN", {"MAIN"}, 0, Option::Id::MENU_MAIN, Option::Flags::MENU);
-    append("SHOW", {"ALL", "FAVORITES"}, 0, Option::Id::GUI_SHOW_ALL, Option::Flags::STRING);
-    append("SHOW_CLONES", {"OFF", "ON"}, 0, Option::Id::GUI_SHOW_CLONES, Option::Flags::BOOLEAN);
+    append("SHOW", {"ALL", "AVAILABLE", "FAVORITES"}, 0, Option::Id::GUI_SHOW_ALL, Option::Flags::STRING);
+    append("SHOW_CLONES", {"OFF", "ON"}, 0, Option::Id::GUI_FILTER_CLONES, Option::Flags::BOOLEAN);
+    /*
     if (C2D_SCREEN_HEIGHT > 544) {
         append("SHOW_ICONS", {"OFF", "ON"}, 0, Option::Id::GUI_SHOW_ICONS, Option::Flags::BOOLEAN);
-    } else {
+    } else */{
         append("SHOW_ICONS", {"OFF", "ON"}, 0, Option::Id::GUI_SHOW_ICONS,
                Option::Flags::BOOLEAN | Option::Flags::HIDDEN);
     }
@@ -183,9 +184,9 @@ void Config::load(const Game &game) {
             if (!isRomCfg) {
                 settings = config_setting_lookup(settings_root, "ROMS_PATHS");
                 if (settings) {
-                    for (unsigned int i = 0; i < roms_paths.size(); i++) {
+                    for (size_t i = 0; i < roms_paths.size(); i++) {
                         char p[MAX_PATH];
-                        snprintf(p, MAX_PATH, "ROMS_PATH%i", i);
+                        snprintf(p, MAX_PATH, "ROMS_PATH%zu", i);
                         const char *value;
                         if (config_setting_lookup_string(settings, p, &value)) {
                             roms_paths[i] = value;
