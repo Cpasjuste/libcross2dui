@@ -58,7 +58,7 @@ private:
         if (bounds.left > -(getSize().x + ROM_ITEM_MARGIN) &&
             bounds.left < ui->getSize().x + getSize().x + ROM_ITEM_MARGIN) {
             if (!previewLoaded && ui->getInput()->getRepeatDelay() >= INPUT_DELAY / 2) {
-                setPreview(ui->getUiRomList()->getPreviewTexture(game, false));
+                setPreview(ui->getUiRomList()->getPreviewTexture(game));
                 previewLoaded = true;
             }
             Shape::onDraw(transform, draw);

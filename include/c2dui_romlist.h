@@ -6,6 +6,7 @@
 #define C2DUI_ROMLIST_H
 
 #include <vector>
+#include "ss_gamelist.h"
 
 #define HARDWARE_PREFIX_ALL 0xffffffff
 #define HARDWARE_PREFIX_FAV 0x20000000
@@ -55,7 +56,7 @@ namespace c2dui {
         UIMain *ui;
         c2d::RectangleShape *rect;
         c2d::Text *text;
-        ss_api::Api::GameList gameList;
+        ss_api::GameList gameList;
         std::vector<Hardware> *hardwareList;
         std::vector<std::string> paths;
         char icon_path[1024];

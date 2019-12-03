@@ -58,15 +58,9 @@ public:
         printf("~UIRomInfo\n");
     }
 
-    bool loadTexture(const Game &game, bool isPreview) {
+    bool loadTexture(const Game &game) {
 
-        texture = (C2DTexture *) uiRomList->getPreviewTexture(game, !isPreview);
-#ifndef __SWITCH__
-        // TODO: fix slow stat fs on switch
-        if (texture == nullptr) {
-            texture = (C2DTexture *) uiRomList->getPreviewTexture(game, isPreview);
-        }
-#endif
+        texture = (C2DTexture *) uiRomList->getPreviewTexture(game);
         // set image
         if ((texture != nullptr) && texture->available) {
             previewText->setVisibility(Visibility::Hidden);
@@ -85,7 +79,7 @@ public:
         return true;
     }
 
-    void load(const Game &game, bool isPreview = false) {
+    void load(const Game &game) {
 
         if (texture != nullptr) {
             delete (texture);
@@ -97,9 +91,9 @@ public:
             infoText->setVisibility(Visibility::Hidden);
             infoText->setString("");
         } else {
-            printf("load(%s, %i)\n", game.getName().text.c_str(), (int) isPreview);
+            printf("load(%s)\n", game.getName().text.c_str());
             // load title/preview texture
-            loadTexture(game, !isPreview);
+            loadTexture(game);
             info = "FILE: " + game.path + "\n";
             info += game.getSynopsis().text;
             infoText->setString(info);
@@ -160,14 +154,14 @@ void UIRomListClassic::updateRomList() {
     Color colorMissing = grp->getOption("color_missing")->getColor();
     bool highlightUseFileColors = grp->getOption("highlight_use_text_color")->getInteger() == 1;
 
-    if (!list_box) {
+    if (list_box == nullptr) {
         // add rom list ui
         Skin::RectangleShapeGroup romListGroup = ui->getSkin()->getRectangleShape({"MAIN", "ROM_LIST"});
         bool use_icons = false;
 #if !(defined(__PSP2__) || defined(__3DS__)) // two slow
         use_icons = ui->getConfig()->get(Option::Id::GUI_SHOW_ICONS)->getValueBool();
 #endif
-        list_box = new UIListBox(ui->getSkin()->font, (int) textGroup.size, romListGroup.rect, games, use_icons);
+        list_box = new UIListBox(ui->getSkin()->font, (int) textGroup.size, romListGroup.rect, gameList.games, use_icons);
         list_box->colorMissing = colorMissing;
         list_box->colorAvailable = textGroup.color;
         list_box->setFillColor(romListGroup.color);
@@ -185,10 +179,10 @@ void UIRomListClassic::updateRomList() {
         list_box->setHighlightUseFileColor(highlightUseFileColors);
         add(list_box);
     } else {
-        list_box->setGames(games);
+        list_box->setGames(gameList.games);
     }
 
-    if (rom_info) {
+    if (rom_info != nullptr) {
         rom_info->load(Game());
         title_loaded = 0;
         timer_load.restart();
@@ -207,14 +201,14 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
     if (keys & Input::Key::Up) {
         rom_index--;
         if (rom_index < 0)
-            rom_index = (int) (games.size() - 1);
+            rom_index = (int) (gameList.games.size() - 1);
         list_box->up();
         show_preview = false;
         rom_info->load(Game());
         title_loaded = 0;
     } else if (keys & Input::Key::Down) {
         rom_index++;
-        if ((unsigned int) rom_index >= games.size())
+        if ((unsigned int) rom_index >= gameList.games.size())
             rom_index = 0;
         list_box->down();
         show_preview = false;
@@ -222,8 +216,8 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
         title_loaded = 0;
     } else if (keys & Input::Key::Right) {
         rom_index += list_box->getMaxLines();
-        if ((unsigned int) rom_index >= games.size())
-            rom_index = (int) (games.size() - 1);
+        if ((unsigned int) rom_index >= gameList.games.size())
+            rom_index = (int) (gameList.games.size() - 1);
         list_box->setSelection(rom_index);
         show_preview = false;
         rom_info->load(Game());
@@ -279,12 +273,12 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
         */
     } else if (keys & Input::Key::Fire5) {
         show_preview = !show_preview;
-        rom_info->load(games.size() > (unsigned int) rom_index ?
-                       games[rom_index] : Game(), show_preview);
+        rom_info->load(gameList.games.size() > (unsigned int) rom_index ?
+                       gameList.games[rom_index] : Game());
     } else if (keys & Input::Key::Fire6) {
         show_preview = !show_preview;
-        rom_info->load(games.size() > (unsigned int) rom_index ?
-                       games[rom_index] : Game(), show_preview);
+        rom_info->load(gameList.games.size() > (unsigned int) rom_index ?
+                       gameList.games[rom_index] : Game());
     } else if (keys & Input::Key::Start) {
         ui->getUiMenu()->load();
     } else if (keys & Input::Key::Select) {
@@ -309,9 +303,9 @@ void UIRomListClassic::onUpdate() {
     if (keys > 0 && keys != Input::Delay) {
         timer_load.restart();
     } else if (keys == 0) {
-        if (!title_loaded && timer_load.getElapsedTime().asMilliseconds() > load_delay) {
-            rom_info->load(games.size() > (unsigned int) rom_index ?
-                           games[rom_index] : Game(), show_preview);
+        if ((title_loaded == 0) && timer_load.getElapsedTime().asMilliseconds() > load_delay) {
+            rom_info->load(gameList.games.size() > (unsigned int) rom_index ?
+                           gameList.games[rom_index] : Game());
             title_loaded = 1;
         }
     }
