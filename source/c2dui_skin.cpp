@@ -290,6 +290,7 @@ config::Group Skin::createRectangleShapeGroup(const std::string &name,
                                               const c2d::Color &outlineColor, int outlineSize, Vector2f scale) {
     config::Group group(name);
     group.addOption({"texture", texture});
+    group.addOption({"filtering", 1});
     group.addOption({"color", color});
     group.addOption({"outline_color", outlineColor});
     group.addOption({"outline_size", outlineSize});
@@ -323,6 +324,10 @@ Skin::RectangleShapeGroup Skin::getRectangleShape(const std::vector<std::string>
     option = group->getOption("texture");
     if (option) {
         rectangleShapeGroup.texture = option->getString();
+    }
+    option = group->getOption("filtering");
+    if (option) {
+        rectangleShapeGroup.filtering = option->getInteger();
     }
     option = group->getOption("color");
     if (option) {
@@ -409,7 +414,8 @@ void Skin::loadRectangleShape(c2d::RectangleShape *shape, const std::vector<std:
                       rectangleShapeGroup.rect.height / tex->getSize().y);
         tex->setFillColor(rectangleShapeGroup.color);
         tex->setOutlineColor(rectangleShapeGroup.outlineColor);
-        tex->setOutlineThickness(rectangleShapeGroup.outlineSize);
+        tex->setOutlineThickness((float) rectangleShapeGroup.outlineSize);
+        tex->setFilter((Texture::Filter) rectangleShapeGroup.filtering);
         shape->setFillColor(Color::Transparent);
         shape->setOutlineColor(Color::Transparent);
         shape->setOutlineThickness(0);

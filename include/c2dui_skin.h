@@ -18,6 +18,7 @@ namespace c2dui {
             c2d::FloatRect rect;
             c2d::Origin origin;
             std::string texture;
+            int filtering = 1;
             c2d::Color color;
             c2d::Color outlineColor;
             int outlineSize;
