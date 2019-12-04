@@ -31,8 +31,8 @@ RomList::RomList(UIMain *_ui, const std::string &emuVersion) {
     title->setOrigin(Origin::Center);
     title->setPosition(Vector2f(rect->getSize().x / 2, rect->getSize().y / 2));
     float scaling = std::min(
-            (rect->getSize().x - 64) / title->getSize().x,
-            (rect->getSize().y - 64) / title->getSize().y);
+            (rect->getSize().x - 256) / title->getSize().x,
+            (rect->getSize().y - 256) / title->getSize().y);
     title->setScale(scaling, scaling);
     rect->add(title);
 
