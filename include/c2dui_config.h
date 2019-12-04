@@ -17,11 +17,11 @@ namespace c2dui {
 
         virtual ~Config() = default;
 
-        void load(const ss_api::Game &game);
+        void load(const ss_api::Game &game = ss_api::Game());
 
-        void save(const ss_api::Game &game);
+        void save(const ss_api::Game &game = ss_api::Game());
 
-        void reset(bool isRom = true);
+        void reset();
 
         std::string getHomePath();
 

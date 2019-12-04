@@ -302,12 +302,12 @@ void Config::save(const Game &game) {
     config_destroy(&cfg);
 }
 
-void Config::reset(bool isRom) {
+void Config::reset() {
 
     options_rom.clear();
 
     int start = 0, end = (int) options_gui.size();
-    for (unsigned int i = 0; i < options_gui.size(); i++) {
+    for (size_t i = 0; i < options_gui.size(); i++) {
         if (options_gui[i].getId() == Option::Id::MENU_ROM_OPTIONS) {
             start = i;
             break;

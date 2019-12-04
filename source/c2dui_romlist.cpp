@@ -103,6 +103,10 @@ void RomList::build() {
             Option::Id::GUI_FILTER_DATE, "FILTER_GENRE",
             gameList.genres, 0, Option::Id::GUI_FILTER_GENRE, Option::Flags::STRING);
 
+    // we need to reload config to update new options we just added
+    ui->getConfig()->reset();
+    ui->getConfig()->load();
+
     /*
      * TODO: add/fix favorites back
     // build favorites
