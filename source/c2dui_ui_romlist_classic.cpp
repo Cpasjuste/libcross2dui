@@ -161,7 +161,8 @@ void UIRomListClassic::updateRomList() {
 #if !(defined(__PSP2__) || defined(__3DS__)) // two slow
         use_icons = ui->getConfig()->get(Option::Id::GUI_SHOW_ICONS)->getValueBool();
 #endif
-        list_box = new UIListBox(ui->getSkin()->font, (int) textGroup.size, romListGroup.rect, gameList.games, use_icons);
+        list_box = new UIListBox(ui->getSkin()->font, (int) textGroup.size, romListGroup.rect, gameList.games,
+                                 use_icons);
         list_box->colorMissing = colorMissing;
         list_box->colorAvailable = textGroup.color;
         list_box->setFillColor(romListGroup.color);
@@ -271,14 +272,6 @@ bool UIRomListClassic::onInput(c2d::Input::Player *players) {
             }
         }
         */
-    } else if (keys & Input::Key::Fire5) {
-        show_preview = !show_preview;
-        rom_info->load(gameList.games.size() > (unsigned int) rom_index ?
-                       gameList.games[rom_index] : Game());
-    } else if (keys & Input::Key::Fire6) {
-        show_preview = !show_preview;
-        rom_info->load(gameList.games.size() > (unsigned int) rom_index ?
-                       gameList.games[rom_index] : Game());
     } else if (keys & Input::Key::Start) {
         ui->getUiMenu()->load();
     } else if (keys & Input::Key::Select) {

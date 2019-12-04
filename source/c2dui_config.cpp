@@ -20,8 +20,6 @@ Config::Config(c2d::Io *io, int ver) {
     /// add default roms paths
     roms_paths.clear();
     roms_paths.emplace_back(io->getDataPath() + "roms/");
-    // default hardware filter (all)
-    hardwareList.emplace_back(HARDWARE_PREFIX_ALL, "All");
 
     /// default options available for all cores
     /////////////////////////////////////////////////
@@ -329,18 +327,6 @@ std::string Config::getConfigPath() {
     return configPath;
 }
 
-std::string Config::getTitlesPath() {
-    return dataPath + "titles/";
-}
-
-std::string Config::getPreviewsPath() {
-    return dataPath + "previews/";
-}
-
-std::string Config::getMixesPath() {
-    return dataPath + "mixes/";
-}
-
 std::string Config::getRomPath(int n) {
     if ((size_t) n >= roms_paths.size()) {
         return roms_paths.at(0);
@@ -448,8 +434,3 @@ int *Config::getPlayerInputButtons(int player, bool isRom) {
 
     return joystick_keys;
 }
-
-std::vector<RomList::Hardware> *Config::getHardwareList() {
-    return &hardwareList;
-}
-

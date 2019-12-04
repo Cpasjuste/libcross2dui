@@ -27,12 +27,6 @@ namespace c2dui {
 
         std::string getConfigPath();
 
-        std::string getTitlesPath();
-
-        std::string getPreviewsPath();
-
-        std::string getMixesPath();
-
         std::string getRomPath(int n = 0);
 
         std::vector<std::string> getRomPaths();
@@ -56,13 +50,12 @@ namespace c2dui {
 
         virtual int *getPlayerInputButtons(int player, bool isRom = false);
 
-        virtual std::vector<RomList::Hardware> *getHardwareList();
+    protected:
+        std::vector<std::string> roms_paths;
 
     private:
-        std::vector<RomList::Hardware> hardwareList;
         std::vector<Option> options_gui;
         std::vector<Option> options_rom;
-        std::vector<std::string> roms_paths;
         std::string configPath;
         std::string dataPath;
 

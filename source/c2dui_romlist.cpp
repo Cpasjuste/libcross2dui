@@ -19,7 +19,6 @@ RomList::RomList(UIMain *_ui, const std::string &emuVersion) {
     printf("RomList()\n");
 
     ui = _ui;
-    hardwareList = ui->getConfig()->getHardwareList();
     paths = ui->getConfig()->getRomPaths();
 
     // UI
