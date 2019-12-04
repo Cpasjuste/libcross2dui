@@ -119,13 +119,59 @@ Skin::Skin(UIMain *u, const std::vector<Button> &btns) {
     romItem.addOption({"highlight_use_text_color", 0});
     romList.addGroup(romItem);
     main.addGroup(romList);
+    //
+    config::Group romSyno = createRectangleShapeGroup(
+            "ROM_SYNOPSIS", {654, 378, 608, 322}, Origin::Left,
+            "romlist_synopsys.png", {150, 150, 150, 255}, {220, 0, 0, 255}, 2);
+    config::Group romSynoText = createTextGroup(
+            "TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+    romSyno.addGroup(romSynoText);
+    main.addGroup(romSyno);
+    //
     config::Group romInfo = createRectangleShapeGroup(
-            "ROM_INFO", {654, 378, 608, 322}, Origin::Left,
+            "ROM_INFOS", {654, 378, 608, 322}, Origin::Left,
             "romlist_info.png", {150, 150, 150, 255}, {220, 0, 0, 255}, 2);
     config::Group romInfoText = createTextGroup(
-            "TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+            "SYSTEM_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+    romInfo.addGroup(romInfoText);
+    romInfoText = createTextGroup(
+            "DEVELOPER_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+    romInfo.addGroup(romInfoText);
+    romInfoText = createTextGroup(
+            "EDITOR_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+    romInfo.addGroup(romInfoText);
+    romInfoText = createTextGroup(
+            "DATE_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+    romInfo.addGroup(romInfoText);
+    romInfoText = createTextGroup(
+            "GENRE_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+    romInfo.addGroup(romInfoText);
+    romInfoText = createTextGroup(
+            "PLAYERS_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+    romInfo.addGroup(romInfoText);
+    romInfoText = createTextGroup(
+            "RATING_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+    romInfo.addGroup(romInfoText);
+    romInfoText = createTextGroup(
+            "TOPSTAFF_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+    romInfo.addGroup(romInfoText);
+    romInfoText = createTextGroup(
+            "ROTATION_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+    romInfo.addGroup(romInfoText);
+    romInfoText = createTextGroup(
+            "RESOLUTION_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+    romInfo.addGroup(romInfoText);
+    romInfoText = createTextGroup(
+            "CLASSIFICATION_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+    romInfo.addGroup(romInfoText);
+    romInfoText = createTextGroup(
+            "CLONEOF_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
+    romInfo.addGroup(romInfoText);
+    romInfoText = createTextGroup(
+            "FILENAME_TEXT", ui->getFontSize(), titleTextRect, Origin::TopLeft, Color::White, Color::Black, 1);
     romInfo.addGroup(romInfoText);
     main.addGroup(romInfo);
+    //
     config::Group previewBox = createRectangleShapeGroup(
             "ROM_IMAGE", {654, 378, 608, 322}, Origin::Left,
             "romlist_image.png", {150, 150, 150, 255}, {220, 0, 0, 255}, 2);
@@ -478,7 +524,7 @@ void Skin::loadText(c2d::Text *text, const std::vector<std::string> &tree) {
     text->setCharacterSize(textGroup.size);
     text->setFillColor(textGroup.color);
     text->setOutlineColor(textGroup.outlineColor);
-    text->setOutlineThickness(textGroup.outlineSize);
+    text->setOutlineThickness((float) textGroup.outlineSize);
     text->setOrigin(textGroup.origin);
     text->setPosition(textGroup.rect.left, textGroup.rect.top);
     text->setOverflow(textGroup.overflow);

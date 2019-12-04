@@ -29,20 +29,41 @@ class UIRomInfo : public Rectangle {
 
 public:
 
-    UIRomInfo(UIMain *u, UIRomList *uiRList, Font *font, int fontSize)
+    UIRomInfo(UIMain *u, UIRomList *uiRList, Font *fnt, int fntSize)
             : Rectangle(u->getSize()) {
 
         printf("UIRomInfo\n");
 
         ui = u;
         uiRomList = uiRList;
+        font = fnt;
+        fontSize = fntSize;
+
+        // synopsis box
+        synoBox = new RectangleShape({16, 16});
+        ui->getSkin()->loadRectangleShape(synoBox, {"MAIN", "ROM_SYNOPSIS"});
+        synoText = new Text("", (unsigned int) fontSize, font);
+        ui->getSkin()->loadText(synoText, {"MAIN", "ROM_SYNOPSIS", "TEXT"});
+        synoBox->add(synoText);
+        add(synoBox);
 
         // info box
         infoBox = new RectangleShape({16, 16});
-        ui->getSkin()->loadRectangleShape(infoBox, {"MAIN", "ROM_INFO"});
-        infoText = new Text("", (unsigned int) fontSize, font);
-        ui->getSkin()->loadText(infoText, {"MAIN", "ROM_INFO", "TEXT"});
-        infoBox->add(infoText);
+        ui->getSkin()->loadRectangleShape(infoBox, {"MAIN", "ROM_INFOS"});
+        // info box texts
+        systemText = addInfoBoxText({"MAIN", "ROM_INFOS", "SYSTEM_TEXT"});
+        developerText = addInfoBoxText({"MAIN", "ROM_INFOS", "DEVELOPER_TEXT"});
+        editorText = addInfoBoxText({"MAIN", "ROM_INFOS", "EDITOR_TEXT"});
+        dateText = addInfoBoxText({"MAIN", "ROM_INFOS", "DATE_TEXT"});
+        genreText = addInfoBoxText({"MAIN", "ROM_INFOS", "GENRE_TEXT"});
+        playersText = addInfoBoxText({"MAIN", "ROM_INFOS", "PLAYERS_TEXT"});
+        ratingText = addInfoBoxText({"MAIN", "ROM_INFOS", "RATING_TEXT"});
+        topstaffText = addInfoBoxText({"MAIN", "ROM_INFOS", "TOPSTAFF_TEXT"});
+        rotationText = addInfoBoxText({"MAIN", "ROM_INFOS", "ROTATION_TEXT"});
+        resolutionText = addInfoBoxText({"MAIN", "ROM_INFOS", "RESOLUTION_TEXT"});
+        classificationText = addInfoBoxText({"MAIN", "ROM_INFOS", "CLASSIFICATION_TEXT"});
+        cloneofText = addInfoBoxText({"MAIN", "ROM_INFOS", "CLONEOF_TEXT"});
+        filenameText = addInfoBoxText({"MAIN", "ROM_INFOS", "FILENAME_TEXT"});
         add(infoBox);
 
         // preview box
@@ -79,6 +100,23 @@ public:
         return true;
     }
 
+    Text *addInfoBoxText(const std::vector<std::string> &tree) {
+        Text *text = new Text("", (unsigned int) fontSize, font);
+        ui->getSkin()->loadText(text, tree);
+        infoBox->add(text);
+        return text;
+    }
+
+    void showText(Text *text, const std::string &msg) {
+        text->setString(msg);
+        text->setVisibility(Visibility::Visible);
+    }
+
+    void hideText(Text *text) {
+        text->setVisibility(Visibility::Hidden);
+        text->setString("");
+    }
+
     void load(const Game &game) {
 
         if (texture != nullptr) {
@@ -87,28 +125,68 @@ public:
         }
 
         if (game.id.empty()) {
-            //printf("load(%s, %i)\n", "nullptr", isPreview);
-            infoText->setVisibility(Visibility::Hidden);
-            infoText->setString("");
+            hideText(systemText);
+            hideText(developerText);
+            hideText(editorText);
+            hideText(dateText);
+            hideText(genreText);
+            hideText(playersText);
+            hideText(ratingText);
+            hideText(topstaffText);
+            hideText(rotationText);
+            hideText(resolutionText);
+            hideText(classificationText);
+            hideText(cloneofText);
+            hideText(filenameText);
+            hideText(synoText);
         } else {
             printf("load(%s)\n", game.getName().text.c_str());
             // load title/preview texture
             loadTexture(game);
-            info = "FILE: " + game.path + "\n";
-            info += game.getSynopsis().text;
-            infoText->setString(info);
-            infoText->setVisibility(Visibility::Visible);
+            showText(systemText, "System: " + game.system.text);
+            showText(developerText, "Developer: " + game.developer.text);
+            showText(editorText, "Editor: " + game.editor.text);
+            showText(dateText, "Date: " + game.getDate().text);
+            showText(genreText, "Genre: " + game.getGenre().text);
+            showText(playersText, "Players: " + game.players);
+            showText(ratingText, "Rating: " + game.rating);
+            showText(topstaffText, "Top Staff: " + game.topstaff);
+            showText(rotationText, "Rotation: " + game.rotation);
+            showText(resolutionText, "Resolution: " + game.resolution);
+            showText(classificationText, "Classification: " + game.getClassification().text);
+            showText(cloneofText, "Clone Of: " + game.cloneof);
+            showText(filenameText, "File: " + game.path);
+            //
+            showText(synoText, game.getSynopsis().text);
         }
     }
 
     UIMain *ui = nullptr;
     UIRomList *uiRomList = nullptr;
     C2DTexture *texture = nullptr;
-    RectangleShape *infoBox = nullptr;
-    Text *infoText = nullptr;
+    Font *font;
+    int fontSize;
+    //
+    RectangleShape *synoBox = nullptr;
+    Text *synoText = nullptr;
+    //
     RectangleShape *previewBox = nullptr;
     Text *previewText = nullptr;
-    std::string info;
+    //
+    RectangleShape *infoBox = nullptr;
+    Text *systemText = nullptr;
+    Text *developerText = nullptr;
+    Text *editorText = nullptr;
+    Text *dateText = nullptr;
+    Text *genreText = nullptr;
+    Text *playersText = nullptr;
+    Text *ratingText = nullptr;
+    Text *topstaffText = nullptr;
+    Text *rotationText = nullptr;
+    Text *resolutionText = nullptr;
+    Text *classificationText = nullptr;
+    Text *cloneofText = nullptr;
+    Text *filenameText = nullptr;
 };
 
 UIRomListClassic::UIRomListClassic(UIMain *u, RomList *romList, const c2d::Vector2f &size)
