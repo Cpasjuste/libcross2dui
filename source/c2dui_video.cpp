@@ -33,10 +33,6 @@ C2DUIVideo::C2DUIVideo(UIMain *gui, void **_pixels, int *_pitch, const c2d::Vect
         lock(nullptr, _pixels, _pitch);
         unlock();
     }
-
-    setShader(ui->getConfig()->get(Option::Id::ROM_SHADER, true)->getIndex());
-    setFilter((Texture::Filter) ui->getConfig()->get(Option::Id::ROM_FILTER, true)->getIndex());
-    updateScaling();
 }
 
 C2DUIVideo::~C2DUIVideo() {
@@ -48,10 +44,7 @@ void C2DUIVideo::updateScaling(bool vertical, bool flip) {
     int rotated = 0;
     float rotation = 0;
     std::string scale_mode = ui->getConfig()->get(Option::Id::ROM_SCALING, true)->getValueString();
-    int rotation_cfg = 0;
-    if (ui->getConfig()->get(Option::Id::ROM_ROTATION, true)) {
-        rotation_cfg = ui->getConfig()->get(Option::Id::ROM_ROTATION, true)->getIndex();
-    }
+    int rotation_cfg = ui->getConfig()->get(Option::Id::ROM_ROTATION, true)->getIndex();
 
     Vector2f screen = ui->getSize();
     Vector2f scale_max;
@@ -139,8 +132,8 @@ void C2DUIVideo::updateScaling(bool vertical, bool flip) {
         sy = rotated ? scale_max.x : scale_max.y;
     }
 
-    printf("C2DUIVideo::updateScaling: mode: %s, scaling: %f x %f, size: %i x %i\n",
-           scale_mode.c_str(), sx, sy, (int) (getSize().x * sx), (int) (getSize().y * sy));
+    printf("C2DUIVideo::updateScaling: mode: %s, scaling: %f x %f, size: %i x %i, rotation: %i\n",
+           scale_mode.c_str(), sx, sy, (int) (getSize().x * sx), (int) (getSize().y * sy), rotation_cfg);
 
     setOrigin(Origin::Center);
     setPosition(screen.x / 2, screen.y / 2);
