@@ -13,7 +13,6 @@
 #include "c2dui_skin.h"
 #include "c2dui_video.h"
 #include "c2dui_config.h"
-#include "c2dui_scrapper.h"
 
 #include "c2dui_ui_highlight.h"
 #include "c2dui_ui_menu.h"

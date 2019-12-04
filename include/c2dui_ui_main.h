@@ -69,10 +69,6 @@ namespace c2dui {
 
         bool done = false;
 
-#ifdef __SSCRAP__
-        Scrapper *getScrapper();
-#endif
-
     private:
 
         Config *config = nullptr;
@@ -87,9 +83,6 @@ namespace c2dui {
         c2d::C2DClock timer;
 
         float scaling = 1;
-#ifdef __SSCRAP__
-        Scrapper *scrapper;
-#endif
     };
 }
 

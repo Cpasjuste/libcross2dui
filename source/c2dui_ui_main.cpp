@@ -189,9 +189,3 @@ void UIMain::updateInputMapping(bool isRomConfig) {
     ((SWITCHInput *) getInput())->setSingleJoyconMode(single_joy_mode);
 #endif
 }
-
-#ifdef __SSCRAP__
-Scrapper *UIMain::getScrapper() {
-    return scrapper;
-}
-#endif
